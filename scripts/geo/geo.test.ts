@@ -268,7 +268,7 @@ describe("reproducible y sin red", () => {
 
 describe("el sitio usa la geometría generada", () => {
   it("el mapa importa la geometría generada", () => {
-    expect(read("src/components/explorer/IslandMap.tsx")).toMatch(/data\/generated\/municipios\.geometry\.json/);
+    expect(read("src/data/pr/geo.ts")).toMatch(/data\/generated\/municipios\.geometry\.json/);
   });
 
   it("los parámetros documentados son los que usa el generador", () => {

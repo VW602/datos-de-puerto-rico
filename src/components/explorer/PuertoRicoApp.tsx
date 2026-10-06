@@ -1,581 +1,541 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { Compass, Minus, Plus, RotateCcw, X } from "lucide-react";
-import { municipios, type Municipio } from "@/data/pr/places";
-import { metricGrain, metricGroup, prMetricById, type MetricGroup, type PrMetricId } from "@/data/pr/metrics";
-import { DEFAULT_METRIC_ID, isPublicMetric, PUBLIC_GROUPS, publicMetricsInGroup, toPublicPlaces } from "@/data/pr/public";
-import { applyLayers, ISLAND_STATS, islandStat, type IslandMetricId } from "@/data/pr/layers";
-import { RAMP_GRADIENT, valueAt } from "@/data/scale";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { focusView, fitView, viewBox, zoomView, type Candidate, type View } from "@/data/pr/geo";
+import { applyLayers, islandStat } from "@/data/pr/layers";
+import { metricGroup, prMetricById, type MetricGroup, type PrMetricId } from "@/data/pr/metrics";
 import { MISSING_COPY, missingReason } from "@/data/pr/missing";
+import { municipios } from "@/data/pr/places";
+import { deltaWords, describePlace, rankOf } from "@/data/pr/present";
+import {
+  DEFAULT_METRIC_ID,
+  PUBLIC_GROUPS,
+  PUBLIC_METRICS,
+  publicMetricsInGroup,
+  toPublicPlaces,
+} from "@/data/pr/public";
 import { rankByMetric } from "@/data/pr/ranking";
-import { provenanceForMetric, publicSourceById, publicSourceForMetric } from "@/data/pr/sources";
-import { cn } from "@/lib/cn";
-import { IslandMap, type IslandMapHandle } from "./IslandMap";
+import { publicSourceById } from "@/data/pr/sources";
+import { ISLAND_ONLY_FILL, colorForValue } from "@/data/scale";
+import { AtlasMap } from "./AtlasMap";
+import { DataTable } from "./DataTable";
+import { Legend, MunicipioSearch, TapChooser, ZoomControls } from "./MapBits";
+import { Ranking78 } from "./Ranking78";
+import { SourcePanel } from "./SourcePanel";
+import { FullProfile, Summary } from "./Summary";
 
-const people = new Intl.NumberFormat("en-US");
-
-/** "3 oct 2026" from an ISO date, without depending on the viewer's time zone. */
-function shortDate(iso: string): string {
-  const [year, month, day] = iso.split("-").map(Number);
-  const months = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
-  return `${day} ${months[month - 1]} ${year}`;
-}
-
-const censusRetrievedAt = publicSourceForMetric("poverty")?.retrievedAt ?? null;
 /** TIGER/Line asks for this notice on the first page of any site that repackages its boundaries. */
 const MAP_ATTRIBUTION = publicSourceById("geometria-municipios")?.attribution ?? null;
-const CENSUS_NOTE = censusRetrievedAt
-  ? `Censo: copia oficial descargada el ${shortDate(censusRetrievedAt)}`
-  : "Censo: copia oficial guardada";
+
+const groupLabel = (group: MetricGroup) => (group === "Isla" ? "Toda la isla" : group);
+
+type Size = { width: number; height: number };
+type MobileTab = "perfil" | "los78" | "fuente";
 
 export function PuertoRicoApp() {
-  const mapRef = useRef<IslandMapHandle>(null);
   const [metricId, setMetricId] = useState<PrMetricId>(DEFAULT_METRIC_ID);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [query, setQuery] = useState("");
+  const [candidates, setCandidates] = useState<Candidate[] | null>(null);
+  // Desktop band and mobile detail map keep their own views; the overview mirrors the detail map.
+  const [bandView, setBandView] = useState<View | null>(null);
+  const [bandSize, setBandSize] = useState<Size>({ width: 0, height: 0 });
+  const [detailView, setDetailView] = useState<View | null>(null);
+  const [detailSize, setDetailSize] = useState<Size>({ width: 0, height: 0 });
+  const [tab, setTab] = useState<MobileTab>("los78");
+  const [showTable, setShowTable] = useState(false);
+
   const metric = prMetricById(metricId);
+  const group = metricGroup(metricId);
+  const island = islandStat(metricId);
   const places = useMemo(() => toPublicPlaces(applyLayers(municipios)), []);
+  const placeById = useMemo(() => new Map(places.map((place) => [place.id, place])), [places]);
+  const ranking = useMemo(() => rankByMetric(places, metric.id, metric.scale), [places, metric]);
+  const missingCount = island ? 0 : places.length - ranking.ranked.length;
 
-  const bundle = useMemo(() => rankByMetric(places, metric.id, metric.scale), [metric, places]);
+  const fills = useMemo(() => {
+    const out: Record<string, string> = {};
+    for (const place of places) {
+      out[place.id] = island
+        ? ISLAND_ONLY_FILL
+        : colorForValue(place.values[metric.id], ranking.min, ranking.max, metric.scale);
+    }
+    return out;
+  }, [places, metric, ranking, island]);
 
-  const selected = selectedId ? (places.find((place) => place.id === selectedId) ?? null) : null;
-  const visible = bundle.ranked.filter((place) =>
-    place.name.toLowerCase().includes(query.trim().toLowerCase()),
+  const selected = selectedId ? (placeById.get(selectedId) ?? null) : null;
+
+  const select = useCallback(
+    (id: string) => {
+      setSelectedId(id);
+      setCandidates(null);
+      if (detailSize.width > 0) setDetailView(focusView(id, detailSize.width, detailSize.height));
+    },
+    [detailSize.height, detailSize.width],
   );
 
-  useEffect(() => {
-    function onKey(event: KeyboardEvent) {
-      const tag = (event.target as HTMLElement | null)?.tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA") return;
-      if (event.key === "+" || event.key === "=") {
-        event.preventDefault();
-        mapRef.current?.zoomBy(1.35);
-      } else if (event.key === "-" || event.key === "_") {
-        event.preventDefault();
-        mapRef.current?.zoomBy(1 / 1.35);
-      } else if (event.key === "0") mapRef.current?.reset();
-      else if (event.key === "Escape") setSelectedId(null);
-      else if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
-        if ((event.target as HTMLElement | null)?.getAttribute("role") === "radio") return;
-        const pool = publicMetricsInGroup(metricGroup(metricId));
-        const index = pool.findIndex((item) => item.id === metricId);
-        const delta = event.key === "ArrowRight" ? 1 : -1;
-        setMetricId(pool[(index + delta + pool.length) % pool.length].id);
-      }
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [metricId]);
+  const describe = useCallback(
+    (id: string) => describePlace(metric, placeById.get(id), ranking),
+    [metric, placeById, ranking],
+  );
+
+  const tooltip = useCallback(
+    (id: string): ReactNode => {
+      const place = placeById.get(id);
+      if (!place) return null;
+      const value = island ? null : place.values[metric.id];
+      const rank = rankOf(ranking, id);
+      return (
+        <>
+          <p className="font-display text-lg leading-tight font-semibold">{place.name}</p>
+          {island ? (
+            <p className="text-sm text-muted">Solo hay cifra para toda la isla</p>
+          ) : value == null ? (
+            <p className="text-base font-semibold text-muted">
+              {MISSING_COPY[missingReason(metric.id, id)].short}
+            </p>
+          ) : (
+            <>
+              <p className="text-[22px] leading-tight font-bold tabular">
+                {value === 0 ? "0 · cero publicado" : metric.format(value)}
+              </p>
+              <p className="text-[13px] text-muted tabular">
+                {rank ? `${rank.rank} de ${rank.of} · ` : ""}
+                {deltaWords(metric, value - ranking.median)}
+              </p>
+            </>
+          )}
+        </>
+      );
+    },
+    [placeById, island, metric, ranking],
+  );
+
+  const islandNote = island ? `Solo para toda la isla · ${metric.format(island.value)}` : null;
+  const mapLabel = `Mapa de Puerto Rico: ${metric.label}. ${selected ? `Seleccionado: ${describe(selected.id)}.` : "Ningún municipio seleccionado."}`;
+
+  const overviewRect =
+    detailSize.width > 0 && detailView
+      ? viewBox(detailView, detailSize.width, detailSize.height)
+      : null;
+
+  const zoomDetail = (factor: number) => {
+    if (!detailSize.width) return;
+    setDetailView(
+      zoomView(
+        detailView ?? fitView(detailSize.width, detailSize.height),
+        factor,
+        detailSize.width,
+        detailSize.height,
+      ),
+    );
+  };
+  const zoomBand = (factor: number) => {
+    if (!bandSize.width) return;
+    setBandView(
+      zoomView(
+        bandView ?? fitView(bandSize.width, bandSize.height),
+        factor,
+        bandSize.width,
+        bandSize.height,
+      ),
+    );
+  };
+
+  const chooser = candidates && (
+    <TapChooser candidates={candidates} onChoose={select} onCancel={() => setCandidates(null)} />
+  );
 
   return (
-    <div className="flex h-dvh flex-col overflow-hidden bg-bg text-fg">
-      <header className="flex shrink-0 flex-col gap-3 border-b border-border px-4 py-3 lg:flex-row lg:items-center lg:justify-between lg:px-6">
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="flex size-9 items-center justify-center rounded-full border border-border text-accent">
-            <Compass className="size-4" aria-hidden="true" strokeWidth={1.75} />
+    <div className="min-h-dvh bg-bg text-fg">
+      <header className="flex items-center justify-between gap-6 border-b border-fg px-4 py-1.5 md:px-14 md:py-3">
+        <div className="flex items-baseline gap-3">
+          <span className="font-display text-[21px] font-semibold md:text-[26px]">
+            Datos de Puerto Rico
           </span>
-          <div>
-            <h1 className="font-display text-2xl leading-none">Puerto Rico</h1>
-            <p className="mt-1 text-xs text-muted">Escoge un municipio y conoce sus datos.</p>
-            <p className="text-xs text-muted">{CENSUS_NOTE}</p>
-          </div>
+          <span className="hidden text-sm text-muted lg:inline">78 municipios, con su fuente</span>
         </div>
-        <MetricSwitcher metricId={metricId} onChange={setMetricId} />
+        <nav aria-label="Temas" className="hidden gap-0.5 md:flex">
+          {PUBLIC_GROUPS.map((item) => (
+            <button
+              key={item}
+              type="button"
+              aria-pressed={item === group}
+              onClick={() => setMetricId(publicMetricsInGroup(item)[0].id)}
+              className={`min-h-11 px-3.5 text-base ${item === group ? "font-semibold text-fg shadow-[inset_0_-3px_0_var(--color-accent)]" : "text-muted hover:text-fg"}`}
+            >
+              {groupLabel(item)}
+            </button>
+          ))}
+        </nav>
+        <a
+          href="#fuente"
+          className="flex min-h-11 items-center text-[15px] font-semibold text-accent"
+        >
+          Fuentes y método
+        </a>
       </header>
 
-      <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1.15fr)_minmax(0,0.95fr)] lg:grid-cols-[minmax(0,1fr)_24rem] lg:grid-rows-1">
-        <div className="relative min-h-0">
-          <IslandMap
-            ref={mapRef}
-            metric={metric}
-            min={bundle.min}
-            max={bundle.max}
-            selectedId={selectedId}
-            places={places}
-            flat={metricGrain(metric.id) === "isla"}
-            flatValue={islandStat(metric.id)?.value ?? null}
-            onSelect={setSelectedId}
-          />
-          <div className="pointer-events-none absolute inset-0">
-            <div className="pointer-events-auto absolute top-3 right-3 flex flex-col gap-1.5">
-              <MapButton label="Acercar" onClick={() => mapRef.current?.zoomBy(1.35)}>
-                <Plus className="size-4" aria-hidden="true" />
-              </MapButton>
-              <MapButton label="Alejar" onClick={() => mapRef.current?.zoomBy(1 / 1.35)}>
-                <Minus className="size-4" aria-hidden="true" />
-              </MapButton>
-              <MapButton label="Ver la isla" onClick={() => mapRef.current?.reset()}>
-                <RotateCcw className="size-4" aria-hidden="true" />
-              </MapButton>
+      <main>
+        {/* Measure and period */}
+        <div className="flex flex-col gap-3 px-4 pt-4 pb-3 md:flex-row md:items-end md:justify-between md:gap-8 md:px-14 md:pt-7 md:pb-5">
+          <div className="min-w-0">
+            <p className="text-xs font-bold tracking-[0.09em] text-accent uppercase md:text-[13px]">
+              {groupLabel(group)} · {metric.source}
+            </p>
+            <h1 className="mt-1.5 hidden font-display text-[54px] leading-none font-medium md:block">
+              {metric.label}
+            </h1>
+            <label className="mt-1.5 block md:hidden">
+              <span className="sr-only">Medida</span>
+              <select
+                value={metricId}
+                onChange={(event) => setMetricId(event.target.value as PrMetricId)}
+                className="min-h-[52px] w-full appearance-none rounded-[3px] border border-fg bg-surface bg-[length:14px] bg-[right_14px_center] bg-no-repeat px-3.5 font-display text-[26px] font-medium text-fg"
+                style={{
+                  backgroundImage:
+                    "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M2 5l5 5 5-5' fill='none' stroke='%231a1916' stroke-width='1.8'/%3E%3C/svg%3E\")",
+                }}
+              >
+                {PUBLIC_GROUPS.map((item) => (
+                  <optgroup key={item} label={groupLabel(item)}>
+                    {publicMetricsInGroup(item).map((option) => (
+                      <option key={option.id} value={option.id}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </label>
+            <p className="mt-2 text-[15px] text-muted md:text-lg">{metric.hint}</p>
+          </div>
+          <div className="hidden flex-col items-end gap-2.5 md:flex">
+            <div
+              role="radiogroup"
+              aria-label={`Medidas de ${groupLabel(group)}`}
+              className="flex max-w-[640px] flex-wrap justify-end gap-1.5"
+            >
+              {publicMetricsInGroup(group).map((item) => {
+                const active = item.id === metricId;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    onClick={() => setMetricId(item.id)}
+                    className={`min-h-11 rounded-full border px-4 text-[15px] ${active ? "border-fg bg-fg font-semibold text-surface" : "border-divider bg-surface text-fg hover:bg-track"}`}
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
             </div>
-            <div className="pointer-events-none absolute bottom-3 left-3 right-3 max-w-xs sm:right-auto">
-              <div className="rounded-lg border border-border bg-surface px-3 py-2.5">
-                <div className="flex items-baseline justify-between gap-3">
-                  <p className="text-sm">{metric.label}</p>
-                  <p className="text-xs text-muted">{metric.scale === "log" ? "Escala logarítmica" : "Escala lineal"}</p>
-                </div>
-                <p className="text-xs text-muted">{metric.hint}</p>
-                {islandStat(metric.id) ? (
-                  <p className="mt-2 font-display text-2xl leading-none">
-                    {metric.format(islandStat(metric.id)!.value)}
-                  </p>
-                ) : (
-                  <>
-                    <div className="mt-2 h-2 rounded-full" style={{ background: RAMP_GRADIENT }} />
-                    <div className="mt-1 flex justify-between gap-2 text-xs text-muted tabular-nums">
-                      <span>{metric.formatTick(valueAt(0, bundle.min, bundle.max, metric.scale))}</span>
-                      <span>{metric.formatTick(valueAt(0.5, bundle.min, bundle.max, metric.scale))}</span>
-                      <span>{metric.formatTick(valueAt(1, bundle.min, bundle.max, metric.scale))}</span>
-                    </div>
-                  </>
-                )}
+            <p className="text-sm text-muted tabular">
+              {island
+                ? "Una sola cifra para toda la isla"
+                : `${ranking.ranked.length} de 78 municipios con dato`}
+            </p>
+          </div>
+        </div>
+
+        {/* Desktop: full-width atlas band */}
+        <div className="relative hidden border-y border-divider md:block">
+          <div className="aspect-[1048/372] max-h-[78vh] w-full">
+            <AtlasMap
+              variant="band"
+              label={mapLabel}
+              fills={fills}
+              selectedId={selectedId}
+              view={bandView}
+              onViewChange={(view) => setBandView(view)}
+              onResize={setBandSize}
+              onSelect={select}
+              onChoose={setCandidates}
+              describe={describe}
+              tooltip={tooltip}
+              placeLabels
+              islandNote={islandNote}
+            />
+          </div>
+          <ZoomControls
+            className="absolute top-4 left-5"
+            onZoomIn={() => zoomBand(1.5)}
+            onZoomOut={() => zoomBand(1 / 1.5)}
+            onReset={() => setBandView(null)}
+          />
+          {candidates && (
+            <div className="absolute right-5 bottom-5 max-w-md shadow-float">{chooser}</div>
+          )}
+          {/* The legend sits below the map, so it never covers land at any zoom. */}
+          <div className="flex items-center gap-4 border-t border-divider bg-surface px-14 py-3">
+            <p className="shrink-0 text-[13px] font-bold">{metric.label}</p>
+            <div className="min-w-0 flex-1">
+              <Legend
+                metric={metric}
+                min={ranking.min}
+                max={ranking.max}
+                islandOnly={Boolean(island)}
+                missingCount={missingCount}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile: whole-island overview linked to a zoomable detail map */}
+        <div className="md:hidden">
+          <div className="px-4 pb-3">
+            <MunicipioSearch places={places} onPick={select} />
+          </div>
+          <div className="border-y border-divider bg-water">
+            <div className="relative border-b border-[#c9d6d9]">
+              <p
+                className="absolute top-1.5 left-2.5 z-10 text-[11px] font-bold tracking-[0.08em] text-sea uppercase"
+                aria-hidden="true"
+              >
+                Toda la isla
+              </p>
+              <div className="aspect-[1048/330] w-full">
+                <AtlasMap
+                  variant="overview"
+                  label={`Vista de toda la isla, de Mona a Culebra. ${overviewRect ? "El recuadro marca la parte que muestra el mapa grande." : ""}`}
+                  fills={fills}
+                  selectedId={selectedId}
+                  viewport={overviewRect}
+                  onPick={([x, y]) => {
+                    if (!detailSize.width) return;
+                    const base = detailView ?? fitView(detailSize.width, detailSize.height);
+                    const k = Math.max(
+                      base.k,
+                      fitView(detailSize.width, detailSize.height).k * 2.8,
+                    );
+                    setDetailView(
+                      zoomView({ cx: x, cy: y, k }, 1, detailSize.width, detailSize.height),
+                    );
+                  }}
+                />
               </div>
             </div>
+            <div className="relative h-[clamp(220px,64vw,280px)]">
+              <AtlasMap
+                variant="detail"
+                label={mapLabel}
+                fills={fills}
+                selectedId={selectedId}
+                view={detailView}
+                onViewChange={(view) => setDetailView(view)}
+                onResize={setDetailSize}
+                onSelect={select}
+                onChoose={setCandidates}
+                describe={describe}
+                placeLabels
+                islandNote={islandNote}
+              />
+            </div>
+            {/* Controls sit under the map, never on top of the land. */}
+            <div className="flex items-center gap-2 border-t border-[#c9d6d9] bg-surface px-3 py-2">
+              <button
+                type="button"
+                onClick={() => setDetailView(null)}
+                className="flex min-h-11 items-center rounded-[3px] border border-fg bg-surface px-3.5 text-[15px] font-semibold hover:bg-track"
+              >
+                Toda la isla
+              </button>
+              <span className="flex-1 text-xs text-muted">
+                {detailView ? "Arrastra el mapa para moverte" : "Toca un municipio o acércate"}
+              </span>
+              <button
+                type="button"
+                aria-label="Alejar el mapa"
+                onClick={() => zoomDetail(1 / 1.6)}
+                className="flex size-11 items-center justify-center rounded-[3px] border border-fg bg-surface text-xl hover:bg-track"
+              >
+                −
+              </button>
+              <button
+                type="button"
+                aria-label="Acercar el mapa"
+                onClick={() => zoomDetail(1.6)}
+                className="flex size-11 items-center justify-center rounded-[3px] border border-fg bg-surface text-xl hover:bg-track"
+              >
+                +
+              </button>
+            </div>
+            {chooser}
+          </div>
+          <div className="border-b border-divider px-4 py-3">
+            <Legend
+              metric={metric}
+              min={ranking.min}
+              max={ranking.max}
+              islandOnly={Boolean(island)}
+              missingCount={missingCount}
+              compact
+            />
           </div>
         </div>
 
-        <aside className="flex min-h-0 flex-col border-t border-border bg-surface lg:border-t-0 lg:border-l">
-          <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
-            {selected ? (
-              <Detail
-                place={selected}
-                metricId={metricId}
-                ranked={bundle.ranked}
-                median={bundle.median}
-                onClear={() => setSelectedId(null)}
-                onMetric={setMetricId}
-                onFocus={() => mapRef.current?.focus(selected.id)}
-              />
-            ) : (
-              <>
-                {metric.id !== "poverty" && isPublicMetric("poverty") && (
-                  <PoorestTowns
-                    places={places}
-                    onSelect={(id) => {
-                      setMetricId("poverty");
-                      setSelectedId(id);
-                      mapRef.current?.focus(id);
-                    }}
-                  />
-                )}
-                {islandStat(metric.id) ? (
-                  <IslandFact metricId={metric.id as IslandMetricId} />
-                ) : (
-                  <List
-                    places={visible}
-                    query={query}
-                    metric={metric}
-                    onQuery={setQuery}
-                    onSelect={(id) => {
-                      setSelectedId(id);
-                      mapRef.current?.focus(id);
-                    }}
-                  />
-                )}
-              </>
+        {/* Summary and ranking */}
+        <div className="grid gap-10 px-4 pt-5 pb-8 md:grid-cols-[minmax(0,500px)_minmax(0,1fr)] md:gap-14 md:px-14 md:pt-9">
+          <div>
+            <div className="mb-5 hidden md:block">
+              <MunicipioSearch places={places} onPick={select} />
+            </div>
+            <Summary
+              metric={metric}
+              place={selected}
+              ranking={ranking}
+              onClear={() => setSelectedId(null)}
+              size="desktop"
+            />
+            {selected && (
+              <details className="mt-4 hidden md:block">
+                <summary className="flex min-h-11 cursor-pointer items-center text-[15px] font-semibold">
+                  Ver las {PUBLIC_METRICS.length} medidas de {selected.name}
+                </summary>
+                <div className="mt-2">
+                  <FullProfile place={selected} />
+                </div>
+              </details>
             )}
           </div>
-          <p className="max-h-20 shrink-0 overflow-y-auto border-t border-border px-4 py-2.5 text-xs leading-relaxed text-muted lg:max-h-none">
-            Fuentes: Oficina del Censo de EE. UU. (ACS y TIGER/Line), NHTSA (FARS) y CDC (BRFSS). Cada
-            medida dice su fuente y su periodo. Las cifras del Censo salen de una copia oficial guardada; los
-            estimados del Censo tienen margen de error.
-            {MAP_ATTRIBUTION && <span className="mt-1 block">{MAP_ATTRIBUTION}</span>}
-          </p>
-        </aside>
-      </div>
-    </div>
-  );
-}
-
-function Detail({
-  place,
-  metricId,
-  ranked,
-  median,
-  onClear,
-  onMetric,
-  onFocus,
-}: {
-  place: Municipio;
-  metricId: PrMetricId;
-  ranked: Municipio[];
-  median: number;
-  onClear: () => void;
-  onMetric: (id: PrMetricId) => void;
-  onFocus: () => void;
-}) {
-  const metric = prMetricById(metricId);
-  const raw = place.values[metric.id];
-  const island = islandStat(metric.id);
-  const value = island ? island.value : raw;
-  const rank = ranked.findIndex((item) => item.id === place.id) + 1;
-  const missing = MISSING_COPY[missingReason(metric.id, place.id)];
-  const moe = island ? null : (place.moe[metric.id] ?? null);
-  const peak = Math.max(...place.ages.flatMap((band) => [band.male, band.female]), 1);
-
-  return (
-    <div>
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <button type="button" onClick={onFocus} className="text-left">
-            <h2 className="font-display text-3xl leading-none">{place.name}</h2>
-          </button>
-          <p className="mt-1 text-xs text-muted">
-            {rank > 0 ? `${rank} de ${ranked.length}` : missing.short} · {metric.source}
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={onClear}
-          aria-label="Cerrar"
-          className="flex size-11 items-center justify-center rounded-md border border-border hover:bg-surface-2"
-        >
-          <X className="size-4" aria-hidden="true" />
-        </button>
-      </div>
-
-      <p className="mt-4 font-display text-4xl leading-none tabular-nums">
-        {value == null ? missing.short : metric.format(value)}
-      </p>
-      <p className="mt-2 text-sm text-muted">
-        {island ? island.note : value == null ? missing.long : metric.versus(value, median)}
-      </p>
-      {value != null && moe != null && (
-        <p className="mt-1 text-xs text-muted tabular-nums">
-          Margen de error (90%): ±{metric.format(moe)}
-        </p>
-      )}
-      {value != null && !island && <p className="mt-1 text-xs text-muted">{metric.hint}</p>}
-      {metric.id === "traffic" && (
-        <p className="mt-1 text-xs text-muted">{people.format(place.trafficDeaths)} muertes en dos años</p>
-      )}
-      <SourceDetails metricId={metric.id} />
-
-      <h3 className="mt-5 text-xs tracking-wide text-muted uppercase">Edad y sexo de la población</h3>
-      <p className="mt-1 text-xs text-muted">
-        {people.format(place.female)} mujeres · {people.format(place.male)} hombres
-      </p>
-      <div className="mt-2 space-y-2">
-        {place.ages.map((band) => (
-          <div key={band.label}>
-            <p className="text-xs text-muted">{band.label}</p>
-            <Bar label="Mujeres" value={band.female} peak={peak} tone="accent" />
-            <Bar label="Hombres" value={band.male} peak={peak} tone="deep" />
+          <div className="hidden md:block">
+            {island ? (
+              <IslandOnlyNote />
+            ) : (
+              <Ranking78
+                metric={metric}
+                ranking={ranking}
+                fills={fills}
+                selectedId={selectedId}
+                missingCount={missingCount}
+                onSelect={select}
+              />
+            )}
           </div>
-        ))}
-      </div>
+        </div>
 
-      <dl className="mt-5 grid grid-cols-2 gap-2">
-        {publicMetricsInGroup(metricGroup(metric.id)).map((item) => {
-          const itemValue = islandStat(item.id)?.value ?? place.values[item.id];
-          const active = item.id === metric.id;
-          return (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => onMetric(item.id)}
-              aria-pressed={active}
-              className={cn(
-                "min-h-11 rounded-md border px-2.5 py-1.5 text-left",
-                active ? "border-accent bg-surface-2" : "border-border hover:bg-surface-2",
-              )}
-            >
-              <span className="block text-xs text-muted">{item.label}</span>
-              <span className="mt-0.5 block text-sm tabular-nums">
-                {itemValue == null ? MISSING_COPY[missingReason(item.id, place.id)].short : item.format(itemValue)}
-              </span>
-            </button>
-          );
-        })}
-      </dl>
+        {/* Mobile tabs */}
+        <div className="px-4 pb-8 md:hidden">
+          <div
+            role="tablist"
+            aria-label="Más información"
+            className="grid grid-cols-3 border-b border-divider"
+          >
+            {(
+              [
+                ["perfil", "Perfil"],
+                ["los78", "Los 78"],
+                ["fuente", "Fuente"],
+              ] as [MobileTab, string][]
+            ).map(([id, text]) => (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                id={`tab-${id}`}
+                aria-selected={tab === id}
+                aria-controls={`panel-${id}`}
+                onClick={() => setTab(id)}
+                className={`min-h-12 text-base ${tab === id ? "font-bold text-fg shadow-[inset_0_-3px_0_var(--color-accent)]" : "text-muted"}`}
+              >
+                {text}
+              </button>
+            ))}
+          </div>
+          <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} className="pt-4">
+            {tab === "perfil" &&
+              (selected ? (
+                <FullProfile place={selected} />
+              ) : (
+                <p className="text-base text-muted">
+                  Escoge un municipio para ver todas sus medidas.
+                </p>
+              ))}
+            {tab === "los78" &&
+              (island ? (
+                <IslandOnlyNote />
+              ) : (
+                <>
+                  <Ranking78
+                    metric={metric}
+                    ranking={ranking}
+                    fills={fills}
+                    selectedId={selectedId}
+                    missingCount={missingCount}
+                    onSelect={select}
+                  />
+                  <button
+                    type="button"
+                    aria-expanded={showTable}
+                    onClick={() => setShowTable((value) => !value)}
+                    className="mt-4 flex min-h-12 w-full items-center justify-center rounded-[3px] border border-fg text-base font-semibold"
+                  >
+                    {showTable ? "Ocultar la tabla" : "Ver la tabla completa"}
+                  </button>
+                  {showTable && (
+                    <div className="mt-3">
+                      <DataTable
+                        metric={metric}
+                        places={places}
+                        ranking={ranking}
+                        selectedId={selectedId}
+                        onSelect={select}
+                      />
+                    </div>
+                  )}
+                </>
+              ))}
+            {tab === "fuente" && <SourcePanel metric={metric} headingLevel={3} />}
+          </div>
+        </div>
+
+        {/* Desktop: secondary table, then the source */}
+        {!island && (
+          <section
+            aria-label="Tabla de los 78"
+            className="hidden border-t border-divider px-14 py-8 md:block"
+          >
+            <div className="flex items-baseline justify-between">
+              <h2 className="font-display text-[28px] font-medium">Tabla de los 78</h2>
+              <span className="text-sm text-muted">Usa los encabezados para ordenar</span>
+            </div>
+            <div className="mt-3.5">
+              <DataTable
+                metric={metric}
+                places={places}
+                ranking={ranking}
+                selectedId={selectedId}
+                onSelect={select}
+              />
+            </div>
+          </section>
+        )}
+        <div id="fuente" className="hidden border-t border-divider px-14 py-8 md:block">
+          <SourcePanel metric={metric} />
+        </div>
+      </main>
+
+      <footer className="border-t border-fg px-4 pt-4 pb-6 text-[13px] leading-normal text-muted md:px-14">
+        <p>
+          Fuentes: Oficina del Censo de EE. UU. (ACS y TIGER/Line), NHTSA (FARS) y CDC (BRFSS). Cada
+          medida dice su fuente y su periodo.
+        </p>
+        {MAP_ATTRIBUTION && <p className="mt-1">{MAP_ATTRIBUTION}</p>}
+        <p className="mt-1">
+          Proyecto independiente, sin afiliación con ninguna agencia de gobierno.
+        </p>
+      </footer>
     </div>
   );
 }
 
-function Bar({
-  label,
-  value,
-  peak,
-  tone,
-}: {
-  label: string;
-  value: number;
-  peak: number;
-  tone: "accent" | "deep";
-}) {
+function IslandOnlyNote() {
   return (
-    <div className="mt-0.5 grid grid-cols-[4.5rem_1fr_auto] items-center gap-2">
-      <span className="text-xs text-muted">{label}</span>
-      <span className="h-1.5 overflow-hidden rounded-full bg-surface-2">
-        <span
-          className={cn("block h-full", tone === "accent" ? "bg-accent" : "bg-fg/70")}
-          style={{ width: `${(value / peak) * 100}%` }}
-        />
-      </span>
-      <span className="text-xs tabular-nums text-muted">{people.format(value)}</span>
-    </div>
-  );
-}
-
-function IslandFact({ metricId }: { metricId: IslandMetricId }) {
-  const metric = prMetricById(metricId);
-  const stat = ISLAND_STATS[metricId];
-  return (
-    <section>
-      <p className="text-xs tracking-wide text-muted uppercase">Toda la isla</p>
-      <h2 className="mt-1 font-display text-4xl leading-none">{metric.format(stat.value)}</h2>
-      <p className="mt-2 text-sm text-muted">{stat.note}</p>
-      <p className="mt-4 text-xs leading-relaxed text-muted">
-        La encuesta BRFSS de los CDC solo publica esta cifra para todo Puerto Rico, así que el mapa pinta
-        la isla entera de un color.
+    <section aria-label="Sin orden por municipio">
+      <h2 className="font-display text-[26px] font-medium md:text-3xl">Los 78, de mayor a menor</h2>
+      <p className="mt-3 text-base text-muted">
+        Esta cifra solo existe para toda la isla. La encuesta BRFSS de los CDC no la publica por
+        municipio, así que no hay orden ni tabla.
       </p>
     </section>
-  );
-}
-
-function PoorestTowns({
-  places,
-  onSelect,
-}: {
-  places: Municipio[];
-  onSelect: (id: string) => void;
-}) {
-  const { ranked } = rankByMetric(places, "poverty", "linear");
-  return (
-    <details open className="mb-4 rounded-md border border-border px-3 py-2">
-      <summary className="min-h-11 cursor-pointer py-1 text-sm">
-        Municipios con más pobreza
-        <span className="mt-0.5 block text-xs text-muted">
-          {ranked[0]?.name} {ranked[0]?.values.poverty?.toFixed(1)}% · Censo, ACS 2020–2024
-        </span>
-      </summary>
-      <ol className="mt-2">
-        {ranked.map((place, index) => (
-          <li key={place.id}>
-            <button
-              type="button"
-              onClick={() => onSelect(place.id)}
-              className="flex min-h-11 w-full items-baseline justify-between gap-3 border-b border-border py-2 text-left hover:bg-surface-2"
-            >
-              <span>
-                <span className="mr-2 text-xs text-muted tabular-nums">{index + 1}</span>
-                {place.name}
-              </span>
-              <span className="shrink-0 text-sm tabular-nums">{place.values.poverty!.toFixed(1)}%</span>
-            </button>
-          </li>
-        ))}
-      </ol>
-    </details>
-  );
-}
-
-function List({
-  places,
-  query,
-  metric,
-  onQuery,
-  onSelect,
-}: {
-  places: Municipio[];
-  query: string;
-  metric: ReturnType<typeof prMetricById>;
-  onQuery: (value: string) => void;
-  onSelect: (id: string) => void;
-}) {
-  return (
-    <div>
-      {metric.id === "poverty" && (
-        <header className="mb-3">
-          <h2 className="font-display text-2xl leading-none">Municipios con más pobreza</h2>
-          <p className="mt-1 text-xs text-muted">
-            De mayor a menor porcentaje de personas bajo pobreza. Censo, ACS 2020–2024.
-          </p>
-        </header>
-      )}
-      <label className="block">
-        <span className="sr-only">Buscar municipio</span>
-        <input
-          value={query}
-          onChange={(event) => onQuery(event.target.value)}
-          placeholder="Buscar municipio"
-          aria-label="Buscar municipio"
-          className="min-h-11 w-full rounded-md border border-border bg-bg px-3 text-sm outline-none focus:border-accent"
-        />
-      </label>
-      <p className="mt-3 text-xs text-muted">
-        {metric.id === "poverty" ? `${places.length} municipios` : `${metric.label} · ${places.length} con dato publicado`}
-      </p>
-      <ol className="mt-2">
-        {places.map((place, index) => {
-          const value = place.values[metric.id];
-          return (
-            <li key={place.id}>
-              <button
-                type="button"
-                onClick={() => onSelect(place.id)}
-                className="flex min-h-11 w-full items-baseline justify-between gap-3 border-b border-border py-2 text-left hover:bg-surface-2"
-              >
-                <span>
-                  <span className="mr-2 text-xs text-muted tabular-nums">{index + 1}</span>
-                  {place.name}
-                </span>
-                <span className="shrink-0 text-sm tabular-nums">
-                  {value == null ? "—" : metric.format(value)}
-                </span>
-              </button>
-            </li>
-          );
-        })}
-      </ol>
-      {places.length === 0 && <p className="mt-4 text-sm text-muted">Ningún municipio con ese nombre.</p>}
-    </div>
-  );
-}
-
-function MetricSwitcher({
-  metricId,
-  onChange,
-}: {
-  metricId: PrMetricId;
-  onChange: (id: PrMetricId) => void;
-}) {
-  const group = metricGroup(metricId);
-  const pool = publicMetricsInGroup(group);
-  function move(delta: number) {
-    const index = pool.findIndex((item) => item.id === metricId);
-    const next = pool[(index + delta + pool.length) % pool.length];
-    onChange(next.id);
-    requestAnimationFrame(() => document.getElementById(`pr-metric-${next.id}`)?.focus());
-  }
-  function pickGroup(nextGroup: MetricGroup) {
-    const first = publicMetricsInGroup(nextGroup)[0];
-    if (first) onChange(first.id);
-  }
-
-  return (
-    <div className="flex min-w-0 flex-col gap-2">
-      <div className="chip-scroll flex gap-1.5 overflow-x-auto" role="group" aria-label="Tema">
-        {PUBLIC_GROUPS.map((item) => (
-          <button
-            key={item}
-            type="button"
-            onClick={() => pickGroup(item)}
-            aria-pressed={item === group}
-            className={cn(
-              "min-h-11 shrink-0 rounded-full px-3 text-sm",
-              item === group ? "bg-fg text-bg" : "text-muted hover:bg-surface-2",
-            )}
-          >
-            {item === "Isla" ? "Toda la isla" : item}
-          </button>
-        ))}
-      </div>
-      <div
-        className="chip-scroll min-w-0 overflow-x-auto"
-        role="radiogroup"
-        aria-label="Medida"
-        onKeyDown={(event) => {
-          if (event.key === "ArrowRight" || event.key === "ArrowDown") {
-            event.preventDefault();
-            move(1);
-          } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
-            event.preventDefault();
-            move(-1);
-          }
-        }}
-      >
-        <div className="flex w-max gap-2 pb-1">
-          {pool.map((item) => {
-            const active = item.id === metricId;
-            return (
-              <button
-                key={item.id}
-                id={`pr-metric-${item.id}`}
-                type="button"
-                role="radio"
-                aria-checked={active}
-                tabIndex={active ? 0 : -1}
-                onClick={() => onChange(item.id)}
-                className={cn(
-                  "min-h-11 shrink-0 rounded-full border px-3.5 text-sm",
-                  active
-                    ? "border-accent bg-accent font-medium text-accent-fg"
-                    : "border-border bg-surface text-fg hover:bg-surface-2",
-                )}
-              >
-                {item.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function MapButton({ label, onClick, children }: { label: string; onClick: () => void; children: ReactNode }) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      onClick={onClick}
-      className="flex size-11 items-center justify-center rounded-md border border-border bg-surface text-fg hover:bg-surface-2"
-    >
-      {children}
-    </button>
-  );
-}
-
-function SourceDetails({ metricId }: { metricId: PrMetricId }) {
-  const source = provenanceForMetric(metricId);
-  if (!source) return null;
-  return (
-    <details className="mt-3 rounded-md border border-border px-3 py-2 text-xs text-muted">
-      <summary className="min-h-11 cursor-pointer py-2.5 text-sm text-fg">¿De dónde sale este dato?</summary>
-      <dl className="mt-1 space-y-1.5 pb-1">
-        <div>
-          <dt className="inline text-fg">Fuente: </dt>
-          <dd className="inline">{source.agency}</dd>
-        </div>
-        <div>
-          <dt className="inline text-fg">Periodo: </dt>
-          <dd className="inline">{source.period}</dd>
-        </div>
-        {source.methodology && (
-          <div>
-            <dt className="inline text-fg">Cómo se calcula: </dt>
-            <dd className="inline">{source.methodology}</dd>
-          </div>
-        )}
-        <div>
-          <dt className="inline text-fg">Datos que faltan: </dt>
-          <dd className="inline">{source.missingValues}</dd>
-        </div>
-        {source.retrievedAt && (
-          <div>
-            <dt className="inline text-fg">Copia oficial descargada: </dt>
-            <dd className="inline">{shortDate(source.retrievedAt)} (UTC)</dd>
-          </div>
-        )}
-        {source.marginOfErrorAvailable && (
-          <div>
-            <dt className="inline text-fg">Margen de error: </dt>
-            <dd className="inline">
-              Es un estimado de encuesta. El Censo publica un margen de error para cada estimado y el proyecto lo
-              guarda junto a la cifra.
-            </dd>
-          </div>
-        )}
-        <div>
-          <dt className="inline text-fg">Cita: </dt>
-          <dd className="inline">{source.attribution}</dd>
-        </div>
-      </dl>
-      {source.url && (
-        <a href={source.url} target="_blank" rel="noreferrer" className="mt-1 inline-block text-accent underline">
-          Ver fuente original
-        </a>
-      )}
-    </details>
   );
 }

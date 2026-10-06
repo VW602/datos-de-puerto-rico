@@ -12,7 +12,7 @@ export const Route = createRootRoute({
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: TITLE },
       { name: "description", content: DESCRIPTION },
-      { name: "theme-color", content: "#0C1210" },
+      { name: "theme-color", content: "#F6F3EC" },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "es_PR" },
       { property: "og:title", content: TITLE },
@@ -26,7 +26,10 @@ export const Route = createRootRoute({
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Outfit:wght@400;500;600&display=swap",
+        // Two families, five styles: Newsreader 500/600 (headings, large values) and
+        // Source Sans 3 400/600/700 plus 400 italic (text, tables, map labels).
+        // display=swap shows the fallback at once; Google serves only the subsets a page uses.
+        href: "https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap",
       },
     ],
   }),

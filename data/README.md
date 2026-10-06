@@ -52,7 +52,7 @@ data/raw/geo/tiger-2024/          78 municipios sin simplificar + manifest.json
    ↓  npm run data:geo:generate   sin red; verifica SHA-256, 78 municipios y nombres del Censo
 data/generated/municipios.geometry.json
    ↓
-sitio (src/components/explorer/IslandMap.tsx)
+sitio (src/data/pr/geo.ts → src/components/explorer/AtlasMap.tsx)
 ```
 
 - **Simplificación:** Douglas–Peucker aplicado una sola vez a cada borde entre dos

@@ -32,6 +32,17 @@ Antes de publicar, fuera del sitio:
   - `public.ts`: la frontera de publicación. Las medidas, los grupos, la medida
     inicial y los datos que ve la gente salen de aquí, según el registro. Una medida
     sin fuente publicable en el registro queda fuera.
+- **El mapa:**
+  - `src/data/pr/geo.ts` proyecta una sola vez la geometría TIGER/Line a un
+    espacio fijo. Acercar y mover solo cambian el `viewBox`; ninguna coordenada
+    cambia. También resuelve los toques: si un toque cae cerca de varios
+    municipios, devuelve los candidatos en orden fijo para que la persona escoja.
+  - `src/components/explorer/AtlasMap.tsx` dibuja el mapa en tres usos: la
+    franja de escritorio, la vista de toda la isla y el mapa ampliado del
+    teléfono (enlazados por el recuadro de la vista).
+  - Colores y letras: los tokens están en `src/styles.css`; la escala Arena →
+    Añil y la trama de «sin dato» están en `src/data/scale.ts`. Una prueba
+    impide que «sin dato» se vuelva un gris plano.
 - **El registro público falla cerrado.** `scripts/registry/public.ts` se niega a
   generar el registro si alguna fuente no está lista: procedencia verificada,
   `publicStatus` `PUBLIC_READY` y derechos de redistribución escritos.

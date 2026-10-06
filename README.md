@@ -102,7 +102,10 @@ No hace falta clave de la API del Censo. Los detalles están en
 ## Cómo está hecho
 
 - **TanStack Start** (React 19 y Vite) con **Tailwind CSS**.
-- El mapa se dibuja con **d3-geo** sobre SVG, y **d3-zoom** maneja el acercamiento.
+- El mapa se dibuja con **d3-geo** sobre SVG. El acercamiento y el desplazamiento
+  solo cambian la vista; las coordenadas de los límites nunca cambian. En el
+  teléfono hay una vista de toda la isla enlazada a un mapa ampliado, con
+  buscador, botones de acercar y alejar, y «Toda la isla».
 - No hay base de datos, cuentas ni cookies propias.
 
 ```

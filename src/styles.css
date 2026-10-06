@@ -1,24 +1,35 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens: D · Hybrid (Editorial frame, atlas map, civic data tools).
+ * Light only in v1. Components use these names, never raw hex values; the map
+ * ramp and the no-data hatch live in src/data/scale.ts.
+ */
 @theme {
-  --font-sans: "Outfit", "Avenir Next", "Segoe UI", sans-serif;
-  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Source Sans 3", "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Newsreader", "Iowan Old Style", Georgia, serif;
 
-  --color-bg: #0c1210;
-  --color-surface: #161e1b;
-  --color-surface-2: #1e2924;
-  --color-fg: #f3efe6;
-  --color-muted: #a8b3ab;
-  --color-accent: #d4a054;
-  --color-accent-fg: #1c140c;
-  --color-border: #2c3a34;
-  --color-land: #1b2622;
+  --color-bg: #f6f3ec;
+  --color-surface: #ffffff;
+  --color-track: #efebe3;
+  --color-fg: #1a1916;
+  --color-muted: #57534b;
+  --color-divider: #d9d3c7;
+  --color-divider-2: #e6e0d5;
+  --color-accent: #9b2c1f;
+  --color-focus: #1d4ed8;
+  --color-error: #b3261e;
+  --color-warning: #8a5300;
 
-  --radius-sm: 0.375rem;
-  --radius-md: 0.625rem;
-  --radius-lg: 1rem;
+  --color-water: #dce7ea;
+  --color-coast: #5f7a82;
+  --color-sea: #3e5a62;
+  --color-below: #d8b75a;
+  --color-nodata: #e9e5dc;
+  --color-nodata-hatch: #7a7468;
+  --color-island: #ddd7cb;
 
-  --shadow-float: 0 16px 40px rgb(0 0 0 / 0.38);
+  --shadow-float: 0 6px 18px rgb(26 25 22 / 0.18);
 }
 
 @layer base {
@@ -39,12 +50,9 @@
     cursor: pointer;
   }
 
-  button:focus-visible,
-  [role="radio"]:focus-visible,
-  a:focus-visible,
-  input:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
+  :focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
   }
 
   h1,
@@ -58,6 +66,106 @@
   }
 }
 
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ map */
+
+.map-svg {
+  display: block;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.map-svg:focus-visible {
+  outline: none;
+}
+
+.map-pan {
+  cursor: grab;
+  touch-action: none;
+}
+
+.map-pan:active {
+  cursor: grabbing;
+}
+
+/* Coastline: drawn under the land, so only its outer half shows against the water. */
+.map-coast {
+  fill: none;
+  stroke: var(--color-coast);
+  stroke-width: 2.8px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+/* White municipio borders also trace the shoreline, so the coast reads even on the darkest class. */
+.map-municipio {
+  stroke: #ffffff;
+  stroke-width: 0.7px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.map-interactive .map-municipio {
+  cursor: pointer;
+}
+
+.map-outline {
+  fill: none;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+/* Hover: thin dark line, no halo. */
+.map-hover {
+  stroke: var(--color-fg);
+  stroke-width: 1.6px;
+}
+
+/* Selected: solid dark line over a white halo. Visible on every fill without color. */
+.map-selected-halo {
+  stroke: #ffffff;
+  stroke-width: 7px;
+}
+
+.map-selected {
+  stroke: var(--color-fg);
+  stroke-width: 3.2px;
+}
+
+/* Keyboard focus: dashed line over a white halo. Never solid, so it never reads as "selected". */
+.map-focus-halo {
+  stroke: #ffffff;
+  stroke-width: 6px;
+}
+
+.map-focus {
+  stroke: var(--color-focus);
+  stroke-width: 3px;
+  stroke-dasharray: 7 4;
+}
+
+.map-sea-label {
+  fill: var(--color-sea);
+  font-family: var(--font-sans);
+  font-style: italic;
+  pointer-events: none;
+}
+
+.map-place-label {
+  fill: var(--color-fg);
+  stroke: #ffffff;
+  stroke-width: 3px;
+  paint-order: stroke;
+  stroke-linejoin: round;
+  font-family: var(--font-sans);
+  pointer-events: none;
+}
+
 .chip-scroll {
   scrollbar-width: none;
 }
@@ -66,40 +174,8 @@
   display: none;
 }
 
-.map-svg {
-  cursor: grab;
-  user-select: none;
-}
-
-.map-svg:active {
-  cursor: grabbing;
-}
-
-.map-municipio {
-  stroke: var(--color-bg);
-  stroke-width: 0.7px;
-  stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
-  cursor: pointer;
-  transition: fill 320ms cubic-bezier(0.22, 0.8, 0.2, 1);
-}
-
-.map-outline {
-  fill: none;
-  stroke: var(--color-accent);
-  stroke-width: 1.75px;
-  stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
-  pointer-events: none;
-}
-
-.map-outline-hover {
-  stroke: var(--color-fg);
-  stroke-width: 1.35px;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .map-municipio {
-    transition: none;
+  * {
+    scroll-behavior: auto !important;
   }
 }
