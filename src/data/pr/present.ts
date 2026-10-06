@@ -73,3 +73,36 @@ export function searchPlaces<T extends { name: string }>(
   const byName = (a: T, b: T) => a.name.localeCompare(b.name, "es");
   return [...starts.sort(byName), ...contains.sort(byName)].slice(0, limit);
 }
+
+/**
+ * Spanish description for an official agency name. Presentation only: the
+ * official name (as the source publishes it) is always shown alongside, and
+ * provenance records are never rewritten.
+ */
+const AGENCY_ES: [RegExp, string, string][] = [
+  [/^U\.S\. Census Bureau/, "Oficina del Censo de EE. UU.", "la"],
+  [
+    /^National Highway Traffic Safety Administration/,
+    "Administración Nacional de Seguridad del Tráfico en las Carreteras (NHTSA)",
+    "la",
+  ],
+  [
+    /^Centers for Disease Control and Prevention/,
+    "Centros para el Control y la Prevención de Enfermedades (CDC)",
+    "los",
+  ],
+];
+
+/** `from` reads naturally after "Sale de": "la Oficina del Censo…", "los Centros…". */
+export function agencyDisplay(official: string): {
+  es: string | null;
+  from: string;
+  official: string;
+} {
+  const match = AGENCY_ES.find(([pattern]) => pattern.test(official));
+  return {
+    es: match ? match[1] : null,
+    from: match ? `${match[2]} ${match[1]}` : official.split(",")[0],
+    official,
+  };
+}

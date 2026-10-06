@@ -16,6 +16,7 @@ import {
   fitView,
   islandLabelAnchor,
   neighborInDirection,
+  placeLabels as layoutLabels,
   project,
   resolveTap,
   shapeAt,
@@ -164,8 +165,13 @@ type Props = {
   /** Accessible description of one municipio for the current metric. */
   describe?: (id: string) => string;
   tooltip?: (id: string) => ReactNode;
-  /** Names drawn near the selection when zoomed in (detail map). */
+  /**
+   * Municipio names. Zoomed in: every name that fits without colliding.
+   * Zoomed out: only the selected and keyboard-focused names.
+   */
   placeLabels?: boolean;
+  /** View to use while `view` is null (for example, the phone starts on the main island). */
+  initialView?: (width: number, height: number) => View;
   /** Centered note for metrics that only exist for the whole island. */
   islandNote?: string | null;
   className?: string;
@@ -187,6 +193,7 @@ export function AtlasMap({
   describe,
   tooltip,
   placeLabels = false,
+  initialView,
   islandNote = null,
   className,
   children,
@@ -208,9 +215,11 @@ export function AtlasMap({
   }, [ready, size.width, size.height]);
   const current = useMemo(() => {
     if (!ready) return null;
-    if (variant === "overview" || !view) return fitView(size.width, size.height);
+    if (variant === "overview") return fitView(size.width, size.height);
+    if (!view)
+      return initialView ? initialView(size.width, size.height) : fitView(size.width, size.height);
     return clampView(view, size.width, size.height);
-  }, [ready, variant, view, size.width, size.height]);
+  }, [ready, variant, view, initialView, size.width, size.height]);
   const box = current ? viewBox(current, size.width, size.height) : null;
   const k = current?.k ?? 1;
   const zoomed = current && ready ? current.k > fitView(size.width, size.height).k * 1.6 : false;
@@ -320,24 +329,27 @@ export function AtlasMap({
   const focused = activeFocus ? SHAPE_BY_ID.get(activeFocus) : undefined;
   const px = (n: number) => n / k;
 
-  const nearby = useMemo(() => {
-    if (!placeLabels || !zoomed || !box) return [];
-    const centerX = (box.x0 + box.x1) / 2;
-    const centerY = (box.y0 + box.y1) / 2;
-    return SHAPES.filter((shape) => {
-      const [x, y] = shape.label;
-      return (
-        x > box.x0 + px(30) && x < box.x1 - px(30) && y > box.y0 + px(16) && y < box.y1 - px(16)
-      );
-    })
-      .sort(
-        (a, b) =>
-          Math.hypot(a.label[0] - centerX, a.label[1] - centerY) -
-          Math.hypot(b.label[0] - centerX, b.label[1] - centerY),
-      )
-      .slice(0, 9);
+  const labels = useMemo(() => {
+    if (!placeLabels || !box) return [];
+    return layoutLabels(box, k, {
+      selectedId,
+      focusId: activeFocus,
+      hoverId: zoomed ? hoverId : null,
+      showAll: zoomed,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [placeLabels, zoomed, box?.x0, box?.y0, box?.x1, box?.y1]);
+  }, [
+    placeLabels,
+    zoomed,
+    box?.x0,
+    box?.y0,
+    box?.x1,
+    box?.y1,
+    k,
+    selectedId,
+    activeFocus,
+    hoverId,
+  ]);
 
   const kmPx = unitsPerKm() * k;
   const km = niceKm(kmPx);
@@ -436,20 +448,20 @@ export function AtlasMap({
               <path d={focused.d} className="map-outline map-focus" />
             </>
           )}
-          {nearby.length > 0 && (
+          {labels.length > 0 && (
             <g aria-hidden="true">
-              {nearby.map((shape) => (
+              {labels.map((placed) => (
                 <text
-                  key={shape.id}
-                  x={shape.label[0]}
-                  y={shape.label[1]}
+                  key={placed.id}
+                  x={placed.x}
+                  y={placed.y}
                   textAnchor="middle"
                   className="map-place-label"
-                  fontSize={px(shape.id === selectedId ? 13 : 11)}
-                  fontWeight={shape.id === selectedId ? 700 : 400}
+                  fontSize={px(placed.size)}
+                  fontWeight={placed.bold ? 700 : 400}
                   strokeWidth={px(3)}
                 >
-                  {shape.name}
+                  {placed.name}
                 </text>
               ))}
             </g>
@@ -479,7 +491,7 @@ export function AtlasMap({
 
       {variant !== "overview" && box && (
         <div
-          className="pointer-events-none absolute right-3 bottom-2 flex items-end gap-1.5 text-[11px] text-sea"
+          className="pointer-events-none absolute bottom-2 left-3 flex items-end gap-1.5 text-[11px] text-sea"
           aria-hidden="true"
         >
           <span className="block h-[3px] bg-sea" style={{ width: `${km * kmPx}px` }} />

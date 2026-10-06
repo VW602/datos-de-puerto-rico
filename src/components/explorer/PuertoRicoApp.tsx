@@ -1,5 +1,13 @@
 import { useCallback, useMemo, useState, type ReactNode } from "react";
-import { focusView, fitView, viewBox, zoomView, type Candidate, type View } from "@/data/pr/geo";
+import {
+  fitView,
+  focusView,
+  mainIslandView,
+  viewBox,
+  zoomView,
+  type Candidate,
+  type View,
+} from "@/data/pr/geo";
 import { applyLayers, islandStat } from "@/data/pr/layers";
 import { metricGroup, prMetricById, type MetricGroup, type PrMetricId } from "@/data/pr/metrics";
 import { MISSING_COPY, missingReason } from "@/data/pr/missing";
@@ -111,16 +119,22 @@ export function PuertoRicoApp() {
   const islandNote = island ? `Solo para toda la isla · ${metric.format(island.value)}` : null;
   const mapLabel = `Mapa de Puerto Rico: ${metric.label}. ${selected ? `Seleccionado: ${describe(selected.id)}.` : "Ningún municipio seleccionado."}`;
 
-  const overviewRect =
-    detailSize.width > 0 && detailView
-      ? viewBox(detailView, detailSize.width, detailSize.height)
+  // The phone's detail map starts on the main island (closer than the overview strip);
+  // "Toda la isla" switches it to the whole archipelago.
+  const detailNow =
+    detailSize.width > 0
+      ? (detailView ?? mainIslandView(detailSize.width, detailSize.height))
       : null;
+  const detailShowsAll =
+    !detailNow || detailNow.k <= fitView(detailSize.width, detailSize.height).k * 1.05;
+  const overviewRect =
+    detailNow && !detailShowsAll ? viewBox(detailNow, detailSize.width, detailSize.height) : null;
 
   const zoomDetail = (factor: number) => {
     if (!detailSize.width) return;
     setDetailView(
       zoomView(
-        detailView ?? fitView(detailSize.width, detailSize.height),
+        detailNow ?? fitView(detailSize.width, detailSize.height),
         factor,
         detailSize.width,
         detailSize.height,
@@ -302,7 +316,7 @@ export function PuertoRicoApp() {
                   viewport={overviewRect}
                   onPick={([x, y]) => {
                     if (!detailSize.width) return;
-                    const base = detailView ?? fitView(detailSize.width, detailSize.height);
+                    const base = detailNow ?? fitView(detailSize.width, detailSize.height);
                     const k = Math.max(
                       base.k,
                       fitView(detailSize.width, detailSize.height).k * 2.8,
@@ -321,6 +335,7 @@ export function PuertoRicoApp() {
                 fills={fills}
                 selectedId={selectedId}
                 view={detailView}
+                initialView={mainIslandView}
                 onViewChange={(view) => setDetailView(view)}
                 onResize={setDetailSize}
                 onSelect={select}
@@ -334,13 +349,15 @@ export function PuertoRicoApp() {
             <div className="flex items-center gap-2 border-t border-[#c9d6d9] bg-surface px-3 py-2">
               <button
                 type="button"
-                onClick={() => setDetailView(null)}
+                onClick={() =>
+                  detailSize.width && setDetailView(fitView(detailSize.width, detailSize.height))
+                }
                 className="flex min-h-11 items-center rounded-[3px] border border-fg bg-surface px-3.5 text-[15px] font-semibold hover:bg-track"
               >
                 Toda la isla
               </button>
               <span className="flex-1 text-xs text-muted">
-                {detailView ? "Arrastra el mapa para moverte" : "Toca un municipio o acércate"}
+                {detailShowsAll ? "Toca un municipio o acércate" : "Arrastra el mapa para moverte"}
               </span>
               <button
                 type="button"

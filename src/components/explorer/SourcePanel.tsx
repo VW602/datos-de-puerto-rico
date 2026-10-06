@@ -1,5 +1,6 @@
+import type { ReactNode } from "react";
 import type { PrMetric } from "@/data/pr/metrics";
-import { shortPeriod } from "@/data/pr/present";
+import { agencyDisplay, shortPeriod } from "@/data/pr/present";
 import { publicSourceForMetric } from "@/data/pr/sources";
 
 function shortDate(iso: string): string {
@@ -33,9 +34,22 @@ export function SourcePanel({
   if (!source) return null;
   const Heading = headingLevel === 2 ? "h2" : "h3";
   const survey = source.marginOfErrorAvailable;
-  const rows: [string, string][] = [
-    ["Fuente", source.sourceAgency],
-    ["Dataset", source.sourceTitle],
+  const agency = agencyDisplay(source.sourceAgency);
+  const rows: [string, ReactNode][] = [
+    [
+      "Fuente",
+      agency.es ? (
+        <>
+          {agency.es}
+          <span className="mt-0.5 block text-[13px] text-muted" lang="en">
+            {agency.official}
+          </span>
+        </>
+      ) : (
+        agency.official
+      ),
+    ],
+    ["Dataset", <span lang="en">{source.sourceTitle}</span>],
     ["Periodo", source.reportingPeriod],
     ["Variable / cálculo", source.methodology ?? "Según la publicación oficial."],
     [
@@ -61,8 +75,8 @@ export function SourcePanel({
           ¿De dónde sale este dato?
         </Heading>
         <p className="mt-3 text-[17px] leading-relaxed">
-          <strong>{metric.label}:</strong> {metric.hint.replace(/\.?$/, ".")} Sale de{" "}
-          {source.sourceAgency.split(",")[0]}.
+          <strong>{metric.label}:</strong> {metric.hint.replace(/\.?$/, ".")} Sale de {agency.from}
+          {agency.from.endsWith(".") ? "" : "."}
         </p>
         {survey && (
           <p className="mt-2 text-[17px] leading-relaxed">

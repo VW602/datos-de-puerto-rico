@@ -24,7 +24,12 @@ import {
   contains,
   fitView,
   focusView,
+  labelWidth,
+  MAIN_ISLAND,
+  mainIslandView,
   neighborInDirection,
+  placeLabels,
+  viewBox,
   resolveTap,
   zoomView,
   MAX_ZOOM,
@@ -32,7 +37,8 @@ import {
 import { applyLayers } from "./layers";
 import { prMetricById } from "./metrics";
 import { municipios } from "./places";
-import { deltaText, searchPlaces, shortPeriod } from "./present";
+import { agencyDisplay, deltaText, searchPlaces, shortPeriod } from "./present";
+import { PUBLIC_SOURCES } from "./sources";
 import { toPublicPlaces } from "./public";
 import { rankByMetric } from "./ranking";
 
@@ -312,5 +318,120 @@ describe("tabla secundaria accesible", () => {
   it("cada barra frente a la mediana lleva su número con signo", () => {
     expect(markup).toContain("+5.7 pts");
     expect(markup.match(/ pts</g)?.length).toBe(78);
+  });
+});
+
+describe("pulido final del atlas", () => {
+  const W = 390;
+  const H = 250;
+
+  it("en el teléfono, el mapa ampliado empieza en la isla grande, más cerca que la vista general", () => {
+    const start = mainIslandView(W, H);
+    const fit = fitView(W, H);
+    expect(start.k).toBeGreaterThan(fit.k * 1.4);
+    const box = viewBox(start, W, H);
+    expect(box.x0).toBeLessThanOrEqual(MAIN_ISLAND.x0);
+    expect(box.x1).toBeGreaterThanOrEqual(MAIN_ISLAND.x1);
+    const mona = SHAPE_BY_ID.get("72097")!.rings.reduce(
+      (min, ring) => Math.min(min, ...ring.map((p) => p[0])),
+      Infinity,
+    );
+    expect(mona).toBeLessThan(box.x0);
+  });
+
+  const overlaps = (
+    labels: ReturnType<typeof placeLabels>,
+    k: number,
+    box: { x0: number; y0: number },
+  ) => {
+    const rects = labels.map((l) => {
+      const w = labelWidth(l.name, l.size);
+      const cx = (l.x - box.x0) * k;
+      const top = (l.y - box.y0) * k - l.size * 0.95;
+      return { x0: cx - w / 2, x1: cx + w / 2, y0: top, y1: top + l.size * 1.25 };
+    });
+    let count = 0;
+    for (let i = 0; i < rects.length; i += 1)
+      for (let j = i + 1; j < rects.length; j += 1) {
+        const a = rects[i];
+        const b = rects[j];
+        if (a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0) count += 1;
+      }
+    return count;
+  };
+
+  it("los nombres no se tapan, el seleccionado siempre gana y el resultado es siempre igual", () => {
+    for (const name of ["Ponce", "Cataño", "San Juan", "Mayagüez", "Florida"]) {
+      const id = idByName.get(name)!;
+      const view = focusView(id, W, H)!;
+      const box = viewBox(view, W, H);
+      const first = placeLabels(box, view.k, { selectedId: id, showAll: true });
+      expect(first[0].id, name).toBe(id);
+      expect(first[0].bold).toBe(true);
+      expect(overlaps(first, view.k, box), name).toBe(0);
+      expect(placeLabels(box, view.k, { selectedId: id, showAll: true })).toEqual(first);
+    }
+  });
+
+  it("Peñuelas y Guayanilla no chocan; al acercarse más, vuelven los dos", () => {
+    const ponce = idByName.get("Ponce")!;
+    const view = focusView(ponce, W, H)!;
+    const near = placeLabels(viewBox(view, W, H), view.k, { selectedId: ponce, showAll: true });
+    expect(overlaps(near, view.k, viewBox(view, W, H))).toBe(0);
+    const pen = SHAPE_BY_ID.get(idByName.get("Peñuelas")!)!.label;
+    const gua = SHAPE_BY_ID.get(idByName.get("Guayanilla")!)!.label;
+    const closer = { cx: (pen[0] + gua[0]) / 2, cy: (pen[1] + gua[1]) / 2, k: view.k * 4 };
+    const zoomedIn = placeLabels(viewBox(closer, W, H), closer.k, {
+      selectedId: ponce,
+      showAll: true,
+    }).map((l) => l.name);
+    expect(zoomedIn).toContain("Peñuelas");
+    expect(zoomedIn).toContain("Guayanilla");
+  });
+
+  it("de lejos solo se rotulan el seleccionado y el foco", () => {
+    const fit = fitView(1440, 512);
+    const box = viewBox(fit, 1440, 512);
+    const ponce = idByName.get("Ponce")!;
+    const cayey = idByName.get("Cayey")!;
+    const labels = placeLabels(box, fit.k, { selectedId: ponce, focusId: cayey, showAll: false });
+    expect(labels.map((l) => l.id).sort()).toEqual([ponce, cayey].sort());
+  });
+
+  it("cada agencia muestra una descripción en español sin cambiar su nombre oficial", () => {
+    for (const source of PUBLIC_SOURCES) {
+      const shown = agencyDisplay(source.sourceAgency);
+      expect(shown.es, source.datasetId).toBeTruthy();
+      expect(shown.official).toBe(source.sourceAgency);
+    }
+    expect(agencyDisplay("U.S. Census Bureau, Geography Division").from).toBe(
+      "la Oficina del Censo de EE. UU.",
+    );
+    expect(agencyDisplay("Centers for Disease Control and Prevention (CDC), BRFSS").from).toMatch(
+      /^los Centros/,
+    );
+  });
+
+  it("las letras se sirven desde el sitio: ni una sola petición a Google Fonts", () => {
+    const files = [
+      join(ROOT, "src/routes/__root.tsx"),
+      join(ROOT, "src/styles.css"),
+      join(ROOT, "src/fonts.css"),
+    ];
+    for (const file of files)
+      expect(readFileSync(file, "utf8"), file).not.toMatch(/fonts\.(googleapis|gstatic)\.com/);
+    const fonts = readFileSync(join(ROOT, "src/fonts.css"), "utf8");
+    const urls = [...fonts.matchAll(/url\("([^"]+)"\)/g)].map((m) => m[1].split("/").pop());
+    expect(urls.sort()).toEqual([
+      "newsreader-latin-opsz-normal.woff2",
+      "source-sans-3-latin-400-italic.woff2",
+      "source-sans-3-latin-400-normal.woff2",
+      "source-sans-3-latin-600-normal.woff2",
+      "source-sans-3-latin-700-normal.woff2",
+    ]);
+    expect(fonts.match(/font-display: swap;/g)).toHaveLength(5);
+    expect(readFileSync(join(ROOT, "src/styles.css"), "utf8")).toMatch(
+      /^@import "\.\/fonts\.css";/,
+    );
   });
 });

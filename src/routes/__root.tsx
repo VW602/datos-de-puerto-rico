@@ -22,15 +22,6 @@ export const Route = createRootRoute({
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "stylesheet", href: appCss },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        // Two families, five styles: Newsreader 500/600 (headings, large values) and
-        // Source Sans 3 400/600/700 plus 400 italic (text, tables, map labels).
-        // display=swap shows the fallback at once; Google serves only the subsets a page uses.
-        href: "https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap",
-      },
     ],
   }),
   component: () => (

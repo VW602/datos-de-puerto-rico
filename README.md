@@ -156,6 +156,10 @@ error y se puede reportar.
 
 El **código** está bajo la licencia MIT ([LICENSE](LICENSE)).
 
+Las **tipografías** Newsreader y Source Sans 3 están bajo la SIL Open Font
+License 1.1. El sitio las sirve él mismo (paquetes `@fontsource`), sin pedir nada a
+Google Fonts.
+
 Los **datos** no son míos. Son de las agencias que los publican y siguen sus
 propios términos, que están en [DATA_LICENSES.md](DATA_LICENSES.md). La licencia MIT
 no cubre los datos. Si los reusas, cita la fuente original.

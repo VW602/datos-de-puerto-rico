@@ -322,3 +322,129 @@ export function neighborInDirection(fromId: string, direction: Direction): strin
   }
   return null;
 }
+
+// ---------------------------------------------------------------- main island
+
+/** Municipios that are their own islands; everything else shares the main island. */
+const OFFSHORE_MUNICIPIOS = new Set(["72049", "72147"]); // Culebra, Vieques
+
+/**
+ * The main island's extent, from each municipio's main body (so Mona and
+ * Desecheo, which belong to Mayagüez, are left out). Computed from the
+ * geometry, never typed in.
+ */
+export const MAIN_ISLAND: Bounds = SHAPES.filter(
+  (shape) => !OFFSHORE_MUNICIPIOS.has(shape.id),
+).reduce(
+  (acc, shape) => ({
+    x0: Math.min(acc.x0, shape.primary.x0),
+    y0: Math.min(acc.y0, shape.primary.y0),
+    x1: Math.max(acc.x1, shape.primary.x1),
+    y1: Math.max(acc.y1, shape.primary.y1),
+  }),
+  { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity },
+);
+
+/** Starting view for the phone's detail map: the main island filling the frame. */
+export function mainIslandView(width: number, height: number): View {
+  const pad = 8;
+  const k = Math.min(
+    (width - 2 * pad) / (MAIN_ISLAND.x1 - MAIN_ISLAND.x0),
+    (height - 2 * pad) / (MAIN_ISLAND.y1 - MAIN_ISLAND.y0),
+  );
+  return clampView(
+    { cx: (MAIN_ISLAND.x0 + MAIN_ISLAND.x1) / 2, cy: (MAIN_ISLAND.y0 + MAIN_ISLAND.y1) / 2, k },
+    width,
+    height,
+  );
+}
+
+// ---------------------------------------------------------------- labels
+
+export type PlacedLabel = {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  size: number;
+  bold: boolean;
+};
+
+/** Approximate rendered width of a label in px (Source Sans 3 averages ~0.55 em per character). */
+export function labelWidth(name: string, size: number): number {
+  return name.length * size * 0.55 + 6;
+}
+
+/**
+ * Municipio names that fit without touching each other, for the current view.
+ * Deterministic greedy placement: the selected municipio first, then keyboard
+ * focus, then hover, then the rest by distance to the center of the view and
+ * by name. A label that would overlap one already placed is hidden (it comes
+ * back as the zoom increases and labels spread apart). Geometry never moves.
+ *
+ * `showAll` is false at low zoom: then only the promoted labels are drawn.
+ */
+export function placeLabels(
+  box: Bounds,
+  k: number,
+  options: {
+    selectedId: string | null;
+    focusId?: string | null;
+    hoverId?: string | null;
+    showAll: boolean;
+    size?: number;
+  },
+): PlacedLabel[] {
+  const size = options.size ?? 11;
+  const width = (box.x1 - box.x0) * k;
+  const height = (box.y1 - box.y0) * k;
+  const centerX = (box.x0 + box.x1) / 2;
+  const centerY = (box.y0 + box.y1) / 2;
+  const rank = (id: string) =>
+    id === options.selectedId ? 0 : id === options.focusId ? 1 : id === options.hoverId ? 2 : 3;
+
+  const candidates = SHAPES.filter((shape) => options.showAll || rank(shape.id) < 3)
+    .map((shape) => ({
+      shape,
+      rank: rank(shape.id),
+      sx: (shape.label[0] - box.x0) * k,
+      sy: (shape.label[1] - box.y0) * k,
+    }))
+    .filter(({ sx, sy }) => sx > 0 && sx < width && sy > 0 && sy < height)
+    .sort(
+      (a, b) =>
+        a.rank - b.rank ||
+        Math.hypot(a.shape.label[0] - centerX, a.shape.label[1] - centerY) -
+          Math.hypot(b.shape.label[0] - centerX, b.shape.label[1] - centerY) ||
+        byName(a.shape.name, b.shape.name),
+    );
+
+  const placed: { box: Bounds; label: PlacedLabel }[] = [];
+  for (const { shape, rank: r, sx, sy } of candidates) {
+    const labelSize = r === 0 ? size + 2 : size;
+    const w = labelWidth(shape.name, labelSize);
+    const h = labelSize * 1.25;
+    // Keep the whole label inside the frame by sliding it, never past the municipio's own anchor by more than half a label.
+    const left = Math.min(Math.max(sx - w / 2, 2), width - w - 2);
+    const top = Math.min(Math.max(sy - labelSize * 0.95, 2), height - h - 2);
+    // A little air around each name, so neighbours read as separate labels.
+    const rect = { x0: left - 6, y0: top - 3, x1: left + w + 6, y1: top + h + 3 };
+    const collides = placed.some(
+      ({ box: other }) =>
+        rect.x0 < other.x1 && rect.x1 > other.x0 && rect.y0 < other.y1 && rect.y1 > other.y0,
+    );
+    if (collides && r !== 0) continue;
+    placed.push({
+      box: rect,
+      label: {
+        id: shape.id,
+        name: shape.name,
+        x: box.x0 + (left + w / 2) / k,
+        y: box.y0 + (top + labelSize * 0.95) / k,
+        size: labelSize,
+        bold: r === 0,
+      },
+    });
+  }
+  return placed.map(({ label }) => label);
+}
