@@ -1,0 +1,331 @@
+{
+  "schema": 1,
+  "generator": "scripts/census/update.ts",
+  "generatorVersion": 1,
+  "attribution": "Fuente: U.S. Census Bureau, American Community Survey (Puerto Rico Community Survey), Table-Based Summary File. Este proyecto usa datos del Censo, pero el Censo no lo respalda ni lo certifica.",
+  "retrievedAtNote": "retrievedAt es la fecha UTC en que se descargaron los archivos oficiales.",
+  "snapshots": [
+    {
+      "snapshotId": "acs-2019-2023",
+      "datasetId": "acs-2019-2023-base",
+      "dataset": "American Community Survey 5-Year Estimates, Table-Based Summary File",
+      "release": "2019–2023",
+      "vintage": 2023,
+      "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2023/table-based-SF/data/5YRData/",
+      "retrievedAt": "2026-10-03",
+      "geography": "Municipios de Puerto Rico (nivel 050, estado 72; equivalentes de condado)",
+      "recordCount": 78,
+      "extractionMethod": "Se descarga completo el archivo nacional oficial y se calcula el SHA-256 de todos sus bytes (upstream.sha256). Se guardan sin modificar la línea de encabezado y las líneas cuyo GEO_ID empieza con 0500000US72. sha256 es el del extracto guardado.",
+      "files": [
+        {
+          "kind": "geos",
+          "table": null,
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2023/table-based-SF/documentation/Geos20235YR.txt",
+          "upstream": {
+            "bytes": 91867232,
+            "sha256": "f019d5c157e2f4083b2d5e8af116825d7b129cfe57e6fa65b6e6ce615cb564b1",
+            "lastModified": "Thu, 05 Dec 2024 14:18:34 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2019-2023/Geos20235YR.pr-municipios.txt",
+          "sha256": "553ecdf7360f7689f84b1574456fa12119d02e32b8a58852d3e0207a9abaa9f4",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B01001",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2023/table-based-SF/data/5YRData/acsdt5y2023-b01001.dat",
+          "upstream": {
+            "bytes": 200088223,
+            "sha256": "dc68a9b588cea042c73dfb4e5cd5e896a6f6c404a3e75be70a99dc514ed7bc35",
+            "lastModified": "Thu, 31 Oct 2024 14:48:36 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2019-2023/acsdt5y2023-b01001.pr-municipios.dat",
+          "sha256": "47b69a90a8381e29e3913aef4c441e7e63c85e34cf60d142ec43a2b4c2305491",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B01003",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2023/table-based-SF/data/5YRData/acsdt5y2023-b01003.dat",
+          "upstream": {
+            "bytes": 18311997,
+            "sha256": "24ae3f523b4c54332ce0a71ba534569685a8a729056f975915d860d1eb943565",
+            "lastModified": "Thu, 31 Oct 2024 14:48:45 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2019-2023/acsdt5y2023-b01003.pr-municipios.dat",
+          "sha256": "fe911d605a5267b7d9c36ce282fd96e85d526be7682054e1be51b7bfdb30c5cf",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B19013",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2023/table-based-SF/data/5YRData/acsdt5y2023-b19013.dat",
+          "upstream": {
+            "bytes": 17884943,
+            "sha256": "c9007017b7bb29ba758c77612ec9a4a0b897a4ed931d527754629866f580a110",
+            "lastModified": "Thu, 31 Oct 2024 14:52:11 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2019-2023/acsdt5y2023-b19013.pr-municipios.dat",
+          "sha256": "2ee6d9bcfb0572ebdd8cb9fe4b7ff4eb2df7b9ff90a8aaa71b703c72ed4b6aa6",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B19301",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2023/table-based-SF/data/5YRData/acsdt5y2023-b19301.dat",
+          "upstream": {
+            "bytes": 17111137,
+            "sha256": "fab116f6034aa9c2eea9ee9d951b8d7d5e23cc07d665571a0c1a7d51efd2ad1e",
+            "lastModified": "Thu, 31 Oct 2024 14:52:59 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2019-2023/acsdt5y2023-b19301.pr-municipios.dat",
+          "sha256": "2d263116565a8c0c4afecbfdc5562f4e531ccfa33014fcb6696c403caf2e8219",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B25047",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2023/table-based-SF/data/5YRData/acsdt5y2023-b25047.dat",
+          "upstream": {
+            "bytes": 22919574,
+            "sha256": "19eaffee39b4e33e0984a1bf39b7a391e92cfa7280fa560a650203cecbe396e0",
+            "lastModified": "Thu, 31 Oct 2024 14:54:32 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2019-2023/acsdt5y2023-b25047.pr-municipios.dat",
+          "sha256": "493477dbcb882a3dd0717027b2826c05940d25034e418453c9a94ee530c54d25",
+          "rows": 78
+        }
+      ]
+    },
+    {
+      "snapshotId": "acs-2020-2024",
+      "datasetId": "acs-2020-2024-layers",
+      "dataset": "American Community Survey 5-Year Estimates, Table-Based Summary File",
+      "release": "2020–2024",
+      "vintage": 2024,
+      "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/",
+      "retrievedAt": "2026-10-03",
+      "geography": "Municipios de Puerto Rico (nivel 050, estado 72; equivalentes de condado)",
+      "recordCount": 78,
+      "extractionMethod": "Se descarga completo el archivo nacional oficial y se calcula el SHA-256 de todos sus bytes (upstream.sha256). Se guardan sin modificar la línea de encabezado y las líneas cuyo GEO_ID empieza con 0500000US72. sha256 es el del extracto guardado.",
+      "files": [
+        {
+          "kind": "geos",
+          "table": null,
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/documentation/Geos20245YR.txt",
+          "upstream": {
+            "bytes": 90707242,
+            "sha256": "b87a1d1a4db9f826d0d133d20cbf7d011932f9ec2cfa74eacf8c9cf387aea344",
+            "lastModified": "Thu, 22 Jan 2026 12:15:04 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2020-2024/Geos20245YR.pr-municipios.txt",
+          "sha256": "59fe355c405930a83e509158c89633dde76a9ee2d00c74dd50a687d278e7dfb2",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B01002",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b01002.dat",
+          "upstream": {
+            "bytes": 26666521,
+            "sha256": "04784637609550868d9da7321e7a947b34e0a10b654dbf6d344599f97f8de7f8",
+            "lastModified": "Thu, 29 Jan 2026 12:31:28 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2020-2024/acsdt5y2024-b01002.pr-municipios.dat",
+          "sha256": "1b8cb6d37dc4a703d396404dd4cfac70780a5a42b60056b9e6d8025f4e067e31",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B08201",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b08201.dat",
+          "upstream": {
+            "bytes": 65043091,
+            "sha256": "2f64e698223ba83f97b67dde4a34961a02f230e0359ffc69b9657b89a3df6b4d",
+            "lastModified": "Thu, 29 Jan 2026 12:40:55 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2020-2024/acsdt5y2024-b08201.pr-municipios.dat",
+          "sha256": "75de419b01754325790225e6ee27c2b8105ae092fcb3182d3b0ee001692d2cc8",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B15003",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b15003.dat",
+          "upstream": {
+            "bytes": 92292840,
+            "sha256": "d0c8609e958022459215c8a31d7452ef7528ee8dd70fbb6f9a99de0f491f42d7",
+            "lastModified": "Thu, 29 Jan 2026 12:48:58 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2020-2024/acsdt5y2024-b15003.pr-municipios.dat",
+          "sha256": "40488cd94d5e89ace48ad00b2db08a9c3b37e6ad68f2856694d3fd69ba51a807",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B17001",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b17001.dat",
+          "upstream": {
+            "bytes": 118607125,
+            "sha256": "707adda8aaff136382f4fe0858617d09062da48b1a3d2ab2e9a1047def09b531",
+            "lastModified": "Thu, 29 Jan 2026 12:50:38 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2020-2024/acsdt5y2024-b17001.pr-municipios.dat",
+          "sha256": "e9f5bb37b47c9f8c13b015e82eff7b468b25388669527a88cd2910f0d9590ab1",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B18101",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b18101.dat",
+          "upstream": {
+            "bytes": 86298310,
+            "sha256": "efd8f4945ac4c4986b9a7b9478b7b831e83cc1430e0ead22b2d1f47eae8d4ec4",
+            "lastModified": "Thu, 29 Jan 2026 12:55:47 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2020-2024/acsdt5y2024-b18101.pr-municipios.dat",
+          "sha256": "03fd0e020c286ef9bd7c8fe0b2c05eb3cd1951fd753edc592c1644fb72aed743",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B22003",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b22003.dat",
+          "upstream": {
+            "bytes": 21065711,
+            "sha256": "03c3c8f329c7223bd9c570a3b9874c6b626585482fce33f665b5a8f43f2b117c",
+            "lastModified": "Thu, 29 Jan 2026 13:04:25 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2020-2024/acsdt5y2024-b22003.pr-municipios.dat",
+          "sha256": "ed2b60a1077484601835ad7bd5301f0c1a2538525558510425459873a96d11cb",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B23025",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b23025.dat",
+          "upstream": {
+            "bytes": 39968046,
+            "sha256": "264a5bd9367c5f58d9773fa4966fa94fe1e02f9c7106bc2ab39168d6de7c3e4a",
+            "lastModified": "Thu, 29 Jan 2026 13:06:50 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2020-2024/acsdt5y2024-b23025.pr-municipios.dat",
+          "sha256": "92dc69b49fcb7307e4a4fab294ea40376ac63d9eb10c0a18f1239ffdcdcd7e28",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B25002",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b25002.dat",
+          "upstream": {
+            "bytes": 23400695,
+            "sha256": "eb98debfe8e8533e9a8e647a8c5dca5dbe11401c4de4e4449b4a2ba7dc75620f",
+            "lastModified": "Thu, 29 Jan 2026 13:08:49 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2020-2024/acsdt5y2024-b25002.pr-municipios.dat",
+          "sha256": "e25912d0f423876c3f3b029669b7a34f278f4a450b61f1b201febbe67f2e22f6",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B25014",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b25014.dat",
+          "upstream": {
+            "bytes": 55681065,
+            "sha256": "020e9e669d5a49ce9f59dfff724ef1b13c5b64adc8c0959833cd32b111dcdf49",
+            "lastModified": "Thu, 29 Jan 2026 13:10:19 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2020-2024/acsdt5y2024-b25014.pr-municipios.dat",
+          "sha256": "5332679b6137d3d6e53dc704d3a83ee11a106618e790c5ed538ad12fbf406d6c",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B25064",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b25064.dat",
+          "upstream": {
+            "bytes": 17272062,
+            "sha256": "b36e6dc1fcef36b8b307d31b37517b64c80d8b9c70d48c9b1894242860f42eb0",
+            "lastModified": "Thu, 29 Jan 2026 13:13:09 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2020-2024/acsdt5y2024-b25064.pr-municipios.dat",
+          "sha256": "46afaad0704fb6966067cefd5045f02e3d84756d76a23a253d9461bfc3dd526c",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B25077",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b25077.dat",
+          "upstream": {
+            "bytes": 18496426,
+            "sha256": "89eb2153764a2330b23959d8bbc29b3a8f3016f087b990f2a8ea0d5096d9a816",
+            "lastModified": "Thu, 29 Jan 2026 13:13:51 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2020-2024/acsdt5y2024-b25077.pr-municipios.dat",
+          "sha256": "96c0ed634a1db1a64e8fd16f8299f882742a8165cbd31c0c26d8667acdc49fdd",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B27001",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b27001.dat",
+          "upstream": {
+            "bytes": 119572124,
+            "sha256": "af9b1cad8178ebc85fa96a32b615a3f7a5f98ead7afabc68922614c68eb976ad",
+            "lastModified": "Thu, 29 Jan 2026 13:18:59 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2020-2024/acsdt5y2024-b27001.pr-municipios.dat",
+          "sha256": "e53c6d0f51e52f274381f2fcdbc11af3cc3b13c207c50cbe2cbe9eda6a5966ea",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B28001",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b28001.dat",
+          "upstream": {
+            "bytes": 51500223,
+            "sha256": "c9a43c129ebd109e810fbdcfbf3f8c8eecdf3e71400c169337d011e5827c682b",
+            "lastModified": "Thu, 29 Jan 2026 13:20:35 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2020-2024/acsdt5y2024-b28001.pr-municipios.dat",
+          "sha256": "0597683dc9ffe6caccf9aa9d22eff28fd67fd7b31a3658cb89dc3d1f8b52babd",
+          "rows": 78
+        },
+        {
+          "kind": "table",
+          "table": "B28002",
+          "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b28002.dat",
+          "upstream": {
+            "bytes": 58063218,
+            "sha256": "12446ff0691b8818f5908cdc398817361772c5b3078c506d0409adc9c841840b",
+            "lastModified": "Thu, 29 Jan 2026 13:20:40 GMT",
+            "etag": null
+          },
+          "path": "data/raw/census/acs-2020-2024/acsdt5y2024-b28002.pr-municipios.dat",
+          "sha256": "121f279eae914b3062190f13693b00d7f7b3b684273a5dfe8d8c6f7728ce6b32",
+          "rows": 78
+        }
+      ]
+    }
+  ]
+}

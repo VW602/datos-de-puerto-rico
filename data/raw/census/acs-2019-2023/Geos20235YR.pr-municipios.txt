@@ -1,0 +1,79 @@
+﻿FILEID|STUSAB|SUMLEVEL|COMPONENT|US|REGION|DIVISION|STATE|COUNTY|COUSUB|PLACE|TRACT|BLKGRP|CONCIT|AIANHH|AIANHHFP|AIHHTLI|AITS|AITSFP|ANRC|CBSA|CSA|METDIV|MACC|MEMI|NECTA|CNECTA|NECTADIV|UA|CDCURR|SLDU|SLDL|ZCTA5|SUBMCD|SDELM|SDSEC|SDUNI|UR|PCI|PUMA5|GEO_ID|NAME|BTTR|BTBG|TL_GEO_ID
+ACSSF|PR|050|00||||72|001||||||||||||||||||.|.|||||||||||||0500000US72001|Adjuntas Municipio, Puerto Rico|||72001
+ACSSF|PR|050|00||||72|003||||||||||||||||||.|.|||||||||||||0500000US72003|Aguada Municipio, Puerto Rico|||72003
+ACSSF|PR|050|00||||72|005||||||||||||||||||.|.|||||||||||||0500000US72005|Aguadilla Municipio, Puerto Rico|||72005
+ACSSF|PR|050|00||||72|007||||||||||||||||||.|.|||||||||||||0500000US72007|Aguas Buenas Municipio, Puerto Rico|||72007
+ACSSF|PR|050|00||||72|009||||||||||||||||||.|.|||||||||||||0500000US72009|Aibonito Municipio, Puerto Rico|||72009
+ACSSF|PR|050|00||||72|011||||||||||||||||||.|.|||||||||||||0500000US72011|Añasco Municipio, Puerto Rico|||72011
+ACSSF|PR|050|00||||72|013||||||||||||||||||.|.|||||||||||||0500000US72013|Arecibo Municipio, Puerto Rico|||72013
+ACSSF|PR|050|00||||72|015||||||||||||||||||.|.|||||||||||||0500000US72015|Arroyo Municipio, Puerto Rico|||72015
+ACSSF|PR|050|00||||72|017||||||||||||||||||.|.|||||||||||||0500000US72017|Barceloneta Municipio, Puerto Rico|||72017
+ACSSF|PR|050|00||||72|019||||||||||||||||||.|.|||||||||||||0500000US72019|Barranquitas Municipio, Puerto Rico|||72019
+ACSSF|PR|050|00||||72|021||||||||||||||||||.|.|||||||||||||0500000US72021|Bayamón Municipio, Puerto Rico|||72021
+ACSSF|PR|050|00||||72|023||||||||||||||||||.|.|||||||||||||0500000US72023|Cabo Rojo Municipio, Puerto Rico|||72023
+ACSSF|PR|050|00||||72|025||||||||||||||||||.|.|||||||||||||0500000US72025|Caguas Municipio, Puerto Rico|||72025
+ACSSF|PR|050|00||||72|027||||||||||||||||||.|.|||||||||||||0500000US72027|Camuy Municipio, Puerto Rico|||72027
+ACSSF|PR|050|00||||72|029||||||||||||||||||.|.|||||||||||||0500000US72029|Canóvanas Municipio, Puerto Rico|||72029
+ACSSF|PR|050|00||||72|031||||||||||||||||||.|.|||||||||||||0500000US72031|Carolina Municipio, Puerto Rico|||72031
+ACSSF|PR|050|00||||72|033||||||||||||||||||.|.|||||||||||||0500000US72033|Cataño Municipio, Puerto Rico|||72033
+ACSSF|PR|050|00||||72|035||||||||||||||||||.|.|||||||||||||0500000US72035|Cayey Municipio, Puerto Rico|||72035
+ACSSF|PR|050|00||||72|037||||||||||||||||||.|.|||||||||||||0500000US72037|Ceiba Municipio, Puerto Rico|||72037
+ACSSF|PR|050|00||||72|039||||||||||||||||||.|.|||||||||||||0500000US72039|Ciales Municipio, Puerto Rico|||72039
+ACSSF|PR|050|00||||72|041||||||||||||||||||.|.|||||||||||||0500000US72041|Cidra Municipio, Puerto Rico|||72041
+ACSSF|PR|050|00||||72|043||||||||||||||||||.|.|||||||||||||0500000US72043|Coamo Municipio, Puerto Rico|||72043
+ACSSF|PR|050|00||||72|045||||||||||||||||||.|.|||||||||||||0500000US72045|Comerío Municipio, Puerto Rico|||72045
+ACSSF|PR|050|00||||72|047||||||||||||||||||.|.|||||||||||||0500000US72047|Corozal Municipio, Puerto Rico|||72047
+ACSSF|PR|050|00||||72|049||||||||||||||||||.|.|||||||||||||0500000US72049|Culebra Municipio, Puerto Rico|||72049
+ACSSF|PR|050|00||||72|051||||||||||||||||||.|.|||||||||||||0500000US72051|Dorado Municipio, Puerto Rico|||72051
+ACSSF|PR|050|00||||72|053||||||||||||||||||.|.|||||||||||||0500000US72053|Fajardo Municipio, Puerto Rico|||72053
+ACSSF|PR|050|00||||72|054||||||||||||||||||.|.|||||||||||||0500000US72054|Florida Municipio, Puerto Rico|||72054
+ACSSF|PR|050|00||||72|055||||||||||||||||||.|.|||||||||||||0500000US72055|Guánica Municipio, Puerto Rico|||72055
+ACSSF|PR|050|00||||72|057||||||||||||||||||.|.|||||||||||||0500000US72057|Guayama Municipio, Puerto Rico|||72057
+ACSSF|PR|050|00||||72|059||||||||||||||||||.|.|||||||||||||0500000US72059|Guayanilla Municipio, Puerto Rico|||72059
+ACSSF|PR|050|00||||72|061||||||||||||||||||.|.|||||||||||||0500000US72061|Guaynabo Municipio, Puerto Rico|||72061
+ACSSF|PR|050|00||||72|063||||||||||||||||||.|.|||||||||||||0500000US72063|Gurabo Municipio, Puerto Rico|||72063
+ACSSF|PR|050|00||||72|065||||||||||||||||||.|.|||||||||||||0500000US72065|Hatillo Municipio, Puerto Rico|||72065
+ACSSF|PR|050|00||||72|067||||||||||||||||||.|.|||||||||||||0500000US72067|Hormigueros Municipio, Puerto Rico|||72067
+ACSSF|PR|050|00||||72|069||||||||||||||||||.|.|||||||||||||0500000US72069|Humacao Municipio, Puerto Rico|||72069
+ACSSF|PR|050|00||||72|071||||||||||||||||||.|.|||||||||||||0500000US72071|Isabela Municipio, Puerto Rico|||72071
+ACSSF|PR|050|00||||72|073||||||||||||||||||.|.|||||||||||||0500000US72073|Jayuya Municipio, Puerto Rico|||72073
+ACSSF|PR|050|00||||72|075||||||||||||||||||.|.|||||||||||||0500000US72075|Juana Díaz Municipio, Puerto Rico|||72075
+ACSSF|PR|050|00||||72|077||||||||||||||||||.|.|||||||||||||0500000US72077|Juncos Municipio, Puerto Rico|||72077
+ACSSF|PR|050|00||||72|079||||||||||||||||||.|.|||||||||||||0500000US72079|Lajas Municipio, Puerto Rico|||72079
+ACSSF|PR|050|00||||72|081||||||||||||||||||.|.|||||||||||||0500000US72081|Lares Municipio, Puerto Rico|||72081
+ACSSF|PR|050|00||||72|083||||||||||||||||||.|.|||||||||||||0500000US72083|Las Marías Municipio, Puerto Rico|||72083
+ACSSF|PR|050|00||||72|085||||||||||||||||||.|.|||||||||||||0500000US72085|Las Piedras Municipio, Puerto Rico|||72085
+ACSSF|PR|050|00||||72|087||||||||||||||||||.|.|||||||||||||0500000US72087|Loíza Municipio, Puerto Rico|||72087
+ACSSF|PR|050|00||||72|089||||||||||||||||||.|.|||||||||||||0500000US72089|Luquillo Municipio, Puerto Rico|||72089
+ACSSF|PR|050|00||||72|091||||||||||||||||||.|.|||||||||||||0500000US72091|Manatí Municipio, Puerto Rico|||72091
+ACSSF|PR|050|00||||72|093||||||||||||||||||.|.|||||||||||||0500000US72093|Maricao Municipio, Puerto Rico|||72093
+ACSSF|PR|050|00||||72|095||||||||||||||||||.|.|||||||||||||0500000US72095|Maunabo Municipio, Puerto Rico|||72095
+ACSSF|PR|050|00||||72|097||||||||||||||||||.|.|||||||||||||0500000US72097|Mayagüez Municipio, Puerto Rico|||72097
+ACSSF|PR|050|00||||72|099||||||||||||||||||.|.|||||||||||||0500000US72099|Moca Municipio, Puerto Rico|||72099
+ACSSF|PR|050|00||||72|101||||||||||||||||||.|.|||||||||||||0500000US72101|Morovis Municipio, Puerto Rico|||72101
+ACSSF|PR|050|00||||72|103||||||||||||||||||.|.|||||||||||||0500000US72103|Naguabo Municipio, Puerto Rico|||72103
+ACSSF|PR|050|00||||72|105||||||||||||||||||.|.|||||||||||||0500000US72105|Naranjito Municipio, Puerto Rico|||72105
+ACSSF|PR|050|00||||72|107||||||||||||||||||.|.|||||||||||||0500000US72107|Orocovis Municipio, Puerto Rico|||72107
+ACSSF|PR|050|00||||72|109||||||||||||||||||.|.|||||||||||||0500000US72109|Patillas Municipio, Puerto Rico|||72109
+ACSSF|PR|050|00||||72|111||||||||||||||||||.|.|||||||||||||0500000US72111|Peñuelas Municipio, Puerto Rico|||72111
+ACSSF|PR|050|00||||72|113||||||||||||||||||.|.|||||||||||||0500000US72113|Ponce Municipio, Puerto Rico|||72113
+ACSSF|PR|050|00||||72|115||||||||||||||||||.|.|||||||||||||0500000US72115|Quebradillas Municipio, Puerto Rico|||72115
+ACSSF|PR|050|00||||72|117||||||||||||||||||.|.|||||||||||||0500000US72117|Rincón Municipio, Puerto Rico|||72117
+ACSSF|PR|050|00||||72|119||||||||||||||||||.|.|||||||||||||0500000US72119|Río Grande Municipio, Puerto Rico|||72119
+ACSSF|PR|050|00||||72|121||||||||||||||||||.|.|||||||||||||0500000US72121|Sabana Grande Municipio, Puerto Rico|||72121
+ACSSF|PR|050|00||||72|123||||||||||||||||||.|.|||||||||||||0500000US72123|Salinas Municipio, Puerto Rico|||72123
+ACSSF|PR|050|00||||72|125||||||||||||||||||.|.|||||||||||||0500000US72125|San Germán Municipio, Puerto Rico|||72125
+ACSSF|PR|050|00||||72|127||||||||||||||||||.|.|||||||||||||0500000US72127|San Juan Municipio, Puerto Rico|||72127
+ACSSF|PR|050|00||||72|129||||||||||||||||||.|.|||||||||||||0500000US72129|San Lorenzo Municipio, Puerto Rico|||72129
+ACSSF|PR|050|00||||72|131||||||||||||||||||.|.|||||||||||||0500000US72131|San Sebastián Municipio, Puerto Rico|||72131
+ACSSF|PR|050|00||||72|133||||||||||||||||||.|.|||||||||||||0500000US72133|Santa Isabel Municipio, Puerto Rico|||72133
+ACSSF|PR|050|00||||72|135||||||||||||||||||.|.|||||||||||||0500000US72135|Toa Alta Municipio, Puerto Rico|||72135
+ACSSF|PR|050|00||||72|137||||||||||||||||||.|.|||||||||||||0500000US72137|Toa Baja Municipio, Puerto Rico|||72137
+ACSSF|PR|050|00||||72|139||||||||||||||||||.|.|||||||||||||0500000US72139|Trujillo Alto Municipio, Puerto Rico|||72139
+ACSSF|PR|050|00||||72|141||||||||||||||||||.|.|||||||||||||0500000US72141|Utuado Municipio, Puerto Rico|||72141
+ACSSF|PR|050|00||||72|143||||||||||||||||||.|.|||||||||||||0500000US72143|Vega Alta Municipio, Puerto Rico|||72143
+ACSSF|PR|050|00||||72|145||||||||||||||||||.|.|||||||||||||0500000US72145|Vega Baja Municipio, Puerto Rico|||72145
+ACSSF|PR|050|00||||72|147||||||||||||||||||.|.|||||||||||||0500000US72147|Vieques Municipio, Puerto Rico|||72147
+ACSSF|PR|050|00||||72|149||||||||||||||||||.|.|||||||||||||0500000US72149|Villalba Municipio, Puerto Rico|||72149
+ACSSF|PR|050|00||||72|151||||||||||||||||||.|.|||||||||||||0500000US72151|Yabucoa Municipio, Puerto Rico|||72151
+ACSSF|PR|050|00||||72|153||||||||||||||||||.|.|||||||||||||0500000US72153|Yauco Municipio, Puerto Rico|||72153

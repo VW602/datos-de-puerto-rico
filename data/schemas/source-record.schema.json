@@ -1,0 +1,323 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "source-record.schema.json",
+  "title": "Registro de fuente de datos",
+  "description": "Una fuente de datos que el sitio usa o publica. Lo que no se sabe se escribe UNKNOWN; no se adivina. Ver DATA_SOURCES.md para la evidencia de cada entrada.",
+  "type": "object",
+  "required": [
+    "datasetId",
+    "title",
+    "topic",
+    "sourceAgency",
+    "sourceTitle",
+    "sourceURL",
+    "additionalURLs",
+    "sourceType",
+    "sourceStatus",
+    "linkHealth",
+    "reportingPeriod",
+    "sourcePublishedAt",
+    "originalRetrievalAt",
+    "verifiedAt",
+    "geography",
+    "nativeGeography",
+    "geographyJoin",
+    "updateFrequency",
+    "redistributionStatus",
+    "rightsEvidence",
+    "attribution",
+    "methodology",
+    "fieldMap",
+    "missingValuePolicy",
+    "provenanceStatus",
+    "readiness",
+    "publicationDecision",
+    "publicStatus",
+    "valueExclusions",
+    "files",
+    "metrics",
+    "notes"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "linkHealth": {
+      "enum": [
+        "LIVE",
+        "REDIRECT",
+        "ARCHIVED",
+        "BROKEN",
+        "AUTH_REQUIRED",
+        "UNKNOWN"
+      ]
+    }
+  },
+  "properties": {
+    "datasetId": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "topic": {
+      "enum": [
+        "municipios",
+        "poblacion",
+        "economia",
+        "vivienda",
+        "educacion",
+        "salud",
+        "elecciones",
+        "seguridad",
+        "infraestructura",
+        "geografia"
+      ]
+    },
+    "sourceAgency": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sourceTitle": {
+      "description": "Título de la publicación o del producto de datos tal como lo nombra la agencia, o UNKNOWN.",
+      "type": "string",
+      "minLength": 1
+    },
+    "sourceURL": {
+      "description": "Enlace directo y oficial a la publicación, archivo o servicio (no a la portada de la agencia), o UNKNOWN.",
+      "type": "string",
+      "anyOf": [
+        {
+          "const": "UNKNOWN"
+        },
+        {
+          "pattern": "^https://"
+        }
+      ]
+    },
+    "additionalURLs": {
+      "description": "Otros enlaces oficiales: página del producto, documentación, términos de uso.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "label",
+          "url",
+          "linkHealth"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "pattern": "^https://"
+          },
+          "linkHealth": {
+            "$ref": "#/$defs/linkHealth"
+          }
+        }
+      }
+    },
+    "sourceType": {
+      "enum": [
+        "API",
+        "CSV",
+        "XLSX",
+        "JSON",
+        "PDF",
+        "GIS_SERVICE",
+        "WEB_TABLE",
+        "OTHER",
+        "UNKNOWN"
+      ]
+    },
+    "sourceStatus": {
+      "description": "RESOLVED: se encontró la fuente original exacta. PARTIAL: se encontró la fuente pero no la pieza exacta. UNRESOLVED: no se pudo establecer.",
+      "enum": [
+        "RESOLVED",
+        "PARTIAL",
+        "UNRESOLVED"
+      ]
+    },
+    "linkHealth": {
+      "$ref": "#/$defs/linkHealth"
+    },
+    "reportingPeriod": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sourcePublishedAt": {
+      "description": "Fecha de publicación de la fuente (YYYY-MM-DD o YYYY-MM), o UNKNOWN.",
+      "type": "string",
+      "anyOf": [
+        {
+          "const": "UNKNOWN"
+        },
+        {
+          "pattern": "^\\d{4}-\\d{2}(-\\d{2})?$"
+        }
+      ]
+    },
+    "originalRetrievalAt": {
+      "description": "Cuándo el proyecto obtuvo originalmente estos valores. UNKNOWN si no se puede probar.",
+      "type": "string",
+      "anyOf": [
+        {
+          "const": "UNKNOWN"
+        },
+        {
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        }
+      ]
+    },
+    "verifiedAt": {
+      "description": "Cuándo se comparó por última vez contra la fuente oficial.",
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "geography": {
+      "enum": [
+        "municipio",
+        "isla"
+      ]
+    },
+    "nativeGeography": {
+      "description": "La geografía en que la fuente publica el dato.",
+      "enum": [
+        "MUNICIPALITY",
+        "PRECINCT",
+        "DISTRICT",
+        "ISLAND_WIDE",
+        "ZIP",
+        "COUNTY_EQUIVALENT",
+        "OTHER",
+        "UNKNOWN"
+      ]
+    },
+    "geographyJoin": {
+      "description": "Cómo se une la fuente a los 78 municipios (código, nombre, normalización manual).",
+      "type": "string",
+      "minLength": 1
+    },
+    "updateFrequency": {
+      "type": "string",
+      "minLength": 1
+    },
+    "redistributionStatus": {
+      "description": "No se marca VERIFIED_ALLOWED ni ATTRIBUTION_REQUIRED sin evidencia escrita de la fuente.",
+      "enum": [
+        "VERIFIED_ALLOWED",
+        "ATTRIBUTION_REQUIRED",
+        "REVIEW_REQUIRED",
+        "DO_NOT_REDISTRIBUTE"
+      ]
+    },
+    "rightsEvidence": {
+      "description": "Qué documento sostiene redistributionStatus.",
+      "type": "string",
+      "minLength": 1
+    },
+    "attribution": {
+      "type": "string",
+      "minLength": 1
+    },
+    "methodology": {
+      "type": "string",
+      "minLength": 1
+    },
+    "fieldMap": {
+      "description": "Medida o campo del proyecto -> variable, tabla o columna de la fuente. Vacío si no aplica.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "missingValuePolicy": {
+      "description": "Qué quiere decir un dato vacío o un cero en esta fuente, en lenguaje claro.",
+      "type": "string",
+      "minLength": 1
+    },
+    "provenanceStatus": {
+      "description": "VERIFIED: los valores del proyecto se reprodujeron contra la fuente oficial. PARTIAL: fuente encontrada, faltan piezas. PENDING: sin verificar.",
+      "enum": [
+        "VERIFIED",
+        "PARTIAL",
+        "PENDING"
+      ]
+    },
+    "readiness": {
+      "description": "READY: fuente, periodo, geografía, metodología y derechos verificados. PARTIAL: falta algo importante. BLOCKED: no se puede publicar.",
+      "enum": [
+        "READY",
+        "PARTIAL",
+        "BLOCKED"
+      ]
+    },
+    "publicationDecision": {
+      "enum": [
+        "KEEP_FOR_PUBLIC_LAUNCH",
+        "KEEP_BUT_LINK_ONLY",
+        "REMOVE_FROM_PUBLIC_LAUNCH",
+        "RESEARCH_MORE"
+      ]
+    },
+    "publicStatus": {
+      "description": "Frontera de publicación del producto. PUBLIC_READY: fuente, significado, valores, transformación y derechos verificados. PUBLIC_PENDING: los datos pueden ser correctos pero falta algo para publicar (por ejemplo, derechos en revisión). PUBLIC_EXCLUDED: un bloqueo conocido impide incluirlo; sus medidas no aparecen en el producto.",
+      "enum": [
+        "PUBLIC_READY",
+        "PUBLIC_PENDING",
+        "PUBLIC_EXCLUDED"
+      ]
+    },
+    "valueExclusions": {
+      "description": "Valores puntuales que no se muestran aunque estén en los datos guardados, con la razón.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "metric",
+          "municipioId",
+          "reason",
+          "note"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "metric": {
+            "type": "string"
+          },
+          "municipioId": {
+            "type": "string",
+            "pattern": "^72\\d{3}$"
+          },
+          "reason": {
+            "enum": [
+              "source_conflict"
+            ]
+          },
+          "note": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "metrics": {
+      "description": "Ids de medidas (src/data/pr/metrics.ts) que salen de esta fuente.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

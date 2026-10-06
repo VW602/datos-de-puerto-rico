@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.output/
+.nitro/
+.vercel/
+.netlify/
+.wrangler/
+.tanstack/
+coverage/
+*.tsbuildinfo
+
+# Environment and secrets (commit an .env.example instead, never real values)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Logs and temp files
+*.log
+npm-debug.log*
+tmp/
+.tmp/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# Local evidence (screenshots and notes from manual QA). Keep it out of the repo;
+# attach what matters to an issue or PR instead.
+screenshots/
+.local/

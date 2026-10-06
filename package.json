@@ -1,0 +1,69 @@
+{
+  "name": "puerto-rico-datos",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Datos p\u00fablicos de los 78 municipios de Puerto Rico, con la fuente de cada cifra.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "overrides": {
+    "nf3": "0.3.17"
+  },
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "format": "prettier --write .",
+    "data:census:update": "node scripts/census/update.ts",
+    "data:census:generate": "node scripts/census/generate.ts",
+    "data:registry:generate": "node scripts/registry/public.ts",
+    "data:geo:update": "node scripts/geo/update.ts",
+    "data:geo:generate": "node scripts/geo/generate.ts",
+    "data:geo:check": "node scripts/geo/generate.ts --check",
+    "data:generate": "npm run data:census:generate && npm run data:geo:generate && npm run data:registry:generate",
+    "data:check": "node scripts/census/generate.ts --check && node scripts/geo/generate.ts --check && node scripts/registry/public.ts --check",
+    "check": "npm run typecheck && npm run lint && npm run data:check && npm test && npm run build"
+  },
+  "dependencies": {
+    "@tanstack/react-router": "^1.170.0",
+    "@tanstack/react-start": "^1.168.0",
+    "clsx": "^2.1.1",
+    "d3-geo": "^3.1.1",
+    "d3-selection": "^3.0.0",
+    "d3-zoom": "^3.0.0",
+    "lucide-react": "^0.510.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tailwind-merge": "^3.5.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.20.0",
+    "@tailwindcss/vite": "^4.3.0",
+    "@types/d3-geo": "^3.1.1",
+    "@types/d3-selection": "^3.0.12",
+    "@types/d3-zoom": "^3.0.9",
+    "@types/geojson": "^7946.0.16",
+    "@types/node": "^22.16.5",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "eslint": "^9.20.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^15.15.0",
+    "nitro": "3.0.260610-beta",
+    "prettier": "^3.4.0",
+    "tailwindcss": "^4.3.0",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.56.1",
+    "vite": "^8.2.0",
+    "vitest": "^5.0.3"
+  }
+}

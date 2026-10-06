@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "generator": "scripts/geo/update.ts",
+  "generatorVersion": 1,
+  "retrievedAtNote": "retrievedAt es la fecha UTC en que se descargó el archivo oficial.",
+  "source": {
+    "agency": "U.S. Census Bureau, Geography Division",
+    "title": "TIGER/Line Shapefiles 2024: Counties (and equivalent)",
+    "vintage": 2024,
+    "url": "https://www2.census.gov/geo/tiger/TIGER2024/COUNTY/tl_2024_us_county.zip",
+    "techDocUrl": "https://www2.census.gov/geo/pdfs/maps-data/data/tiger/tgrshp2024/TGRSHP2024_TechDoc.pdf",
+    "fileName": "tl_2024_us_county.zip",
+    "retrievedAt": "2026-10-03",
+    "bytes": 83913260,
+    "sha256": "04e668d3502757c837c13444730547cd967f28a2c49aeffb873d1792ab2cb97b",
+    "lastModified": "Fri, 27 Jun 2025 20:01:24 GMT",
+    "etag": null,
+    "members": {
+      "tl_2024_us_county.cpg": {
+        "bytes": 5,
+        "sha256": "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824"
+      },
+      "tl_2024_us_county.dbf": {
+        "bytes": 993755,
+        "sha256": "f310846d5f8160fc63e2e4930af756b966f31a86e7b019a251ffc51789d28919"
+      },
+      "tl_2024_us_county.prj": {
+        "bytes": 165,
+        "sha256": "0b9041e921d9ebb43247d314608fe9e38a0b008ee793067fc1806199ea1fb9dd"
+      },
+      "tl_2024_us_county.shp": {
+        "bytes": 132150152,
+        "sha256": "4bdd1476ffeb7e5a4bc6a2eb60d39e6ceae3d385b2d87793a634ffe1552aafe4"
+      },
+      "tl_2024_us_county.shp.ea.iso.xml": {
+        "bytes": 42070,
+        "sha256": "d12be63dc317a5bf08c847531847adc2671933148d1ddc42ba8979cbdc539f77"
+      },
+      "tl_2024_us_county.shp.iso.xml": {
+        "bytes": 50721,
+        "sha256": "36330d84ca9454d5956be072b81cd2de8f24ce48cd1bf4ad1ff87c3f59c79a74"
+      },
+      "tl_2024_us_county.shx": {
+        "bytes": 25980,
+        "sha256": "d41d07996080ceaa52c7a01045f9139d01a017aba59f3f8a7b7d8d000a8151c6"
+      }
+    },
+    "coordinateReferenceSystem": "GEOGCS[\"GCS_North_American_1983\",DATUM[\"D_North_American_1983\",SPHEROID[\"GRS_1980\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]]",
+    "attribution": "Límites de los municipios: U.S. Census Bureau, TIGER/Line® Shapefiles 2024 (condados y equivalentes), simplificados por este proyecto. TIGER/Line® es una marca registrada de la Oficina del Censo de EE. UU.; el Censo no respalda ni certifica este proyecto. Los límites son para fines estadísticos y no son descripciones legales de terrenos."
+  },
+  "extract": {
+    "path": "data/raw/geo/tiger-2024/tl_2024_72_county.geojson",
+    "sha256": "717bb6bbb21f1adce1f892c7df5e33e9baab085a88f243e4b9cc623aea4d8853",
+    "features": 78,
+    "vertices": 120724,
+    "stateFips": "72",
+    "selection": "Registros del .dbf con STATEFP = 72 (verificados como MTFCC G4020, LSAD 13 «Municipio»), ordenados por GEOID."
+  }
+}

@@ -1,0 +1,304 @@
+{
+  "schema": 2,
+  "verifiedAt": "2026-10-01",
+  "description": "Registro de las fuentes que el sitio usa. Cada medida de src/data/pr/metrics.ts apunta a una entrada. UNKNOWN quiere decir que el proyecto no lo ha podido verificar; no se adivina. La evidencia de cada entrada está en DATA_SOURCES.md y DATA_LICENSES.md.",
+  "records": [
+    {
+      "datasetId": "acs-2019-2023-base",
+      "title": "Población, edad, ingreso y plomería (ACS 5 años, 2019–2023)",
+      "topic": "poblacion",
+      "sourceAgency": "U.S. Census Bureau, American Community Survey / Puerto Rico Community Survey",
+      "sourceTitle": "American Community Survey 2019–2023 5-Year Estimates, Detailed Tables (Table-Based Summary File)",
+      "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2023/table-based-SF/data/5YRData/",
+      "additionalURLs": [
+        {
+          "label": "Variables oficiales (API, metadatos)",
+          "url": "https://api.census.gov/data/2023/acs/acs5/variables.html",
+          "linkHealth": "LIVE"
+        },
+        {
+          "label": "Términos de la API del Censo",
+          "url": "https://www.census.gov/data/developers/about/terms-of-service.html",
+          "linkHealth": "LIVE"
+        }
+      ],
+      "sourceType": "CSV",
+      "sourceStatus": "RESOLVED",
+      "linkHealth": "LIVE",
+      "reportingPeriod": "2019–2023 (estimado de 5 años; dólares ajustados a 2023)",
+      "sourcePublishedAt": "2024-12",
+      "originalRetrievalAt": "UNKNOWN",
+      "verifiedAt": "2026-10-01",
+      "geography": "municipio",
+      "nativeGeography": "COUNTY_EQUIVALENT",
+      "geographyJoin": "Por código FIPS de 5 dígitos (GEO_ID 0500000US72xxx = id del municipio). Sin unión por nombre.",
+      "updateFrequency": "Anual (el estimado de 5 años sale cada diciembre)",
+      "redistributionStatus": "ATTRIBUTION_REQUIRED",
+      "rightsEvidence": "Documentación oficial del Censo (TIGER/Line Technical Documentation, cap. 1): las obras del gobierno federal no tienen derechos de autor (17 U.S.C. §105); el Censo pide que se le cite como fuente. Si se usa la API oficial, sus términos exigen el aviso «This product uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau».",
+      "attribution": "Fuente: U.S. Census Bureau, American Community Survey (Puerto Rico Community Survey) 2019–2023, estimados de 5 años. Este proyecto usa datos del Censo, pero el Censo no lo respalda ni lo certifica.",
+      "methodology": "Valores tomados tal cual de las tablas B01003 (población), B19013 (ingreso mediano del hogar), B19301 (ingreso por persona), B01001 (sexo y edad) y B25047 (plomería, todas las viviendas). Por cientos = parte / total × 100: mujeres, menores de 18 y 65 años o más a un decimal; viviendas sin plomería completa a dos decimales. Los 78 municipios se reprodujeron exactamente. Los valores se generan con el proceso documentado en scripts/census desde la copia oficial guardada.",
+      "fieldMap": {
+        "population": "B01003_001E (= B01001_001E)",
+        "income": "B19013_001E",
+        "percapita": "B19301_001E",
+        "women": "B01001_026E / B01001_001E × 100, 1 decimal",
+        "under18": "(B01001_003E..006E + B01001_027E..030E) / B01001_001E × 100, 1 decimal",
+        "over65": "(B01001_020E..025E + B01001_044E..049E) / B01001_001E × 100, 1 decimal",
+        "plumbing": "B25047_003E / B25047_001E × 100, 2 decimales (todas las viviendas, incluye vacantes)",
+        "male": "B01001_002E",
+        "female": "B01001_026E",
+        "ages": "0–17: B01001_003..006 / 027..030; 18–34: 007..012 / 031..036; 35–64: 013..019 / 037..043; 65+: 020..025 / 044..049"
+      },
+      "missingValuePolicy": "Hoy no falta ninguno. Si el Censo usa un código especial, el valor queda vacío con su razón; nunca se vuelve 0. Los márgenes de error oficiales se guardan junto a cada estimado.",
+      "provenanceStatus": "VERIFIED",
+      "readiness": "READY",
+      "publicationDecision": "KEEP_FOR_PUBLIC_LAUNCH",
+      "publicStatus": "PUBLIC_READY",
+      "valueExclusions": [],
+      "files": [
+        "data/raw/census/manifest.json",
+        "data/generated/census-municipios.json",
+        "scripts/census/formulas.ts"
+      ],
+      "metrics": [
+        "population",
+        "income",
+        "percapita",
+        "women",
+        "under18",
+        "over65",
+        "plumbing"
+      ],
+      "notes": "Verificado el 2026-10-01 contra el Summary File oficial: 78/78 exactos en todos los campos. Los valores se generan con scripts/census desde la copia oficial en data/raw/census (con SHA-256). «Sin plomería completa» sigue el concepto oficial de la tabla B25047: viviendas a las que les falta al menos una de las instalaciones de plomería completa, sobre todas las viviendas (incluye las vacantes)."
+    },
+    {
+      "datasetId": "acs-2020-2024-layers",
+      "title": "Pobreza, empleo, educación, vivienda y hogares (ACS 5 años, 2020–2024)",
+      "topic": "economia",
+      "sourceAgency": "U.S. Census Bureau, American Community Survey / Puerto Rico Community Survey",
+      "sourceTitle": "American Community Survey 2020–2024 5-Year Estimates, Detailed Tables (Table-Based Summary File)",
+      "sourceURL": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/",
+      "additionalURLs": [
+        {
+          "label": "Variables oficiales (API, metadatos)",
+          "url": "https://api.census.gov/data/2024/acs/acs5/variables.html",
+          "linkHealth": "LIVE"
+        },
+        {
+          "label": "Términos de la API del Censo",
+          "url": "https://www.census.gov/data/developers/about/terms-of-service.html",
+          "linkHealth": "LIVE"
+        }
+      ],
+      "sourceType": "CSV",
+      "sourceStatus": "RESOLVED",
+      "linkHealth": "LIVE",
+      "reportingPeriod": "2020–2024 (estimado de 5 años; dólares ajustados a 2024)",
+      "sourcePublishedAt": "2025-12",
+      "originalRetrievalAt": "UNKNOWN",
+      "verifiedAt": "2026-10-01",
+      "geography": "municipio",
+      "nativeGeography": "COUNTY_EQUIVALENT",
+      "geographyJoin": "Por código FIPS de 5 dígitos (05000US72xxx). Sin unión por nombre.",
+      "updateFrequency": "Anual (el estimado de 5 años sale cada diciembre)",
+      "redistributionStatus": "ATTRIBUTION_REQUIRED",
+      "rightsEvidence": "Documentación oficial del Censo (TIGER/Line Technical Documentation, cap. 1): las obras del gobierno federal no tienen derechos de autor (17 U.S.C. §105); el Censo pide que se le cite como fuente. Si se usa la API oficial, sus términos exigen el aviso «This product uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau».",
+      "attribution": "Fuente: U.S. Census Bureau, American Community Survey (Puerto Rico Community Survey) 2020–2024, estimados de 5 años. Este proyecto usa datos del Censo, pero el Censo no lo respalda ni lo certifica.",
+      "methodology": "Por ciento = parte / universo de la tabla × 100, redondeado a un decimal; renta y valor de la vivienda redondeados al dólar; edad mediana a un decimal. Los universos son los de cada tabla: por ejemplo, la pobreza se mide sobre las personas a quienes se les determina el estado de pobreza, y el seguro y la discapacidad sobre la población civil no institucionalizada. Los valores se generan con el proceso documentado en scripts/census desde la copia oficial guardada.",
+      "fieldMap": {
+        "poverty": "B17001_002E / B17001_001E",
+        "unemployment": "B23025_005E / B23025_003E",
+        "highschool": "Σ B15003_017E..025E / B15003_001E (diploma o equivalente o más, 25 años o más)",
+        "bachelors": "Σ B15003_022E..025E / B15003_001E",
+        "nointernet": "B28002_013E / B28002_001E",
+        "disability": "Σ B18101_004,007,010,013,016,019,023,026,029,032,035,038 E / B18101_001E",
+        "rent": "B25064_001E",
+        "homevalue": "B25077_001E",
+        "uninsured": "Σ B27001_005,008,…,057 E (sin seguro, por sexo y edad) / B27001_001E",
+        "medianage": "B01002_001E",
+        "snap": "B22003_002E / B22003_001E",
+        "vacant": "B25002_003E / B25002_001E",
+        "novehicle": "B08201_002E / B08201_001E",
+        "nocomputer": "(B28001_001E − B28001_002E) / B28001_001E",
+        "crowding": "Σ B25014_005,006,007,011,012,013 E (más de 1 persona por cuarto) / B25014_001E"
+      },
+      "missingValuePolicy": "Si a una variable le falta valor, o el Censo usa un código especial (por ejemplo, margen de error «controlado»), queda vacía con su razón y la medida que dependa de ella también queda vacía; nunca se vuelve 0. Maricao y Culebra tienen desempleo 0: es el estimado publicado (0, con margen de error de ±15 personas), no un dato que falte.",
+      "provenanceStatus": "VERIFIED",
+      "readiness": "READY",
+      "publicationDecision": "KEEP_FOR_PUBLIC_LAUNCH",
+      "publicStatus": "PUBLIC_READY",
+      "valueExclusions": [],
+      "files": [
+        "data/raw/census/manifest.json",
+        "data/generated/census-municipios.json",
+        "scripts/census/formulas.ts"
+      ],
+      "metrics": [
+        "poverty",
+        "uninsured",
+        "unemployment",
+        "highschool",
+        "bachelors",
+        "nointernet",
+        "disability",
+        "rent",
+        "homevalue",
+        "medianage",
+        "snap",
+        "vacant",
+        "novehicle",
+        "nocomputer",
+        "crowding"
+      ],
+      "notes": "Verificado el 2026-10-01 contra el Summary File oficial 2020–2024: las 15 medidas se reproducen 78/78 (1,170 valores). Se generan con scripts/census a partir de la copia oficial en data/raw/census (con SHA-256). El sitio no consulta al Censo al abrir la página. En Puerto Rico, la pregunta de SNAP del ACS recoge el PAN."
+    },
+    {
+      "datasetId": "nhtsa-fars-2022-2023",
+      "title": "Muertes en accidentes de tránsito",
+      "topic": "salud",
+      "sourceAgency": "National Highway Traffic Safety Administration (NHTSA), Fatality Analysis Reporting System (FARS)",
+      "sourceTitle": "FARS 2022 y 2023, archivos de Puerto Rico (CSV, accident.csv)",
+      "sourceURL": "https://static.nhtsa.gov/nhtsa/downloads/FARS/2023/Puerto%20Rico/FARS2023PuertoRicoCSV.zip",
+      "additionalURLs": [
+        {
+          "label": "FARS 2022, Puerto Rico",
+          "url": "https://static.nhtsa.gov/nhtsa/downloads/FARS/2022/Puerto%20Rico/FARS2022PuertoRicoCSV.zip",
+          "linkHealth": "LIVE"
+        },
+        {
+          "label": "FARS en data.gov (licencia)",
+          "url": "https://catalog.data.gov/dataset/fatality-analysis-reporting-system-fars",
+          "linkHealth": "LIVE"
+        }
+      ],
+      "sourceType": "CSV",
+      "sourceStatus": "RESOLVED",
+      "linkHealth": "LIVE",
+      "reportingPeriod": "Años calendario 2022 y 2023",
+      "sourcePublishedAt": "2025-10",
+      "originalRetrievalAt": "UNKNOWN",
+      "verifiedAt": "2026-10-01",
+      "geography": "municipio",
+      "nativeGeography": "COUNTY_EQUIVALENT",
+      "geographyJoin": "Por código de condado de FARS (COUNTY) = últimos tres dígitos del FIPS del municipio.",
+      "updateFrequency": "Anual; los años anteriores se pueden revisar",
+      "redistributionStatus": "VERIFIED_ALLOWED",
+      "rightsEvidence": "data.gov publica FARS (NHTSA) bajo la etiqueta de dominio público de EE. UU. (usa.gov/publicdomain/label/1.0), acceso público sin restricciones.",
+      "attribution": "Fuente: NHTSA, Fatality Analysis Reporting System (FARS), archivos de Puerto Rico 2022 y 2023.",
+      "methodology": "Muertes = suma del campo FATALS de 2022 y 2023 por municipio. Tasa = muertes / 2 / población del ACS 2019–2023 × 100,000, a dos decimales. Los 78 municipios se reprodujeron exactamente.",
+      "fieldMap": {
+        "trafficDeaths": "Σ FATALS (accident.csv) 2022 + 2023",
+        "traffic": "trafficDeaths / 2 / B01003_001E (ACS 2019–2023) × 100,000"
+      },
+      "missingValuePolicy": "Maricao, Sabana Grande, Guayanilla, Culebra y Las Marías tienen 0: FARS registra todos los choques fatales y no tiene ninguno en esos municipios en 2022–2023. Es un cero real.",
+      "provenanceStatus": "VERIFIED",
+      "readiness": "READY",
+      "publicationDecision": "KEEP_FOR_PUBLIC_LAUNCH",
+      "publicStatus": "PUBLIC_READY",
+      "valueExclusions": [],
+      "files": [
+        "src/data/pr/municipios.json"
+      ],
+      "metrics": [
+        "traffic"
+      ],
+      "notes": "Los archivos nacionales de FARS no traen a Puerto Rico; NHTSA lo publica aparte. Verificado el 2026-10-01: 78/78 exactos (271 muertes en 2022, 307 en 2023). El denominador mezcla periodos (población 2019–2023 para muertes 2022–2023); está documentado."
+    },
+    {
+      "datasetId": "cdc-brfss-2023",
+      "title": "Obesidad e inactividad física en adultos (BRFSS 2023)",
+      "topic": "salud",
+      "sourceAgency": "Centers for Disease Control and Prevention (CDC), Behavioral Risk Factor Surveillance System",
+      "sourceTitle": "Behavioral Risk Factor Surveillance System (BRFSS) Prevalence Data (2011 to present)",
+      "sourceURL": "https://data.cdc.gov/resource/dttw-5yxu.json",
+      "additionalURLs": [
+        {
+          "label": "Página del conjunto de datos",
+          "url": "https://data.cdc.gov/Behavioral-Risk-Factors/Behavioral-Risk-Factor-Surveillance-System-BRFSS-P/dttw-5yxu",
+          "linkHealth": "LIVE"
+        }
+      ],
+      "sourceType": "API",
+      "sourceStatus": "RESOLVED",
+      "linkHealth": "LIVE",
+      "reportingPeriod": "Encuesta 2023",
+      "sourcePublishedAt": "UNKNOWN",
+      "originalRetrievalAt": "UNKNOWN",
+      "verifiedAt": "2026-10-01",
+      "geography": "isla",
+      "nativeGeography": "ISLAND_WIDE",
+      "geographyJoin": "Un solo valor para Puerto Rico (locationabbr = PR). No hay unión municipal.",
+      "updateFrequency": "Anual",
+      "redistributionStatus": "VERIFIED_ALLOWED",
+      "rightsEvidence": "Los metadatos del conjunto en data.cdc.gov indican licencia «Public Domain» y nivel de acceso público; piden atribución a CDC.",
+      "attribution": "Fuente: CDC, Behavioral Risk Factor Surveillance System 2023.",
+      "methodology": "Prevalencia cruda, adultos, Puerto Rico 2023: obesidad (IMC 30 o más) 36.0% (IC 95% 33.9–38.0); sobrepeso 35.1%; sin actividad física en el tiempo libre en el último mes 52.1% (IC 95% 50.1–54.2).",
+      "fieldMap": {
+        "obesity": "question «Weight classification by BMI», response «Obese», break_out Overall",
+        "inactivity": "question «participate in any physical activities», response «No», break_out Overall"
+      },
+      "missingValuePolicy": "No hay cifra por municipio. El mapa pinta toda la isla de un color y lo dice.",
+      "provenanceStatus": "VERIFIED",
+      "readiness": "READY",
+      "publicationDecision": "KEEP_FOR_PUBLIC_LAUNCH",
+      "publicStatus": "PUBLIC_READY",
+      "valueExclusions": [],
+      "files": [
+        "src/data/pr/layers.ts"
+      ],
+      "metrics": [
+        "obesity",
+        "inactivity"
+      ],
+      "notes": "Verificado el 2026-10-01 contra la API oficial de CDC: los tres valores coinciden."
+    },
+    {
+      "datasetId": "geometria-municipios",
+      "title": "Límites de los 78 municipios",
+      "topic": "geografia",
+      "sourceAgency": "U.S. Census Bureau, Geography Division",
+      "sourceTitle": "TIGER/Line® Shapefiles 2024: Counties (and equivalent) — tl_2024_us_county.zip",
+      "sourceURL": "https://www2.census.gov/geo/tiger/TIGER2024/COUNTY/tl_2024_us_county.zip",
+      "additionalURLs": [
+        {
+          "label": "Documentación técnica TIGER/Line 2024",
+          "url": "https://www2.census.gov/geo/pdfs/maps-data/data/tiger/tgrshp2024/TGRSHP2024_TechDoc.pdf",
+          "linkHealth": "LIVE"
+        }
+      ],
+      "sourceType": "OTHER",
+      "sourceStatus": "RESOLVED",
+      "linkHealth": "LIVE",
+      "reportingPeriod": "Edición TIGER/Line 2024",
+      "sourcePublishedAt": "UNKNOWN",
+      "originalRetrievalAt": "2026-10-03",
+      "verifiedAt": "2026-10-03",
+      "geography": "municipio",
+      "nativeGeography": "COUNTY_EQUIVALENT",
+      "geographyJoin": "GEOID de TIGER/Line = id del municipio (código FIPS de 5 dígitos); NAME coincide exactamente con el nombre oficial del Censo en los 78. Sin normalización ni alias.",
+      "updateFrequency": "TIGER/Line se publica cada año; el proyecto usa una edición fija (2024) y solo la cambia a propósito.",
+      "redistributionStatus": "ATTRIBUTION_REQUIRED",
+      "rightsEvidence": "Documentación técnica TIGER/Line 2024, cap. 1: las obras del gobierno federal no tienen derechos de autor (17 U.S.C. §105) y se pide citar al Censo como fuente (1.2). Se pide que todo reempaquetado de los datos lleve, en un lugar visible como la primera página del sitio, el aviso de marca registrada de TIGER/Line® (1.1). Los límites son para fines estadísticos y no son descripciones legales de terrenos (1.1).",
+      "attribution": "Límites de los municipios: U.S. Census Bureau, TIGER/Line® Shapefiles 2024 (condados y equivalentes), simplificados por este proyecto. TIGER/Line® es una marca registrada de la Oficina del Censo de EE. UU.; el Censo no respalda ni certifica este proyecto. Los límites son para fines estadísticos y no son descripciones legales de terrenos.",
+      "methodology": "Del archivo nacional oficial se toman los 78 registros con STATEFP = 72 (MTFCC G4020, «Municipio»), sin cambiar coordenadas ni atributos (data/raw/geo/tiger-2024). Luego se simplifican con Douglas–Peucker aplicado una sola vez a cada borde compartido, para que dos municipios vecinos usen exactamente la misma línea (sin huecos ni encimas), con tolerancia de 0.0001 grados (unos 11 m) y coordenadas a 5 decimales (unos 1.1 m). Se conservan todas las islas, incluidas Mona y Desecheo como parte de Mayagüez. El resultado se puede reconstruir sin internet y siempre da los mismos bytes.",
+      "fieldMap": {
+        "id": "GEOID",
+        "name": "NAME"
+      },
+      "missingValuePolicy": "No aplica: los 78 municipios tienen geometría.",
+      "provenanceStatus": "VERIFIED",
+      "readiness": "READY",
+      "publicationDecision": "KEEP_FOR_PUBLIC_LAUNCH",
+      "publicStatus": "PUBLIC_READY",
+      "valueExclusions": [],
+      "files": [
+        "data/raw/geo/tiger-2024/manifest.json",
+        "data/raw/geo/tiger-2024/tl_2024_72_county.geojson",
+        "data/generated/municipios.geometry.json",
+        "scripts/geo/source.ts"
+      ],
+      "metrics": [],
+      "notes": "Generado desde TIGER/Line 2024 (SHA-256 del ZIP 04e668d3502757c837c13444730547cd967f28a2c49aeffb873d1792ab2cb97b, 83913260 bytes, Last-Modified del servidor Fri, 27 Jun 2025 20:01:24 GMT; extracto PR SHA-256 717bb6bbb21f1adce1f892c7df5e33e9baab085a88f243e4b9cc623aea4d8853, 120724 vértices; resultado 28,994 vértices). Coordenadas en NAD83 (GCS_North_American_1983), usadas como longitud/latitud. Cambio máximo de área por municipio al simplificar: 0.059% (Hormigueros); mediana 0.007%. Por las aguas costeras de TIGER, Culebra y Vieques colindan con Ceiba; solo Mona y Desecheo quedan sueltas."
+    }
+  ]
+}
