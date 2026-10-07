@@ -11,7 +11,8 @@ dónde sale cada cosa.
 | `normalized/census/` | `npm run data:census:generate` | Cada estimado y margen de error de la copia, por municipio. Los códigos especiales del Censo quedan como `null` con su razón. **Generado: no editar a mano.** |
 | `raw/geo/` | `npm run data:geo:update` | Copia oficial de los límites: los 78 municipios de TIGER/Line 2024, con coordenadas y atributos tal cual, más `manifest.json` (enlace, tamaño y SHA-256 del ZIP nacional y de cada archivo dentro, fecha de descarga UTC, sistema de coordenadas). |
 | `raw/bls/laus/` | `npm run data:bls:update` | Respuestas de la API oficial de BLS (LAUS), byte por byte: 13 lotes de 25 series o menos, más `manifest.json` con los pedidos, la fecha de obtención (UTC), los términos y el SHA-256 de cada lote. |
-| `generated/` | `npm run data:generate` | Lo que lee el sitio: `census-municipios.json` (medidas del Censo con su margen de error), `municipios.geometry.json` (límites del mapa), `bls-laus.json` (desempleo mensual de BLS) y `sources.public.json` (la parte pública del registro). **Generado: no editar a mano.** |
+| `raw/usaspending/` | `npm run data:usaspending:update` | Respuestas de la API oficial de USAspending, byte por byte, más `manifest.json` con cada pedido exacto, la hora, el SHA-256, la huella del plan y la fecha de actualización de USAspending. |
+| `generated/` | `npm run data:generate` | Lo que lee el sitio: `census-municipios.json` (medidas del Censo con su margen de error), `municipios.geometry.json` (límites del mapa), `bls-laus.json` (desempleo mensual de BLS), `usaspending-pr.json` (fondos federales) y `sources.public.json` (la parte pública del registro). **Generado: no editar a mano.** |
 
 ## Datos del Censo
 
@@ -90,6 +91,26 @@ sitio (src/data/pr/geo.ts → src/components/explorer/AtlasMap.tsx)
   Lo marcado «P» por BLS queda en `preliminary`. Un valor que falta queda `null`
   con su razón en `missing`.
 - **`--check`** (parte de `npm run data:check`) falla si `bls-laus.json` no es
+  exactamente lo que sale de la copia guardada.
+
+## Fondos federales (USAspending)
+
+- **De dónde:** la API oficial de USAspending (`https://api.usaspending.gov/api/v2/`),
+  sin clave. Nunca el sitio web.
+- **`data:usaspending:update`** (con red) se puede reanudar. Cada respuesta buena
+  se guarda en `.cache/usaspending/` (ignorado por git) con su pedido canónico, su
+  SHA-256 y la hora. Al volver a correr, reusa una respuesta solo si el pedido es
+  idéntico, la huella del plan es la misma y USAspending no se ha actualizado desde
+  entonces; si no, descarta la copia temporal y lo dice. Pausa de 1.2–1.6 s entre
+  pedidos, tiempo límite de 90 s, hasta 7 intentos con espera exponencial (y
+  `Retry-After`) solo para fallos de red, 408, 429 y 5xx. Si se rinde, se detiene
+  sin perder lo guardado. Solo cuando están todas las respuestas, arma la copia
+  aparte, la pasa por el generador completo y la instala de una vez.
+- **`data:usaspending:generate`** (sin red) comprueba el SHA-256 de cada archivo,
+  que estén todos los pedidos del plan (y la huella), que cada periodo sea un año
+  fiscal completo, los 78 municipios por código y nombre, montos finitos, y que
+  cada desglose sume su parte (ver DATA_SOURCES.md). Si algo no cuadra, falla.
+- **`--check`** (parte de `npm run data:check`) falla si `usaspending-pr.json` no es
   exactamente lo que sale de la copia guardada.
 
 ## Lo demás

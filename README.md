@@ -21,7 +21,7 @@ su fuente oficial, no entra.
 - **Un mapa de los 78 municipios.** Escoges una medida y cada pueblo se colorea
   según su cifra. Puedes acercarte, moverte y escoger un municipio en el mapa o en
   la lista.
-- **26 medidas** en cinco grupos:
+- **29 medidas** en seis grupos:
   - **Gente:** población, mujeres, menores de 18, 65 años o más, edad mediana y
     discapacidad.
   - **Hogar:** ingreso del hogar y por persona, pobreza, renta, valor de la
@@ -31,6 +31,8 @@ su fuente oficial, no entra.
   - **Trabajo:** desempleo mensual (BLS), desempleo promedio de 5 años (Censo),
     escuela superior y bachillerato.
   - **Salud:** personas sin plan médico y muertes de tránsito.
+  - **Fondos federales:** obligaciones, desembolsos reportados y adjudicaciones
+    federales del último año fiscal, solo lo que se puede atribuir al municipio.
   - **Toda la isla:** obesidad e inactividad física en adultos, que solo se publican
     para Puerto Rico completo.
 - **Una ficha por municipio** con la cifra, su lugar entre los 78, el margen de
@@ -50,6 +52,7 @@ su fuente oficial, no entra.
 | NHTSA, Fatality Analysis Reporting System (FARS) 2022–2023 | Muertes de tránsito |
 | CDC, Behavioral Risk Factor Surveillance System (BRFSS) 2023 | Obesidad e inactividad física, toda la isla |
 | Oficina de Estadísticas Laborales de EE. UU. (BLS), Local Area Unemployment Statistics (LAUS) | Desempleo mensual por municipio, fuerza laboral, personas empleadas y desempleadas |
+| Departamento del Tesoro de EE. UU., USAspending.gov | Obligaciones, desembolsos y adjudicaciones federales por lugar de ejecución |
 
 El detalle de cada fuente está en [DATA_SOURCES.md](DATA_SOURCES.md), y sus
 condiciones de uso, en [DATA_LICENSES.md](DATA_LICENSES.md).
@@ -90,6 +93,7 @@ Abre <http://localhost:8080>.
 | `npm run data:generate` | Vuelve a generar los datos del Censo, el mapa, el desempleo de BLS y el registro público, sin red |
 | `npm run data:census:update` | Descarga de nuevo la copia oficial del Censo (necesita red) |
 | `npm run data:geo:update` | Descarga de nuevo los límites TIGER/Line 2024 (necesita red) |
+| `npm run data:usaspending:update` | Pide de nuevo los fondos federales a la API oficial de USAspending (necesita red; se puede reanudar) |
 | `npm run data:bls:update` | Pide de nuevo el desempleo mensual a la API oficial de BLS (necesita red) |
 
 ### Actualizar los datos del Censo o del mapa
@@ -111,6 +115,16 @@ No hace falta clave de la API del Censo. Los detalles están en
    gratuita en la variable `BLS_API_KEY` usa la versión 2 (la clave no se guarda).
 2. Corre `npm run data:bls:generate -- --allow-changes` y revisa el cambio. El mes
    nuevo sale solo: es el último que BLS publica para todas las series.
+3. Corre `npm run data:registry:generate` y `npm run check`.
+
+### Actualizar los fondos federales (USAspending)
+
+1. Corre `npm run data:usaspending:update`. Solo se conecta a `api.usaspending.gov`,
+   un pedido a la vez con pausas (unos 450 pedidos, 15–30 minutos). Si se corta,
+   vuelve a correrlo: sigue donde iba, con las respuestas guardadas en `.cache/`.
+   `data/raw/usaspending/` solo se reemplaza cuando la copia completa pasa todas las
+   comprobaciones.
+2. Corre `npm run data:usaspending:generate -- --allow-changes` y revisa el cambio.
 3. Corre `npm run data:registry:generate` y `npm run check`.
 
 Usar la API de BLS es aceptar sus
@@ -184,13 +198,13 @@ no cubre los datos. Si los reusas, cita la fuente original.
 ## Sin afiliación
 
 Este es un proyecto independiente. No está afiliado al gobierno de Puerto Rico, a la
-Oficina del Censo, a NHTSA, a los CDC, a BLS ni a ninguna otra agencia, y ninguna de ellas
+Oficina del Censo, a NHTSA, a los CDC, a BLS, al Departamento del Tesoro ni a ninguna otra agencia, y ninguna de ellas
 lo respalda ni lo certifica.
 
 ---
 
 **English:** An independent, Spanish-first, open-source map of public data for
 Puerto Rico's 78 municipalities, built from U.S. Census Bureau (ACS, TIGER/Line),
-NHTSA (FARS), CDC (BRFSS) and Bureau of Labor Statistics (LAUS) data. Every number links back to its official source.
+NHTSA (FARS), CDC (BRFSS), Bureau of Labor Statistics (LAUS) and USAspending.gov (U.S. Treasury) data. Every number links back to its official source.
 Code is MIT-licensed; the data keeps its publishers' terms (see DATA_LICENSES.md).
 Not affiliated with or endorsed by any government agency.

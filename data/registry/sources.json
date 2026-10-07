@@ -315,6 +315,74 @@
       "notes": "Descargado de la API oficial v1 sin clave el 2026-10-07 (UTC): 316 series (4 medidas × Puerto Rico y 78 municipios) en 13 pedidos, guardadas byte por byte con SHA-256. El sitio de BLS bloquea robots que no siguen su política; la API es la vía oficial para programas. En cada mes, empleo + desempleo = fuerza laboral en las 79 áreas."
     },
     {
+      "datasetId": "usaspending-pr",
+      "title": "Fondos federales por municipio (USAspending)",
+      "topic": "economia",
+      "sourceAgency": "U.S. Department of the Treasury, Bureau of the Fiscal Service (USAspending.gov)",
+      "sourceTitle": "USAspending.gov prime award data: obligations, outlays and award counts for Puerto Rico by primary place of performance",
+      "sourceURL": "https://www.usaspending.gov/",
+      "additionalURLs": [
+        {
+          "label": "API oficial de USAspending (lo que usa data:usaspending:update)",
+          "url": "https://api.usaspending.gov/docs/endpoints",
+          "linkHealth": "LIVE"
+        },
+        {
+          "label": "USAspending: licencia y cita (página About)",
+          "url": "https://www.usaspending.gov/about",
+          "linkHealth": "LIVE"
+        },
+        {
+          "label": "Limitación de uso de datos de Dun & Bradstreet",
+          "url": "https://www.usaspending.gov/db_info",
+          "linkHealth": "LIVE"
+        },
+        {
+          "label": "Diccionario de datos de USAspending",
+          "url": "https://www.usaspending.gov/data-dictionary",
+          "linkHealth": "LIVE"
+        }
+      ],
+      "sourceType": "API",
+      "sourceStatus": "RESOLVED",
+      "linkHealth": "LIVE",
+      "reportingPeriod": "Año fiscal federal más reciente ya cerrado (1 de octubre a 30 de septiembre; el sitio muestra el año exacto), con los cuatro anteriores para comparar",
+      "sourcePublishedAt": "UNKNOWN",
+      "originalRetrievalAt": "2026-10-07",
+      "verifiedAt": "2026-10-07",
+      "geography": "municipio",
+      "nativeGeography": "COUNTY_EQUIVALENT",
+      "geographyJoin": "Por el código de condado del lugar principal de ejecución (72 + condado = FIPS del municipio). Sin unión por nombre. Cada dólar queda en uno de cuatro estados geográficos: atribuible a un municipio (contratos con municipio; asistencia a personas con municipio), registrado en un municipio sin certeza (otra asistencia con municipio), todo Puerto Rico (asistencia sin municipio: formato «State-wide» de FABS) y sin municipio registrado (contratos sin municipio). Los cuatro suman el total de Puerto Rico. Nada se reasigna por concentración ni por sede.",
+      "updateFrequency": "USAspending se actualiza a diario; las agencias reportan obligaciones con días o semanas de atraso (contratos de Defensa, 90 días) y desembolsos cada mes. El último año fiscal puede seguir subiendo semanas después de cerrar.",
+      "redistributionStatus": "ATTRIBUTION_REQUIRED",
+      "rightsEvidence": "Página About de USAspending.gov, sección Licensing (leída el 2026-10-06): el Departamento del Tesoro, Bureau of the Fiscal Service, dice que los datos del sitio se pueden copiar, adaptar, redistribuir o usar para fines comerciales o no comerciales, sujeto a la «Limitation on Permissible Use of Dun & Bradstreet, Inc. Data». Cita sugerida: «USAspending.gov, U.S. Department of Treasury, Bureau of the Fiscal Service, https://www.usaspending.gov. Accessed [fecha]». La limitación de D&B (usaspending.gov/db_info) cubre nombre, dirección, ciudad, estado, país, condado y ZIP de las entidades (datos de D&B): pide atribución a D&B y prohíbe diseminarlos en bloque; también prohíbe la extracción sistemática del sitio web con robots. Este proyecto usa la API oficial (no el sitio web), y no guarda ni publica nombres ni direcciones de recipientes: solo montos agregados por municipio, agencia y programa, y números de adjudicación de CDBG. Con eso no hay conflicto con mostrar, transformar ni redistribuir en un repositorio público.",
+      "attribution": "Fuente: USAspending.gov, U.S. Department of the Treasury, Bureau of the Fiscal Service, https://www.usaspending.gov.",
+      "methodology": "Obligaciones: suma de federal_action_obligation de las transacciones de adjudicaciones primarias con fecha de acción en el año fiscal, por lugar principal de ejecución (puede haber montos negativos: desobligaciones). Desembolsos: total_outlays acumulado que reportan las agencias para las adjudicaciones con actividad en el año, a nivel de adjudicación; no se suman con las obligaciones de transacción. Adjudicaciones: número de adjudicaciones primarias con actividad en el año. El mapa solo pinta lo atribuible a un municipio: contratos (FPDS: donde se hace el trabajo) y asistencia a personas (tipo de negocio P de FABS) con municipio. Obligado no quiere decir desembolsado ni gastado; desembolsado tampoco quiere decir gastado por quien lo recibe.",
+      "fieldMap": {
+        "fedObligations": "spending_by_geography, spending_level=transactions, scope=place_of_performance, geo_layer=county: contratos (A–D, IDV) + asistencia a personas (recipient_type_names=individuals)",
+        "fedOutlays": "spending_by_geography, spending_level=awards: total_outlays de contratos + asistencia a personas",
+        "fedAwards": "spending_by_award_count por municipio: contratos + IDV + asistencia a personas",
+        "puertoRico": "spending_by_geography, geo_layer=state, PR"
+      },
+      "missingValuePolicy": "Si USAspending no registra nada para un municipio, queda vacío con su razón; nunca se vuelve $0. Un desembolso no reportado queda vacío, no $0. Un $0 solo aparece cuando la fuente suma $0.",
+      "provenanceStatus": "VERIFIED",
+      "readiness": "READY",
+      "publicationDecision": "KEEP_FOR_PUBLIC_LAUNCH",
+      "publicStatus": "PUBLIC_READY",
+      "valueExclusions": [],
+      "files": [
+        "data/raw/usaspending/manifest.json",
+        "data/generated/usaspending-pr.json",
+        "scripts/usaspending/source.ts"
+      ],
+      "metrics": [
+        "fedObligations",
+        "fedOutlays",
+        "fedAwards"
+      ],
+      "notes": "Obtenido de la API oficial sin clave entre el 2026-10-07T22:39:40.118Z y el 2026-10-07T22:59:39.920Z (UTC), de forma reanudable: 530 respuestas guardadas byte por byte con SHA-256 y la huella del plan 4b4d640f7418. USAspending actualizado el 2026-10-07. AF 2026: total de Puerto Rico $38.97 mil millones; atribuible a municipios $15.67 mil millones, registrado en municipios sin certeza $15.32 mil millones, todo Puerto Rico $7.97 mil millones, sin municipio $0. La respuesta de la API para todas las adjudicaciones por condado omitió a Culebra (su fila existe al pedirla sola); por eso cada municipio se pide aparte a nivel de adjudicación y todo se cuadra con el total de Puerto Rico."
+    },
+    {
       "datasetId": "geometria-municipios",
       "title": "Límites de los 78 municipios",
       "topic": "geografia",

@@ -1,7 +1,9 @@
+import { fundsValues } from "./funds";
 import { latestRates } from "./laus";
 import type { Municipio } from "./places";
 
 const LAUS_RATES = latestRates();
+const FUNDS = fundsValues();
 
 /**
  * Island-wide figures from the CDC BRFSS 2023 (data.cdc.gov, public domain).
@@ -33,6 +35,10 @@ export function applyLayers(places: Municipio[]): Municipio[] {
       ...place.values,
       // BLS LAUS, latest month: copied as published; a missing value stays null.
       unemploymentMonthly: LAUS_RATES[place.id] ?? null,
+      // USAspending, money attributable to the municipio only; null stays null.
+      fedObligations: FUNDS[place.id]?.obligations ?? null,
+      fedOutlays: FUNDS[place.id]?.outlays ?? null,
+      fedAwards: FUNDS[place.id]?.awards ?? null,
       // Island-wide only: no municipio has its own figure.
       obesity: null,
       inactivity: null,

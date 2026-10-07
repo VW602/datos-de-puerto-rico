@@ -124,6 +124,28 @@
       "valueExclusions": []
     },
     {
+      "datasetId": "usaspending-pr",
+      "title": "Fondos federales por municipio (USAspending)",
+      "sourceAgency": "U.S. Department of the Treasury, Bureau of the Fiscal Service (USAspending.gov)",
+      "sourceTitle": "USAspending.gov prime award data: obligations, outlays and award counts for Puerto Rico by primary place of performance",
+      "reportingPeriod": "Año fiscal federal más reciente ya cerrado (1 de octubre a 30 de septiembre; el sitio muestra el año exacto), con los cuatro anteriores para comparar",
+      "geography": "municipio",
+      "attribution": "Fuente: USAspending.gov, U.S. Department of the Treasury, Bureau of the Fiscal Service, https://www.usaspending.gov.",
+      "missingValuePolicy": "Si USAspending no registra nada para un municipio, queda vacío con su razón; nunca se vuelve $0. Un desembolso no reportado queda vacío, no $0. Un $0 solo aparece cuando la fuente suma $0.",
+      "publicStatus": "PUBLIC_READY",
+      "metrics": [
+        "fedObligations",
+        "fedOutlays",
+        "fedAwards"
+      ],
+      "sourceURL": "https://www.usaspending.gov/",
+      "methodology": "Obligaciones: suma de federal_action_obligation de las transacciones de adjudicaciones primarias con fecha de acción en el año fiscal, por lugar principal de ejecución (puede haber montos negativos: desobligaciones). Desembolsos: total_outlays acumulado que reportan las agencias para las adjudicaciones con actividad en el año, a nivel de adjudicación; no se suman con las obligaciones de transacción. Adjudicaciones: número de adjudicaciones primarias con actividad en el año. El mapa solo pinta lo atribuible a un municipio: contratos (FPDS: donde se hace el trabajo) y asistencia a personas (tipo de negocio P de FABS) con municipio. Obligado no quiere decir desembolsado ni gastado; desembolsado tampoco quiere decir gastado por quien lo recibe.",
+      "verified": true,
+      "retrievedAt": "2026-10-07",
+      "marginOfErrorAvailable": false,
+      "valueExclusions": []
+    },
+    {
       "datasetId": "geometria-municipios",
       "title": "Límites de los 78 municipios",
       "sourceAgency": "U.S. Census Bureau, Geography Division",

@@ -1,0 +1,527 @@
+{
+  "generated": "GENERADO por scripts/usaspending/generate.ts desde data/raw/usaspending. NO EDITAR A MANO.",
+  "schema": 1,
+  "generatorVersion": 1,
+  "source": {
+    "publisher": "U.S. Department of the Treasury, Bureau of the Fiscal Service",
+    "site": "https://www.usaspending.gov/",
+    "api": "https://api.usaspending.gov/api/v2/",
+    "retrievedAt": "2026-10-07T22:39:40.118Z",
+    "retrievedUntil": "2026-10-07T22:59:39.920Z",
+    "sourceLastUpdated": "2026-10-07",
+    "outlaysReportedThrough": {
+      "fiscalYear": 2026,
+      "fiscalMonth": 11,
+      "periodEnd": "2026-08-31"
+    },
+    "planFingerprint": "4b4d640f7418c9979c6d51eaa1a5297f97519c51de3fe803b06731b7b4f01143",
+    "terms": {
+      "about": "https://www.usaspending.gov/about",
+      "dnb": "https://www.usaspending.gov/db_info",
+      "apiDocs": "https://api.usaspending.gov/docs/endpoints",
+      "dataDictionary": "https://www.usaspending.gov/data-dictionary"
+    },
+    "attribution": "Fuente: USAspending.gov, U.S. Department of the Treasury, Bureau of the Fiscal Service, https://www.usaspending.gov."
+  },
+  "fiscalYear": 2026,
+  "period": {
+    "start": "2025-10-01",
+    "end": "2026-09-30"
+  },
+  "history": [
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+  ],
+  "island": {
+    "total": 38971247071.72,
+    "states": {
+      "MUNICIPIO_ATTRIBUTABLE": 15673984553.66,
+      "MUNICIPIO_UNCERTAIN": 15324370334.09,
+      "PUERTO_RICO_STATEWIDE": 7972892183.97,
+      "NO_MUNICIPIO_GEOGRAPHY": 0
+    },
+    "statewideIndividuals": 0,
+    "byAwardType": {
+      "contracts": 2074188084.12,
+      "idvs": 0,
+      "grants": 9239845404.79,
+      "direct_payments": 27638554582.68,
+      "loans": -11495470.78,
+      "other": 30154470.91
+    },
+    "award": {
+      "obligations": 99469906002.31,
+      "outlays": 49103056761.85,
+      "states": {
+        "MUNICIPIO_ATTRIBUTABLE": {
+          "obligations": 20020524639.34,
+          "outlays": 12576663720.51
+        },
+        "MUNICIPIO_UNCERTAIN": {
+          "obligations": 60995634973.65,
+          "outlays": 22576578676
+        },
+        "PUERTO_RICO_STATEWIDE": {
+          "obligations": 18453746389.32,
+          "outlays": 13949814365.34
+        },
+        "NO_MUNICIPIO_GEOGRAPHY": {
+          "obligations": 0,
+          "outlays": null
+        }
+      },
+      "municipiosAskedOneByOne": [
+        "72049"
+      ]
+    },
+    "awards": {
+      "recorded": 33047,
+      "byType": {
+        "contracts": 3698,
+        "direct_payments": 17767,
+        "grants": 3298,
+        "idvs": 0,
+        "loans": 7006,
+        "other": 1278
+      }
+    },
+    "agencies": [
+      [
+        "HHS",
+        14973500491.45
+      ],
+      [
+        "SSA",
+        11835391369.77
+      ],
+      [
+        "USDA",
+        3558759270.34
+      ],
+      [
+        "VA",
+        1890392497.93
+      ],
+      [
+        "DOD",
+        1658753666.45
+      ],
+      [
+        "ED",
+        1599507438.74
+      ],
+      [
+        "DHS",
+        1496650361.92
+      ],
+      [
+        "HUD",
+        845671195.65
+      ]
+    ],
+    "programs": [
+      [
+        "96.002",
+        8430306364
+      ],
+      [
+        "93.774",
+        4485061600.79
+      ],
+      [
+        "93.778",
+        4191162658.89
+      ],
+      [
+        "10.566",
+        2978782575.19
+      ],
+      [
+        "93.773",
+        2888300445.43
+      ],
+      [
+        "93.770",
+        2370250363.76
+      ],
+      [
+        "96.001",
+        2224158053
+      ],
+      [
+        "64.109",
+        1502540072
+      ]
+    ],
+    "history": [
+      {
+        "fiscalYear": 2022,
+        "total": 39003333666.81,
+        "states": {
+          "MUNICIPIO_ATTRIBUTABLE": 13395501624.8,
+          "MUNICIPIO_UNCERTAIN": 18304744498.05,
+          "PUERTO_RICO_STATEWIDE": 7303087543.96,
+          "NO_MUNICIPIO_GEOGRAPHY": 0
+        }
+      },
+      {
+        "fiscalYear": 2023,
+        "total": 39640111295.53,
+        "states": {
+          "MUNICIPIO_ATTRIBUTABLE": 14679615922.22,
+          "MUNICIPIO_UNCERTAIN": 15923254618.96,
+          "PUERTO_RICO_STATEWIDE": 9037240754.35,
+          "NO_MUNICIPIO_GEOGRAPHY": 0
+        }
+      },
+      {
+        "fiscalYear": 2024,
+        "total": 40452074036.14,
+        "states": {
+          "MUNICIPIO_ATTRIBUTABLE": 14656154682.11,
+          "MUNICIPIO_UNCERTAIN": 15819926878.73,
+          "PUERTO_RICO_STATEWIDE": 9975992475.3,
+          "NO_MUNICIPIO_GEOGRAPHY": 0
+        }
+      },
+      {
+        "fiscalYear": 2025,
+        "total": 38433551211.26,
+        "states": {
+          "MUNICIPIO_ATTRIBUTABLE": 15076453275.22,
+          "MUNICIPIO_UNCERTAIN": 15055302121.45,
+          "PUERTO_RICO_STATEWIDE": 8301795814.59,
+          "NO_MUNICIPIO_GEOGRAPHY": 0
+        }
+      },
+      {
+        "fiscalYear": 2026,
+        "total": 38971247071.72,
+        "states": {
+          "MUNICIPIO_ATTRIBUTABLE": 15673984553.66,
+          "MUNICIPIO_UNCERTAIN": 15324370334.09,
+          "PUERTO_RICO_STATEWIDE": 7972892183.97,
+          "NO_MUNICIPIO_GEOGRAPHY": 0
+        }
+      }
+    ]
+  },
+  "missing": [],
+  "cdbg": [
+    {
+      "awardId": "B-18-DP-72-0002",
+      "obligated": 8285284000,
+      "outlays": 644335983.26,
+      "start": "2021-05-12",
+      "end": "2033-05-12"
+    },
+    {
+      "awardId": "B-18-DP-72-0001",
+      "obligated": 8220783000,
+      "outlays": 4104995025.12,
+      "start": "2018-09-20",
+      "end": "2029-12-31"
+    },
+    {
+      "awardId": "B-18-DE-72-0001",
+      "obligated": 1932347000,
+      "outlays": 171263928.25,
+      "start": "2022-08-05",
+      "end": "2033-05-12"
+    },
+    {
+      "awardId": "B-17-DM-72-0001",
+      "obligated": 1507179000,
+      "outlays": 1206321863.72,
+      "start": null,
+      "end": null
+    },
+    {
+      "awardId": "B-19-DP-72-0001",
+      "obligated": 277853230,
+      "outlays": 64550621.55,
+      "start": "2021-07-07",
+      "end": "2029-12-31"
+    },
+    {
+      "awardId": "B-21-DZ-72-0001",
+      "obligated": 184626000,
+      "outlays": 20757130.89,
+      "start": "2022-07-21",
+      "end": "2028-07-21"
+    },
+    {
+      "awardId": "B-23-DN-72-0001",
+      "obligated": 165645000,
+      "outlays": 66301.23,
+      "start": "2024-07-18",
+      "end": "2030-07-18"
+    },
+    {
+      "awardId": "B-19-DF-72-0001",
+      "obligated": 36424000,
+      "outlays": 12376636.04,
+      "start": "2022-01-05",
+      "end": "2028-01-05"
+    },
+    {
+      "awardId": "B-20-DW-72-0001",
+      "obligated": 33178921,
+      "outlays": 32265204.37,
+      "start": "2020-08-04",
+      "end": "2026-08-04"
+    },
+    {
+      "awardId": "B-08-DI-72-0001",
+      "obligated": 27065441.36,
+      "outlays": 3581198.96,
+      "start": null,
+      "end": "2026-02-24"
+    },
+    {
+      "awardId": "B-18-DC-72-0001",
+      "obligated": 24363783,
+      "outlays": 23488314.81,
+      "start": null,
+      "end": null
+    },
+    {
+      "awardId": "B-20-DC-72-0001",
+      "obligated": 23884017,
+      "outlays": 18249333.1,
+      "start": "2020-10-16",
+      "end": "2027-09-01"
+    },
+    {
+      "awardId": "B-21-DC-72-0001",
+      "obligated": 23780802,
+      "outlays": 15604596.78,
+      "start": "2021-08-18",
+      "end": "2028-09-01"
+    },
+    {
+      "awardId": "B-19-DC-72-0001",
+      "obligated": 23715075,
+      "outlays": 21763888.8,
+      "start": "2019-07-01",
+      "end": "2026-09-01"
+    },
+    {
+      "awardId": "B-17-DC-72-0001",
+      "obligated": 23078405,
+      "outlays": 16904006.77,
+      "start": "2017-10-19",
+      "end": null
+    },
+    {
+      "awardId": "B-22-DC-72-0001",
+      "obligated": 22595084,
+      "outlays": 10254383.32,
+      "start": "2022-07-01",
+      "end": "2029-09-01"
+    },
+    {
+      "awardId": "B-23-DC-72-0001",
+      "obligated": 22385506,
+      "outlays": 6779622.13,
+      "start": "2023-07-01",
+      "end": "2030-09-01"
+    },
+    {
+      "awardId": "B-24-DC-72-0001",
+      "obligated": 22131554,
+      "outlays": 5497997.87,
+      "start": "2024-07-01",
+      "end": "2031-09-01"
+    },
+    {
+      "awardId": "B-25-DC-72-0001",
+      "obligated": 21788490,
+      "outlays": 2068170.45,
+      "start": "2024-10-01",
+      "end": "2032-09-30"
+    },
+    {
+      "awardId": "B-26-DC-72-0001",
+      "obligated": 21377853,
+      "outlays": null,
+      "start": "2025-10-01",
+      "end": "2034-09-30"
+    },
+    {
+      "awardId": "B-23-DN-72-0002",
+      "obligated": 667000,
+      "outlays": 0,
+      "start": "2024-07-18",
+      "end": "2030-07-18"
+    }
+  ],
+  "names": {
+    "agencies": {
+      "DHS": "Department of Homeland Security",
+      "DOC": "Department of Commerce",
+      "DOD": "Department of Defense",
+      "DOI": "Department of the Interior",
+      "DOJ": "Department of Justice",
+      "DOL": "Department of Labor",
+      "DOS": "Department of State",
+      "DOT": "Department of Transportation",
+      "ED": "Department of Education",
+      "EPA": "Environmental Protection Agency",
+      "GSA": "General Services Administration",
+      "HHS": "Department of Health and Human Services",
+      "HUD": "Department of Housing and Urban Development",
+      "NSF": "National Science Foundation",
+      "SSA": "Social Security Administration",
+      "TREAS": "Department of the Treasury",
+      "USDA": "Department of Agriculture",
+      "VA": "Department of Veterans Affairs"
+    },
+    "programs": {
+      "10.096": "Marketing Assistance for Specialty Crops",
+      "10.098": "Reimbursement Transportation Cost Payment Program for Geographically Disadvantaged Farmers and Ranchers",
+      "10.427": "Rural Rental Assistance Payments",
+      "10.447": "Rural Multi-Family Housing Revitalization Demonstration Program (MPR)",
+      "10.451": "Noninsured Crop Disaster Assistance Program",
+      "10.566": "Nutrition Assistance For Puerto Rico",
+      "10.699": "Partnership Agreements",
+      "10.704": "Law Enforcement Agreements",
+      "10.763": "Emergency Community Water Assistance Grants",
+      "10.766": "Community Facilities Loans and Grants",
+      "10.912": "Environmental Quality Incentives Program",
+      "10.923": "Emergency Watershed Protection Program",
+      "10.924": "Conservation Stewardship Program",
+      "10.988": "Supplemental Disaster Relief Program",
+      "10.991": "Assistance for Specialty Crop Farmers",
+      "14.157": "Supportive Housing for the Elderly",
+      "14.195": "Project-Based Rental Assistance (PBRA)",
+      "14.218": "Community Development Block Grants/Entitlement Grants",
+      "14.239": "Home Investment Partnerships Program",
+      "14.267": "Continuum of Care Program ",
+      "14.856": "Lower Income Housing Assistance Program Section 8 Moderate Rehabilitation",
+      "14.871": "Section 8 Housing Choice Vouchers",
+      "15.630": "Coastal",
+      "15.631": "Partners for Fish and Wildlife",
+      "15.657": "Endangered Species Recovery Implementation",
+      "15.916": "Outdoor Recreation Acquisition, Development and Planning",
+      "20.106": "Airport Improvement Program, Infrastructure Investment and Jobs Act Programs, and COVID-19 Airports Programs",
+      "20.116": "Airport Improvement Program",
+      "20.117": "Airport Infrastructure Grants",
+      "20.205": "Highway Planning and Construction",
+      "20.263": "Bridge Formula Program",
+      "20.298": "Territorial and Puerto Rico Highway Program",
+      "20.939": "Safe Streets and Roads for All",
+      "32.004": "UNIVERSAL SERVICE FUND - SCHOOLS and LIBRARIES",
+      "47.083": "Integrative Activities",
+      "59.008": "Disaster Assistance Loans",
+      "64.028": "Post-9/11 Veterans Educational Assistance",
+      "64.104": "Pension for Non-Service-Connected Disability for Veterans",
+      "64.105": "Pension to Veterans Surviving Spouses, and Children",
+      "64.109": "Veterans Compensation for Service-Connected Disability",
+      "64.110": "Veterans Dependency and Indemnity Compensation for Service-Connected Death",
+      "64.117": "Survivors and Dependents Educational Assistance",
+      "66.447": "Sewer Overflow and Stormwater Reuse Municipal Grant Program",
+      "66.818": "Brownfields Multipurpose, Assessment, Revolving Loan Fund, and Cleanup Cooperative Agreements",
+      "84.033": "Federal Work-Study Program",
+      "84.063": "Federal Pell Grant Program",
+      "84.116": "Fund for the Improvement of Postsecondary Education",
+      "84.282": "Charter Schools",
+      "93.145": "HIV-Related Training and Technical Assistance",
+      "93.211": "Telehealth Programs",
+      "93.224": "Health Center Program",
+      "93.356": "Head Start Disaster Recovery",
+      "93.600": "Head Start",
+      "93.770": "Medicare Prescription Drug Coverage",
+      "93.773": "Medicare Hospital Insurance",
+      "93.774": "Medicare Supplementary Medical Insurance",
+      "93.778": "Grants to States for Medicaid",
+      "96.001": "Social Security Disability Insurance",
+      "96.002": "Social Security Retirement Insurance",
+      "96.004": "Social Security Survivors Insurance",
+      "97.036": "Disaster Grants - Public Assistance (Presidentially Declared Disasters)"
+    }
+  },
+  "municipios": {
+    "72001": {"name":"Adjuntas","recorded":67764403.75,"attributable":65439787.89,"contracts":11959803.11,"individuals":53479984.78,"uncertain":2324615.86,"award":{"attributableObligations":107851787.63,"attributableOutlays":86652101.56,"uncertainObligations":7154192.02,"uncertainOutlays":5657186.75},"awards":{"recorded":539,"attributable":182},"contractAgencies":[["DOT",11473925.42],["DHS",337334.51],["DOD",68940.18],["USDA",62803],["DOI",16800]],"individualPrograms":[["96.002",30215805],["96.001",9909894],["64.109",6517081],["96.004",5588893],["64.110",230284]],"uncertainPrograms":[["14.195",752037],["10.988",519007.32],["20.205",432907.59],["14.871",254101],["10.912",178160.08]],"history":{"attributable":[56754431.66,73781560.05,73208776.57,58937165.08,65439787.89],"uncertain":[2482585.68,2028260.1,5026794.49,2449172.09,2324615.86]}},
+    "72003": {"name":"Aguada","recorded":162271307.29,"attributable":158888569.55,"contracts":2153626.97,"individuals":156734942.58,"uncertain":3382737.74,"award":{"attributableObligations":172959244.37,"attributableOutlays":134833456.25,"uncertainObligations":2583699.68,"uncertainOutlays":1673269.39},"awards":{"recorded":266,"attributable":196},"contractAgencies":[["DOD",2149126.97],["DHS",4500]],"individualPrograms":[["96.002",88754408],["96.001",33370678],["64.109",19316146],["96.004",12306791],["64.028",884670]],"uncertainPrograms":[["20.205",1533750.38],["14.871",851894],["14.195",424860],["10.912",235748.63],["84.063",141179.37]],"history":{"attributable":[130846106.57,143578705.89,150741112.24,163938009.65,158888569.55],"uncertain":[3808988.09,1822411.83,1696667.04,3085370.06,3382737.74]}},
+    "72005": {"name":"Aguadilla","recorded":448523481.42,"attributable":344785920.21,"contracts":88571648.73,"individuals":256214271.48,"uncertain":103737561.21,"award":{"attributableObligations":655660670.17,"attributableOutlays":300979756.97,"uncertainObligations":177864339.89,"uncertainOutlays":99904293.27},"awards":{"recorded":396,"attributable":239},"contractAgencies":[["DOD",42011551.45],["DHS",27090782.29],["DOL",19035865.75],["GSA",292004.8],["HHS",122000]],"individualPrograms":[["96.002",136912713],["64.109",49994667],["96.001",38618808],["96.004",22960537],["64.028",2694030]],"uncertainPrograms":[["84.063",32723621.34],["20.117",24414554],["20.298",19231989.4],["20.116",14128711],["20.205",5237262.24]],"history":{"attributable":[420283373.86,274845590.78,301899466.1,308810389.75,344785920.21],"uncertain":[44800035.38,46398237.87,48117875.19,65605470.57,103737561.21]}},
+    "72007": {"name":"Aguas Buenas","recorded":93561081.89,"attributable":89943884.01,"contracts":0,"individuals":89943884.01,"uncertain":3617197.88,"award":{"attributableObligations":89943884.01,"attributableOutlays":80090381,"uncertainObligations":3046000.87,"uncertainOutlays":2017658.19},"awards":{"recorded":226,"attributable":154},"contractAgencies":[],"individualPrograms":[["96.002",54426947],["96.001",18190036],["64.109",8440135],["96.004",7460578],["64.104",362661]],"uncertainPrograms":[["14.871",1076688],["20.205",1053625.73],["14.195",878071],["10.763",354000],["32.004",246927.54]],"history":{"attributable":[79165284.61,83796681.87,88590359.74,95139470,89943884.01],"uncertain":[3775591.24,2471209.38,2202447.21,2449431.46,3617197.88]}},
+    "72009": {"name":"Aibonito","recorded":134607521.41,"attributable":132110901.43,"contracts":15891581.73,"individuals":116219319.7,"uncertain":2496619.98,"award":{"attributableObligations":145672331.8,"attributableOutlays":106953362.92,"uncertainObligations":1649946.05,"uncertainOutlays":1326850.71},"awards":{"recorded":218,"attributable":182},"contractAgencies":[["DOT",15891581.73]],"individualPrograms":[["96.002",65787113],["96.001",25817503],["64.109",14920405],["96.004",6655850],["64.110",1032144]],"uncertainPrograms":[["20.205",1246773.93],["14.195",677661],["14.871",280956],["10.988",152178.25],["10.912",57958.4]],"history":{"attributable":[109434770.07,109061508.42,114056707.22,121642585.22,132110901.43],"uncertain":[2927551.52,1424497.98,509968.44,2535116.17,2496619.98]}},
+    "72011": {"name":"Añasco","recorded":130024616.28,"attributable":124437885.76,"contracts":13649828.43,"individuals":110788057.33,"uncertain":5586730.52,"award":{"attributableObligations":130800178.72,"attributableOutlays":102618009.97,"uncertainObligations":1708247.91,"uncertainOutlays":1234727.96},"awards":{"recorded":413,"attributable":188},"contractAgencies":[["DOT",13409332.28],["USDA",240496.15]],"individualPrograms":[["96.002",69274676],["96.001",20332850],["64.109",10956572],["96.004",8535239],["64.110",434624]],"uncertainPrograms":[["20.205",4243758.22],["14.871",728408],["10.988",243124],["10.991",238664.49],["32.004",148077]],"history":{"attributable":[93181648.56,105784994.21,110916817.95,115179576.25,124437885.76],"uncertain":[1913681.78,890000.86,5595183.15,1552995.8,5586730.52]}},
+    "72013": {"name":"Arecibo","recorded":532777676.91,"attributable":484291994.79,"contracts":81579232.58,"individuals":402712762.21,"uncertain":48485682.12,"award":{"attributableObligations":557475499.65,"attributableOutlays":446293099.22,"uncertainObligations":137048480,"uncertainOutlays":117721797.72},"awards":{"recorded":489,"attributable":267},"contractAgencies":[["DOD",72635223.44],["DOL",4546505.85],["EPA",2340137],["NSF",2045976.29],["DHS",11390]],"individualPrograms":[["96.002",232092800],["96.001",90176336],["64.109",39173937],["96.004",33789667],["64.110",2227471]],"uncertainPrograms":[["84.063",32064723.16],["20.205",6329298.32],["14.871",4760813],["14.218",809447],["14.195",718558]],"history":{"attributable":[386996677.05,417890899.23,422128895.23,455439644.57,484291994.79],"uncertain":[187261245.43,195658278.82,192719223.46,211284087.36,48485682.12]}},
+    "72015": {"name":"Arroyo","recorded":78282665.04,"attributable":71098387.86,"contracts":0,"individuals":71098387.86,"uncertain":7184277.18,"award":{"attributableObligations":71098387.86,"attributableOutlays":62555334,"uncertainObligations":45000332.46,"uncertainOutlays":28237245.85},"awards":{"recorded":193,"attributable":159},"contractAgencies":[],"individualPrograms":[["96.002",40598322],["96.001",15936270],["64.109",7104561],["96.004",6012955],["64.110",413161]],"uncertainPrograms":[["93.224",3689103],["84.063",1535512.45],["14.856",605437],["93.145",439241],["32.004",430406.06]],"history":{"attributable":[58800540.05,63443169.76,68110237.88,74076383.05,71098387.86],"uncertain":[6172595.85,6658554.56,7503774.09,7432611.53,7184277.18]}},
+    "72017": {"name":"Barceloneta","recorded":103998038.23,"attributable":99057789.28,"contracts":0,"individuals":99057789.28,"uncertain":4940248.95,"award":{"attributableObligations":99186054.25,"attributableOutlays":86839056.97,"uncertainObligations":1158964.95,"uncertainOutlays":819483.55},"awards":{"recorded":234,"attributable":203},"contractAgencies":[],"individualPrograms":[["96.002",52019336],["96.001",26932816],["64.109",10584647],["96.004",7878809],["64.110",379054]],"uncertainPrograms":[["93.224",3808956],["14.871",896840],["10.912",122281],["32.004",37251.9],["10.988",28452.9]],"history":{"attributable":[85264041.87,91024006.29,95624152.59,102388071.18,99057789.28],"uncertain":[26518391.32,4273697.83,9491004.84,5066130.18,4940248.95]}},
+    "72019": {"name":"Barranquitas","recorded":108782834.39,"attributable":93315738.35,"contracts":355116.12,"individuals":92960622.23,"uncertain":15467096.04,"award":{"attributableObligations":101333748.03,"attributableOutlays":78814527.59,"uncertainObligations":37544965.41,"uncertainOutlays":31536364.1},"awards":{"recorded":309,"attributable":170},"contractAgencies":[["DOT",355116.12]],"individualPrograms":[["96.002",46136727],["96.001",22082905],["64.109",13946535],["96.004",7421250],["64.110",1365004]],"uncertainPrograms":[["84.063",8368322.04],["14.195",1906672],["20.205",1101578.77],["14.871",876853],["14.157",712548]],"history":{"attributable":[78889684.62,84405099.26,97233088.55,95598148.12,93315738.35],"uncertain":[14489038.84,14513064.86,13580065.17,16395030.39,15467096.04]}},
+    "72021": {"name":"Bayamón","recorded":957614187.01,"attributable":836039108.87,"contracts":6978392.05,"individuals":829060716.82,"uncertain":121575078.14,"award":{"attributableObligations":864096574.65,"attributableOutlays":734491193.28,"uncertainObligations":344714513.96,"uncertainOutlays":284522365.83},"awards":{"recorded":741,"attributable":391},"contractAgencies":[["DHS",3999555.92],["VA",3023975.92],["HUD",503150],["USDA",46161.14],["DOI",36108.1]],"individualPrograms":[["96.002",541865206],["96.001",98985546],["64.109",91097209],["96.004",79478802],["64.110",6844106]],"uncertainPrograms":[["84.063",65628539.82],["93.600",19817231.62],["14.871",16139980],["14.195",10688205],["20.205",6646872.15]],"history":{"attributable":[788210857.77,808857960.12,858477976.72,907595681.64,836039108.87],"uncertain":[122092379.64,133355719.22,143181034.16,138339265.32,121575078.14]}},
+    "72023": {"name":"Cabo Rojo","recorded":272950152.22,"attributable":216538790.63,"contracts":30241925.02,"individuals":186296865.61,"uncertain":56411361.59,"award":{"attributableObligations":275703496.18,"attributableOutlays":179205756.19,"uncertainObligations":41156715.81,"uncertainOutlays":1321109.57},"awards":{"recorded":320,"attributable":252},"contractAgencies":[["DOD",28742496.11],["GSA",890741.26],["DOI",527157.58],["EPA",76435],["DHS",5095.07]],"individualPrograms":[["96.002",118862214],["64.109",26882359],["96.001",21470561],["96.004",15102631],["64.110",822252]],"uncertainPrograms":[["20.205",54323862.4],["10.912",686367],["14.218",657059],["14.871",564703],["32.004",140691.48]],"history":{"attributable":[310240233.29,310975468.12,284380023.55,258771319.12,216538790.63],"uncertain":[7899936.65,2310219.19,1479083.18,3146517.01,56411361.59]}},
+    "72025": {"name":"Caguas","recorded":704978384.22,"attributable":583313591.56,"contracts":1350354.92,"individuals":581963236.64,"uncertain":121664792.66,"award":{"attributableObligations":593066137.92,"attributableOutlays":508423057.43,"uncertainObligations":445120630.14,"uncertainOutlays":320749636.87},"awards":{"recorded":584,"attributable":280},"contractAgencies":[["DHS",469763.17],["VA",314843.13],["SSA",313016.55],["DOD",132497.19],["DOI",66702.48]],"individualPrograms":[["96.002",369766854],["96.001",86886793],["64.109",67402857],["96.004",45659349],["64.110",4245833]],"uncertainPrograms":[["20.205",36374511.66],["93.600",32347200.64],["84.063",20565494.01],["14.195",9721673],["14.871",9610146]],"history":{"attributable":[518924065.91,549291330.92,569672757.18,608287841.57,583313591.56],"uncertain":[108770536.39,112853406.71,132864463.38,120277353.85,121664792.66]}},
+    "72027": {"name":"Camuy","recorded":211641773.16,"attributable":168010913.33,"contracts":32451237.58,"individuals":135559675.75,"uncertain":43630859.83,"award":{"attributableObligations":182429062.77,"attributableOutlays":120302709.81,"uncertainObligations":77511927.22,"uncertainOutlays":50371190.29},"awards":{"recorded":321,"attributable":232},"contractAgencies":[["DOD",32451237.58]],"individualPrograms":[["96.002",75023786],["96.001",33715233],["64.109",12749544],["96.004",11453053],["64.110",784897]],"uncertainPrograms":[["20.205",30897107.27],["10.427",5693940],["93.224",2781687],["66.447",1759000],["14.195",1467561]],"history":{"attributable":[160292627.64,139770096.4,163890382.62,179458055.56,168010913.33],"uncertain":[13014075.42,14620167.5,12899626.34,16486118,43630859.83]}},
+    "72029": {"name":"Canóvanas","recorded":225157430.16,"attributable":206383373.19,"contracts":35841000,"individuals":170542373.19,"uncertain":18774056.97,"award":{"attributableObligations":206437140.45,"attributableOutlays":147852777.6,"uncertainObligations":40520808,"uncertainOutlays":28991114.83},"awards":{"recorded":330,"attributable":252},"contractAgencies":[["DOT",35841000]],"individualPrograms":[["96.002",105601993],["96.001",26370114],["64.109",19872037],["96.004",15790679],["64.110",711338]],"uncertainPrograms":[["20.205",9435837.41],["93.600",5662135.67],["14.218",1868902],["15.916",737179.5],["14.195",623684]],"history":{"attributable":[149396679.57,157775601.95,164866716.24,177598685.35,206383373.19],"uncertain":[6521435.83,6165628.5,15722464.17,8593471.79,18774056.97]}},
+    "72031": {"name":"Carolina","recorded":801270039.3,"attributable":639776459.19,"contracts":19854651.46,"individuals":619921807.73,"uncertain":161493580.11,"award":{"attributableObligations":706006492.33,"attributableOutlays":560361370.53,"uncertainObligations":290553749.14,"uncertainOutlays":207562835.92},"awards":{"recorded":573,"attributable":313},"contractAgencies":[["DOD",7688066.72],["DHS",6462303.7],["GSA",3444659.11],["DOT",849160.09],["DOC",668543.3]],"individualPrograms":[["96.002",414554852],["96.001",72869067],["64.109",67512573],["96.004",52409215],["64.110",5682835]],"uncertainPrograms":[["84.063",37610555.28],["93.356",31338360.76],["20.298",29067239.9],["20.205",26596172.07],["93.600",10266343.69]],"history":{"attributable":[595162409.13,603554270.38,611199555.52,661878087.72,639776459.19],"uncertain":[74256000.34,66819379.32,74361583.99,74164657.71,161493580.11]}},
+    "72033": {"name":"Cataño","recorded":81287456.97,"attributable":75070225.23,"contracts":497942.23,"individuals":74572283,"uncertain":6217231.74,"award":{"attributableObligations":76046702.39,"attributableOutlays":67131694,"uncertainObligations":2089706.57,"uncertainOutlays":1686953.78},"awards":{"recorded":167,"attributable":145},"contractAgencies":[["HHS",202829.95],["VA",195800],["DHS",64992],["USDA",34320.28]],"individualPrograms":[["96.002",47632022],["96.001",10843253],["96.004",8525003],["64.109",6197621],["64.110",468793]],"uncertainPrograms":[["20.205",4167823.42],["14.195",1894700],["32.004",154708.32]],"history":{"attributable":[72924526.24,74276517.18,74980592.26,80016323.01,75070225.23],"uncertain":[10466829.76,2738823.92,2292220.45,2298359.38,6217231.74]}},
+    "72035": {"name":"Cayey","recorded":247939369.12,"attributable":218778123.08,"contracts":34932.01,"individuals":218743191.07,"uncertain":29161246.04,"award":{"attributableObligations":219312502.4,"attributableOutlays":184589595.09,"uncertainObligations":43813019.3,"uncertainOutlays":37952702.43},"awards":{"recorded":293,"attributable":229},"contractAgencies":[["DOD",38581.04],["DHS",-3649.03]],"individualPrograms":[["96.002",124309578],["96.001",44892216],["64.109",29648049],["96.004",15331292],["64.110",1720581]],"uncertainPrograms":[["20.205",15394511.46],["84.063",10373624.45],["14.871",1143668],["14.218",565543],["14.195",483851]],"history":{"attributable":[487210828.17,207142666.05,213510333,231274720.58,218778123.08],"uncertain":[15562960.7,15677007.22,14635088.18,14963765.98,29161246.04]}},
+    "72037": {"name":"Ceiba","recorded":64041459.74,"attributable":54037870.47,"contracts":3683694.22,"individuals":50354176.25,"uncertain":10003589.27,"award":{"attributableObligations":61819156.03,"attributableOutlays":45668431.52,"uncertainObligations":2749089.82,"uncertainOutlays":2437474.82},"awards":{"recorded":227,"attributable":191},"contractAgencies":[["GSA",3026473.6],["DOD",426996],["DOT",140410],["VA",73200],["DHS",9014.62]],"individualPrograms":[["96.002",28859439],["64.109",8337953],["96.001",7981152],["96.004",3745808],["64.110",385581]],"uncertainPrograms":[["20.205",8940103.45],["14.195",669046],["14.871",236356],["14.157",125058],["32.004",58028.52]],"history":{"attributable":[54734910.96,60779142.35,53491449.96,54912014.05,54037870.47],"uncertain":[2644850.63,2001987.07,2153971.07,1414747.2,10003589.27]}},
+    "72039": {"name":"Ciales","recorded":87764835.96,"attributable":76181464.94,"contracts":1198216.74,"individuals":74983248.2,"uncertain":11583371.02,"award":{"attributableObligations":97706385.82,"attributableOutlays":81376232.32,"uncertainObligations":46823392.41,"uncertainOutlays":32842354.92},"awards":{"recorded":213,"attributable":144},"contractAgencies":[["DOT",1198216.74]],"individualPrograms":[["96.002",41512584],["96.001",20164728],["64.109",6039926],["96.004",5980199],["64.110",296421]],"uncertainPrograms":[["93.600",5888920],["93.224",3016725],["20.205",1274340.05],["14.157",695070],["14.195",316255]],"history":{"attributable":[65111100.72,84451513.59,80815665.34,78128772.17,76181464.94],"uncertain":[4536028.98,8847746.04,14243495.5,11029472.38,11583371.02]}},
+    "72041": {"name":"Cidra","recorded":166229351.19,"attributable":160959554,"contracts":1179559.62,"individuals":159779994.38,"uncertain":5269797.19,"award":{"attributableObligations":187351767.27,"attributableOutlays":156878277.1,"uncertainObligations":6053745.73,"uncertainOutlays":3534631.98},"awards":{"recorded":244,"attributable":185},"contractAgencies":[["EPA",1179559.62]],"individualPrograms":[["96.002",86546357],["96.001",41826827],["64.109",18037993],["96.004",10666621],["64.110",730569]],"uncertainPrograms":[["20.205",2634515.07],["14.871",1572733],["14.218",515630],["93.211",430754],["32.004",78234.77]],"history":{"attributable":[135975044.85,158300007.97,164453467.33,167123459.69,160959554],"uncertain":[20415478.76,3707039.55,3553066.31,3052654.38,5269797.19]}},
+    "72043": {"name":"Coamo","recorded":147890015.53,"attributable":147090941.35,"contracts":0,"individuals":147090941.35,"uncertain":799074.18,"award":{"attributableObligations":147209782.35,"attributableOutlays":115304067.89,"uncertainObligations":663986.19,"uncertainOutlays":324597.59},"awards":{"recorded":232,"attributable":196},"contractAgencies":[],"individualPrograms":[["96.002",76113090],["96.001",28438408],["64.109",27547742],["96.004",10672630],["64.110",905766]],"uncertainPrograms":[["20.205",406116.99],["10.912",261789.42],["10.988",68663],["32.004",34376.9],["10.096",29192.71]],"history":{"attributable":[119872567.3,128850351.94,135378036.26,149411370.51,147090941.35],"uncertain":[1965257.01,121102.38,4146238.47,788374.68,799074.18]}},
+    "72045": {"name":"Comerío","recorded":65378375.83,"attributable":56102865.7,"contracts":0,"individuals":56102865.7,"uncertain":9275510.13,"award":{"attributableObligations":56102865.7,"attributableOutlays":49843240,"uncertainObligations":2466359.79,"uncertainOutlays":1856765.47},"awards":{"recorded":182,"attributable":135},"contractAgencies":[],"individualPrograms":[["96.002",30984472],["96.001",13294092],["96.004",5560875],["64.109",5103959],["64.110",326730]],"uncertainPrograms":[["20.205",7821848.34],["14.871",641467],["32.004",570025],["10.451",143354],["10.912",67427]],"history":{"attributable":[48930042.64,52496628.32,54754739.54,58963103.21,56102865.7],"uncertain":[1064997.32,1745442.46,3512670.62,1718825.87,9275510.13]}},
+    "72047": {"name":"Corozal","recorded":111793705.85,"attributable":107444214.58,"contracts":514694.44,"individuals":106929520.14,"uncertain":4349491.27,"award":{"attributableObligations":110069702.01,"attributableOutlays":97233837.86,"uncertainObligations":2228168.02,"uncertainOutlays":1391488.93},"awards":{"recorded":225,"attributable":177},"contractAgencies":[["DOT",537017.81],["DOD",-22323.37]],"individualPrograms":[["96.002",61125450],["96.001",23455465],["96.004",10197911],["64.109",9378285],["64.110",786926]],"uncertainPrograms":[["20.205",3179291.48],["14.871",1025989],["10.988",97042.4],["32.004",20605],["10.451",14658]],"history":{"attributable":[102116859.35,104932110.21,110307792.85,111985238.54,107444214.58],"uncertain":[4043295.9,2585809.31,2162585.68,2673590.75,4349491.27]}},
+    "72049": {"name":"Culebra","recorded":7154533.22,"attributable":7120171.97,"contracts":1363330.97,"individuals":5756841,"uncertain":34361.25,"award":{"attributableObligations":10533517.37,"attributableOutlays":5606794,"uncertainObligations":85752.69,"uncertainOutlays":50752.69},"awards":{"recorded":67,"attributable":61},"contractAgencies":[["DOD",641422.7],["DOI",481135],["DOC",240773.27]],"individualPrograms":[["96.002",4306672],["96.001",577740],["64.109",536013],["96.004",325846],["64.104",9446]],"uncertainPrograms":[["15.657",35000],["59.008",22931.25],["20.106",-23570]],"history":{"attributable":[6408964.4,8162811.35,8999747.29,8420343.24,7120171.97],"uncertain":[1207685.12,875824.22,5876296.23,0,34361.25]}},
+    "72051": {"name":"Dorado","recorded":160224084.44,"attributable":143504977.56,"contracts":192256.98,"individuals":143312720.58,"uncertain":16719106.88,"award":{"attributableObligations":151725328.18,"attributableOutlays":129375196.1,"uncertainObligations":32818347.85,"uncertainOutlays":12245200.47},"awards":{"recorded":243,"attributable":195},"contractAgencies":[["USDA",266320.6],["DOD",-74063.62]],"individualPrograms":[["96.002",90640265],["96.001",19793473],["64.109",18176296],["96.004",12126541],["64.110",824226]],"uncertainPrograms":[["20.263",13357147.65],["14.871",1693863],["93.600",1484528],["32.004",143038.14],["10.924",31179]],"history":{"attributable":[120950418,110748118.82,134596952.89,155822790.47,143504977.56],"uncertain":[6140906.48,8394777.01,2791271.84,5883067.98,16719106.88]}},
+    "72053": {"name":"Fajardo","recorded":148169490.02,"attributable":138801220.52,"contracts":923713.05,"individuals":137877507.47,"uncertain":9368269.5,"award":{"attributableObligations":145263769.57,"attributableOutlays":118157167.33,"uncertainObligations":27584057.7,"uncertainOutlays":23043973.95},"awards":{"recorded":262,"attributable":205},"contractAgencies":[["DOD",479532.6],["DOC",399184.3],["DHS",44996.15]],"individualPrograms":[["96.002",81620124],["96.001",22310659],["64.109",19041778],["96.004",12019020],["64.110",1093632]],"uncertainPrograms":[["84.063",6173053.95],["14.195",1394129],["93.224",650000],["14.218",477859],["14.871",440164]],"history":{"attributable":[124674301.6,129250350.25,135165106.77,144144079.78,138801220.52],"uncertain":[11337906.79,9706395.44,9803861.45,10181661.95,9368269.5]}},
+    "72054": {"name":"Florida","recorded":63883607.33,"attributable":60997451.03,"contracts":0,"individuals":60997451.03,"uncertain":2886156.3,"award":{"attributableObligations":61004248.03,"attributableOutlays":55919113,"uncertainObligations":16892944.5,"uncertainOutlays":10823437.62},"awards":{"recorded":212,"attributable":154},"contractAgencies":[],"individualPrograms":[["96.002",34306203],["96.001",16256804],["96.004",5346349],["64.109",4285533],["64.110",257146]],"uncertainPrograms":[["93.224",1895587],["14.195",428098],["14.871",362618],["10.912",119392.47],["10.924",20592]],"history":{"attributable":[52084279.27,56468503.31,60335597.56,63741462.53,60997451.03],"uncertain":[674950.23,3485185.92,2638648.83,2945856.18,2886156.3]}},
+    "72055": {"name":"Guánica","recorded":92993638.56,"attributable":71674497.27,"contracts":14253094.13,"individuals":57421403.14,"uncertain":21319141.29,"award":{"attributableObligations":85536786.5,"attributableOutlays":51659641.58,"uncertainObligations":304702.67,"uncertainOutlays":256947.32},"awards":{"recorded":177,"attributable":137},"contractAgencies":[["DOD",14253094.13]],"individualPrograms":[["96.002",34881450],["96.001",7745930],["64.109",6982981],["96.004",6834372],["64.104",329924]],"uncertainPrograms":[["20.205",20622355.68],["20.298",491146.91],["14.871",62816],["10.991",58029.91],["32.004",30127.93]],"history":{"attributable":[51585475.7,88409240.34,86241073.51,63075216.26,71674497.27],"uncertain":[748984.2,4123906.28,171842.96,756418.99,21319141.29]}},
+    "72057": {"name":"Guayama","recorded":204685505.6,"attributable":132939357.57,"contracts":0,"individuals":132939357.57,"uncertain":71746148.03,"award":{"attributableObligations":132981185.91,"attributableOutlays":113814937.87,"uncertainObligations":192551631.72,"uncertainOutlays":154567638.57},"awards":{"recorded":271,"attributable":205},"contractAgencies":[],"individualPrograms":[["96.002",73650345],["96.001",29028980],["64.109",16594647],["96.004",11006896],["64.110",551342]],"uncertainPrograms":[["93.600",41131961],["20.205",14408542.12],["93.356",7530624.6],["84.063",5725604.57],["14.871",1195348]],"history":{"attributable":[113060395.52,119924100.02,124523847.19,137043568.44,132939357.57],"uncertain":[10843932.46,47397293.96,92048228.35,55802473.91,71746148.03]}},
+    "72059": {"name":"Guayanilla","recorded":122068574.79,"attributable":111788963,"contracts":1230000,"individuals":110558963,"uncertain":10279611.79,"award":{"attributableObligations":112095512,"attributableOutlays":99422725.39,"uncertainObligations":1254053.69,"uncertainOutlays":985049.77},"awards":{"recorded":181,"attributable":149},"contractAgencies":[["EPA",1230000]],"individualPrograms":[["96.002",67224480],["96.001",19844142],["96.004",12226146],["64.109",9699591],["64.110",384324]],"uncertainPrograms":[["20.205",9527317.6],["14.871",533962],["20.263",123482.4],["32.004",79272.45],["10.451",8151]],"history":{"attributable":[100709044.17,103867070.47,110212727.94,114991020.18,111788963],"uncertain":[1750452.36,3918930.68,8977340.25,1502050.26,10279611.79]}},
+    "72061": {"name":"Guaynabo","recorded":3252999171.76,"attributable":1552288566.59,"contracts":1131928879.98,"individuals":420359686.61,"uncertain":1700710605.17,"award":{"attributableObligations":1799869974.83,"attributableOutlays":404903533.26,"uncertainObligations":1763644905.55,"uncertainOutlays":1738362518.18},"awards":{"recorded":1931,"attributable":1777},"contractAgencies":[["DOD",1105442673.5],["VA",14605596.92],["DOJ",4794778.31],["DHS",4405096.66],["TREAS",1965595.1]],"individualPrograms":[["96.002",313624327],["96.004",37530820],["64.109",33559966],["96.001",29199781],["64.110",2404550]],"uncertainPrograms":[["93.774",761296993.96],["93.773",488252237.88],["93.770",405988231.55],["20.205",25018280.58],["14.195",6645955]],"history":{"attributable":[376926306.05,392733659.95,436392941.85,507260819.29,1552288566.59],"uncertain":[1769816151.53,1558631644.47,1692206043.26,1640747665.59,1700710605.17]}},
+    "72063": {"name":"Gurabo","recorded":244903758.66,"attributable":161454083.73,"contracts":830790.6,"individuals":160623293.13,"uncertain":83449674.93,"award":{"attributableObligations":161939880.49,"attributableOutlays":135133265,"uncertainObligations":235114495.66,"uncertainOutlays":208734753.67},"awards":{"recorded":289,"attributable":237},"contractAgencies":[["DOD",830790.6]],"individualPrograms":[["96.002",95705868],["96.001",27899319],["64.109",22030621],["96.004",11510789],["64.028",828830]],"uncertainPrograms":[["84.063",52011116.71],["20.205",20599417.72],["93.224",6921432],["84.033",1308373],["14.871",796846]],"history":{"attributable":[132504206.9,140930195.71,148796493.93,164133249.58,161454083.73],"uncertain":[55254233.14,51674274.01,50488139.78,62188414.97,83449674.93]}},
+    "72065": {"name":"Hatillo","recorded":142572882.37,"attributable":132641498.27,"contracts":0,"individuals":132641498.27,"uncertain":9931384.1,"award":{"attributableObligations":132914636.47,"attributableOutlays":118461474.26,"uncertainObligations":37160157.62,"uncertainOutlays":23689747.7},"awards":{"recorded":329,"attributable":168},"contractAgencies":[],"individualPrograms":[["96.002",75761047],["96.001",28784885],["96.004",13687714],["64.109",11998635],["64.110",755408]],"uncertainPrograms":[["20.205",4409129.8],["93.224",4234913],["14.871",380136],["10.924",247782.36],["10.098",223457.82]],"history":{"attributable":[112303501.34,121044939.14,127282226.83,138076098.47,132641498.27],"uncertain":[7075808.36,5376822.43,5143775.23,4741577.84,9931384.1]}},
+    "72067": {"name":"Hormigueros","recorded":83539761.63,"attributable":73346429.29,"contracts":313880,"individuals":73032549.29,"uncertain":10193332.34,"award":{"attributableObligations":73594429.29,"attributableOutlays":63347331,"uncertainObligations":34161931.56,"uncertainOutlays":24115906.07},"awards":{"recorded":190,"attributable":143},"contractAgencies":[["DOC",313880]],"individualPrograms":[["96.002",47423860],["96.001",9516235],["64.109",8477975],["96.004",6158958],["64.110",513088]],"uncertainPrograms":[["20.205",7479834.6],["93.600",1982273.78],["14.157",752090],["14.871",634172],["32.004",153423]],"history":{"attributable":[62847842.77,67015216.68,71003537.87,75791294.66,73346429.29],"uncertain":[6562540.45,6350455.56,10493372.96,3525521.92,10193332.34]}},
+    "72069": {"name":"Humacao","recorded":406998799.02,"attributable":336621333.25,"contracts":4337979.8,"individuals":332283353.45,"uncertain":70377465.77,"award":{"attributableObligations":339412941.95,"attributableOutlays":306097763.91,"uncertainObligations":129446730.85,"uncertainOutlays":102234205.68},"awards":{"recorded":424,"attributable":277},"contractAgencies":[["USDA",3867427.14],["DOD",250833.81],["VA",198268.85],["DOC",21450]],"individualPrograms":[["96.002",207995465],["96.001",71856485],["96.004",24636277],["64.109",23751471],["64.110",1256989]],"uncertainPrograms":[["20.205",30164578.71],["84.063",15630615.19],["93.600",11915810],["93.356",4174079],["14.871",1989290]],"history":{"attributable":[294862343.37,310023944.89,330075638.78,350916210.02,336621333.25],"uncertain":[32011732.65,34837235.76,36877687.24,37825754.73,70377465.77]}},
+    "72071": {"name":"Isabela","recorded":186802476.85,"attributable":180732111.35,"contracts":1793790.22,"individuals":178938321.13,"uncertain":6070365.5,"award":{"attributableObligations":203902825.35,"attributableOutlays":150177328.2,"uncertainObligations":30315210.15,"uncertainOutlays":25966718.83},"awards":{"recorded":272,"attributable":214},"contractAgencies":[["DHS",1312325.16],["NSF",500000],["DOD",-18534.93]],"individualPrograms":[["96.002",92456066],["96.001",36459715],["64.109",30041367],["96.004",15048459],["64.110",1337153]],"uncertainPrograms":[["20.205",4340196.27],["14.218",664063],["10.912",555653.54],["14.871",341564],["20.939",135000]],"history":{"attributable":[148659400.44,160349487.67,169677819.15,184120063.58,180732111.35],"uncertain":[10661002.98,8552156.98,15178731.67,2558773.43,6070365.5]}},
+    "72073": {"name":"Jayuya","recorded":53809776.59,"attributable":51417095.54,"contracts":0,"individuals":51417095.54,"uncertain":2392681.05,"award":{"attributableObligations":51457427.24,"attributableOutlays":45378156.42,"uncertainObligations":1486143.98,"uncertainOutlays":1093690.54},"awards":{"recorded":252,"attributable":145},"contractAgencies":[],"individualPrograms":[["96.002",27566191],["96.001",13693235],["64.109",4983847],["96.004",4080477],["64.110",348241]],"uncertainPrograms":[["20.205",1165442.43],["14.195",502383],["32.004",343056.81],["10.912",103587.9],["10.988",87938.6]],"history":{"attributable":[44023790.03,47067556.56,49014584.07,52815040.49,51417095.54],"uncertain":[6136279.65,30428744.73,4400491.17,1743030.82,2392681.05]}},
+    "72075": {"name":"Juana Díaz","recorded":180209752.06,"attributable":156118190.17,"contracts":1536598.79,"individuals":154581591.38,"uncertain":24091561.89,"award":{"attributableObligations":174930800.97,"attributableOutlays":126801316.23,"uncertainObligations":32456189.67,"uncertainOutlays":21772847.35},"awards":{"recorded":284,"attributable":206},"contractAgencies":[["DOD",1414707.29],["GSA",121891.5]],"individualPrograms":[["96.002",86266419],["96.001",25809760],["64.109",23742488],["96.004",14544418],["64.110",1019948]],"uncertainPrograms":[["20.205",17189216.42],["10.427",2018844],["84.063",1840662.68],["14.195",928978],["14.871",752767]],"history":{"attributable":[130546628.63,140056441.73,162823962.53,158039609.7,156118190.17],"uncertain":[7634042.56,7126339.93,10566209.46,7452051.67,24091561.89]}},
+    "72077": {"name":"Juncos","recorded":147403598.36,"attributable":143109414.13,"contracts":89636.25,"individuals":143019777.88,"uncertain":4294184.23,"award":{"attributableObligations":143109414.13,"attributableOutlays":125518321,"uncertainObligations":9307415.23,"uncertainOutlays":5937125.91},"awards":{"recorded":249,"attributable":213},"contractAgencies":[["VA",89636.25]],"individualPrograms":[["96.002",80854039],["96.001",33165510],["64.109",14787970],["96.004",11486005],["64.110",819094]],"uncertainPrograms":[["93.600",4117031],["14.195",475669],["14.871",335399],["32.004",266288.81],["10.098",8000]],"history":{"attributable":[122692482.01,131338069.66,137776428.9,148392012.42,143109414.13],"uncertain":[2195868.89,1088711.39,10007485.77,2936938,4294184.23]}},
+    "72079": {"name":"Lajas","recorded":159487620.59,"attributable":150649976.29,"contracts":62437834.18,"individuals":88212142.11,"uncertain":8837644.3,"award":{"attributableObligations":167204924.73,"attributableOutlays":74723965,"uncertainObligations":4687042.52,"uncertainOutlays":1120906.27},"awards":{"recorded":310,"attributable":275},"contractAgencies":[["DOD",62437834.18]],"individualPrograms":[["96.002",54552223],["96.001",11585945],["64.109",11351070],["96.004",8581370],["64.110",591060]],"uncertainPrograms":[["20.205",4677874.44],["10.447",3170094.26],["14.195",434741],["14.871",310816],["14.157",157490]],"history":{"attributable":[109606396.2,120317662.19,156815422.63,162158279.06,150649976.29],"uncertain":[1987130.01,3921436.13,1963682.98,1437350.17,8837644.3]}},
+    "72081": {"name":"Lares","recorded":117339260.38,"attributable":103106472.88,"contracts":0,"individuals":103106472.88,"uncertain":14232787.5,"award":{"attributableObligations":103554341.3,"attributableOutlays":90160139.95,"uncertainObligations":63371999.68,"uncertainOutlays":37182811.02},"awards":{"recorded":657,"attributable":202},"contractAgencies":[],"individualPrograms":[["96.002",57815562],["96.001",21353435],["96.004",10721456],["64.109",9814185],["10.912",1099186.17]],"uncertainPrograms":[["93.224",7108285],["10.447",1663227.48],["10.912",1642508.3],["20.205",912514],["10.988",806837.19]],"history":{"attributable":[87763134.92,106003389.76,108075808.61,106775040.58,103106472.88],"uncertain":[7717609.13,9960768.68,8370121.98,10317393.12,14232787.5]}},
+    "72083": {"name":"Las Marías","recorded":15118155,"attributable":15118155,"contracts":0,"individuals":15118155,"uncertain":0,"award":{"attributableObligations":15118155,"attributableOutlays":12886794,"uncertainObligations":0,"uncertainOutlays":0},"awards":{"recorded":93,"attributable":93},"contractAgencies":[],"individualPrograms":[["96.002",8979977],["96.001",2633313],["64.109",1992052],["96.004",1242989],["64.117",70209]],"uncertainPrograms":[],"history":{"attributable":[12838912.97,14099722.09,14869200.8,16207296,15118155],"uncertain":[212688.91,73213.02,2063653.2,1082.89,0]}},
+    "72085": {"name":"Las Piedras","recorded":161867293.59,"attributable":151269878.65,"contracts":0,"individuals":151269878.65,"uncertain":10597414.94,"award":{"attributableObligations":151660305.96,"attributableOutlays":135749943.95,"uncertainObligations":9086685.2,"uncertainOutlays":7165944.07},"awards":{"recorded":288,"attributable":225},"contractAgencies":[],"individualPrograms":[["96.002",82553113],["96.001",42719918],["64.109",13338361],["96.004",10183344],["64.104",586095]],"uncertainPrograms":[["20.205",7878766.33],["93.600",1718058],["14.871",663388],["32.004",227491.01],["10.923",46000]],"history":{"attributable":[132766948.15,140588075.62,147626512.6,157906855.73,151269878.65],"uncertain":[3324675.08,2798652.77,2096103.79,2638480.47,10597414.94]}},
+    "72087": {"name":"Loíza","recorded":59276708.19,"attributable":52295862.48,"contracts":0,"individuals":52295862.48,"uncertain":6980845.71,"award":{"attributableObligations":52295862.48,"attributableOutlays":47088762,"uncertainObligations":43311738.57,"uncertainOutlays":28648369.81},"awards":{"recorded":195,"attributable":160},"contractAgencies":[],"individualPrograms":[["96.002",32668967],["96.001",8467356],["96.004",5949321],["64.109",4039826],["64.110",398070]],"uncertainPrograms":[["93.224",5449132],["14.195",1041151],["32.004",288250.19],["20.205",125677.52],["14.871",76635]],"history":{"attributable":[47302936.91,48341151.98,51090702.24,54541565.42,52295862.48],"uncertain":[3338708.21,2806296.18,12627370.6,6781054,6980845.71]}},
+    "72089": {"name":"Luquillo","recorded":105830162.77,"attributable":77636632.42,"contracts":772999.42,"individuals":76863633,"uncertain":28193530.35,"award":{"attributableObligations":77948327.2,"attributableOutlays":63674737.83,"uncertainObligations":28205524.3,"uncertainOutlays":618695.9},"awards":{"recorded":227,"attributable":192},"contractAgencies":[["DOD",754168],["DOJ",20160],["USDA",-1328.58]],"individualPrograms":[["96.002",46375484],["64.109",11573329],["96.001",11514581],["96.004",5722091],["64.110",895029]],"uncertainPrograms":[["20.298",27322777.9],["14.871",548173],["14.195",214898],["32.004",56066.25],["15.630",30000]],"history":{"attributable":[70316680.23,73345707.13,77328551.77,81016102.77,77636632.42],"uncertain":[1000303.02,706216.31,822448.83,898961.9,28193530.35]}},
+    "72091": {"name":"Manatí","recorded":198055695.25,"attributable":173292341.51,"contracts":667799.01,"individuals":172624542.5,"uncertain":24763353.74,"award":{"attributableObligations":198531635.71,"attributableOutlays":160897380.02,"uncertainObligations":67920772.77,"uncertainOutlays":57414835.05},"awards":{"recorded":302,"attributable":230},"contractAgencies":[["VA",442576.65],["DHS",225222.36]],"individualPrograms":[["96.002",105451029],["96.001",37516185],["64.109",13629371],["96.004",13262447],["64.110",727361]],"uncertainPrograms":[["84.063",12550633.76],["93.600",7397284],["84.116",2018800],["14.871",1245937],["14.218",654813]],"history":{"attributable":[153355356.54,177406868.42,181254287.12,184915760.26,173292341.51],"uncertain":[18669434.7,17886786.18,25245069.82,25528375.14,24763353.74]}},
+    "72093": {"name":"Maricao","recorded":16399054.85,"attributable":15871489.3,"contracts":0,"individuals":15871489.3,"uncertain":527565.55,"award":{"attributableObligations":15871481.44,"attributableOutlays":14390480.02,"uncertainObligations":687468.42,"uncertainOutlays":497976.06},"awards":{"recorded":240,"attributable":106},"contractAgencies":[],"individualPrograms":[["96.002",10883915],["96.001",2071278],["96.004",1394724],["64.109",1304399],["64.105",54877]],"uncertainPrograms":[["14.871",164153],["10.991",154518.64],["10.988",147201.61],["10.451",36577],["32.004",12901.92]],"history":{"attributable":[13618157.42,14632004.88,15877018.99,16658616.94,15871489.3],"uncertain":[278079.5,216614.94,1891224.45,636813.54,527565.55]}},
+    "72095": {"name":"Maunabo","recorded":50058051.61,"attributable":48723484.2,"contracts":636460.2,"individuals":48087024,"uncertain":1334567.41,"award":{"attributableObligations":55324430.85,"attributableOutlays":47874860.73,"uncertainObligations":1001550.76,"uncertainOutlays":301830.34},"awards":{"recorded":189,"attributable":131},"contractAgencies":[["DHS",417772.41],["DOT",218687.79]],"individualPrograms":[["96.002",24675582],["96.001",14482332],["64.109",4309485],["96.004",3872390],["64.110",317161]],"uncertainPrograms":[["20.205",583016.65],["20.263",447796.81],["32.004",155659.69],["10.991",64998.99],["10.988",62700.4]],"history":{"attributable":[42209959.68,50549372.74,47824095.7,53642824.59,48723484.2],"uncertain":[113109.48,-53521.81,2258302.75,20543279.32,1334567.41]}},
+    "72097": {"name":"Mayagüez","recorded":465071072.71,"attributable":359977589.51,"contracts":51203962.93,"individuals":308773626.58,"uncertain":105093483.2,"award":{"attributableObligations":383785028.17,"attributableOutlays":279083448.76,"uncertainObligations":345084107.5,"uncertainOutlays":251051530.45},"awards":{"recorded":467,"attributable":277},"contractAgencies":[["DOD",44260334.89],["DHS",4576964.62],["DOT",2200226],["USDA",117037.5],["HHS",49399.92]],"individualPrograms":[["96.002",215490909],["96.001",32102087],["96.004",27843099],["64.109",27820475],["64.110",1604085]],"uncertainPrograms":[["84.063",46751537.08],["93.600",14058505.71],["47.083",14020140],["14.195",7941136],["20.205",6714985.01]],"history":{"attributable":[306294825.52,339984916.58,332117833.87,364806499.9,359977589.51],"uncertain":[85271417.31,103892684.44,87108177.27,102803049.52,105093483.2]}},
+    "72099": {"name":"Moca","recorded":156814180.13,"attributable":134445719.48,"contracts":434040,"individuals":134011679.48,"uncertain":22368460.65,"award":{"attributableObligations":134472967.48,"attributableOutlays":113359596.18,"uncertainObligations":7351913.54,"uncertainOutlays":4539416.55},"awards":{"recorded":293,"attributable":182},"contractAgencies":[["DOD",434040]],"individualPrograms":[["96.002",71928150],["96.001",29417411],["64.109",17329879],["96.004",11961374],["10.912",942763.18]],"uncertainPrograms":[["20.205",19833797.41],["10.912",1024697.8],["14.195",596651],["14.871",423883],["10.988",140920.13]],"history":{"attributable":[107182056.99,119135070.92,127168030.75,137089032.71,134445719.48],"uncertain":[2302195.72,1030209.44,6568503.12,1759021.06,22368460.65]}},
+    "72101": {"name":"Morovis","recorded":130686731.13,"attributable":103151094.15,"contracts":1025087.39,"individuals":102126006.76,"uncertain":27535636.98,"award":{"attributableObligations":115174531.18,"attributableOutlays":97557783.17,"uncertainObligations":47700803.86,"uncertainOutlays":31550227.2},"awards":{"recorded":244,"attributable":188},"contractAgencies":[["VA",771337.39],["DOT",253750]],"individualPrograms":[["96.002",55066796],["96.001",27754937],["64.109",9919633],["96.004",7561220],["64.110",553784]],"uncertainPrograms":[["20.205",21323947.73],["93.224",3677932.25],["10.427",2015108],["14.871",336377],["32.004",153256]],"history":{"attributable":[88610973.04,97743334.73,99135210.39,132230365.87,103151094.15],"uncertain":[7420918.4,10278700.63,9264747.08,10585589.78,27535636.98]}},
+    "72103": {"name":"Naguabo","recorded":90498766.28,"attributable":84833312.95,"contracts":0,"individuals":84833312.95,"uncertain":5665453.33,"award":{"attributableObligations":85003791.82,"attributableOutlays":73796904.5,"uncertainObligations":1737712.63,"uncertainOutlays":1227300.54},"awards":{"recorded":214,"attributable":176},"contractAgencies":[],"individualPrograms":[["96.002",49019090],["96.001",17400566],["64.109",9402331],["96.004",7126771],["64.110",652026]],"uncertainPrograms":[["20.205",4338640.62],["14.871",654562],["14.195",459828],["14.157",120549],["32.004",49411.21]],"history":{"attributable":[75816085.3,79260275.01,82346958.93,88380091.46,84833312.95],"uncertain":[1953794.48,1585138.13,5319534.21,2674368.23,5665453.33]}},
+    "72105": {"name":"Naranjito","recorded":158400172.55,"attributable":99538998.94,"contracts":129975.68,"individuals":99409023.26,"uncertain":58861173.61,"award":{"attributableObligations":99791857.69,"attributableOutlays":88274540.5,"uncertainObligations":78388218.29,"uncertainOutlays":41444555.57},"awards":{"recorded":215,"attributable":172},"contractAgencies":[["DOT",134975.68],["DOD",-5000]],"individualPrograms":[["96.002",57947409],["96.001",20458277],["96.004",9771406],["64.109",8774949],["64.110",777009]],"uncertainPrograms":[["20.205",48949055.98],["93.224",8394286],["14.871",987287],["66.818",250000],["14.267",179770]],"history":{"attributable":[90050368.15,94649559.75,98102208.04,104770096.06,99538998.94],"uncertain":[10493424.58,9754050.67,11245603.23,11610970.52,58861173.61]}},
+    "72107": {"name":"Orocovis","recorded":134045866.08,"attributable":118814833.58,"contracts":44475719.58,"individuals":74339114,"uncertain":15231032.5,"award":{"attributableObligations":130280757.31,"attributableOutlays":64606004.03,"uncertainObligations":44136181.54,"uncertainOutlays":31514427.82},"awards":{"recorded":258,"attributable":193},"contractAgencies":[["DOD",44475719.58]],"individualPrograms":[["96.002",36785560],["96.001",21935801],["64.109",8514160],["96.004",5829440],["64.110",349764]],"uncertainPrograms":[["93.600",9699115],["93.356",4556732],["14.195",294994],["14.871",246748],["10.988",124642]],"history":{"attributable":[81384682.97,103993940.64,94512471.17,127817967.83,118814833.58],"uncertain":[2772466.71,10096603.13,11176604.49,11231396.15,15231032.5]}},
+    "72109": {"name":"Patillas","recorded":113901693.14,"attributable":77479322.54,"contracts":0,"individuals":77479322.54,"uncertain":36422370.6,"award":{"attributableObligations":77506868,"attributableOutlays":69629585.91,"uncertainObligations":58833944.72,"uncertainOutlays":42220674.06},"awards":{"recorded":220,"attributable":177},"contractAgencies":[],"individualPrograms":[["96.002",43676550],["96.001",19421395],["64.109",6749854],["96.004",6468671],["64.110",466653]],"uncertainPrograms":[["20.205",30235800.01],["93.224",4958893],["93.600",840822.42],["14.871",310276],["10.988",36688.4]],"history":{"attributable":[66627374.87,72590504.04,75761544.6,80632225.54,77479322.54],"uncertain":[5801644.61,6215225.36,8943442.01,6891089.69,36422370.6]}},
+    "72111": {"name":"Peñuelas","recorded":96825375.52,"attributable":85816097.47,"contracts":5237017.19,"individuals":80579080.28,"uncertain":11009278.05,"award":{"attributableObligations":86902390.47,"attributableOutlays":68754819.92,"uncertainObligations":4492947.49,"uncertainOutlays":2943890.77},"awards":{"recorded":217,"attributable":196},"contractAgencies":[["DOD",5143180.19],["EPA",93837]],"individualPrograms":[["96.002",46209038],["96.001",13704952],["64.109",10660855],["96.004",8512145],["64.110",401746]],"uncertainPrograms":[["20.205",9299532.2],["14.871",808279],["14.195",746160],["32.004",80650.8],["10.912",50657]],"history":{"attributable":[69019285.8,74429344.36,77355023.45,83683727.49,85816097.47],"uncertain":[2365215.13,1508921.78,6130351,1938215.89,11009278.05]}},
+    "72113": {"name":"Ponce","recorded":804967074.08,"attributable":639159262.04,"contracts":36088675.8,"individuals":603070586.24,"uncertain":165807812.04,"award":{"attributableObligations":678506168.12,"attributableOutlays":526304273.54,"uncertainObligations":539415123.87,"uncertainOutlays":421943318.99},"awards":{"recorded":719,"attributable":416},"contractAgencies":[["DOD",32669929.38],["DHS",2177128.62],["USDA",832606],["DOS",290677.96],["DOJ",118333.84]],"individualPrograms":[["96.002",382354062],["64.109",73891901],["96.001",73712806],["96.004",60328368],["64.110",4274534]],"uncertainPrograms":[["84.063",60294872.09],["20.205",57062974.92],["93.600",21075187.26],["93.224",11170167.55],["14.195",8300561]],"history":{"attributable":[543218086.96,584516943.13,587979489.22,639284263.96,639159262.04],"uncertain":[129578947.4,127342570.44,149657465.84,122337357.22,165807812.04]}},
+    "72115": {"name":"Quebradillas","recorded":119229573.12,"attributable":112153537.95,"contracts":250899.55,"individuals":111902638.4,"uncertain":7076035.17,"award":{"attributableObligations":112305629.62,"attributableOutlays":92901425.46,"uncertainObligations":30728706.67,"uncertainOutlays":23025429.04},"awards":{"recorded":222,"attributable":165},"contractAgencies":[["DOD",242979.49],["DOJ",7920.06]],"individualPrograms":[["96.002",58014416],["96.001",24842717],["64.109",16518689],["96.004",9915155],["64.028",756064]],"uncertainPrograms":[["93.600",5319241],["14.157",647268],["14.871",381040],["14.195",313226],["10.912",217889.5]],"history":{"attributable":[92325608.61,99563163.92,104871412.03,114948644.33,112153537.95],"uncertain":[9714767.23,6463041.88,6874864.48,6801906.97,7076035.17]}},
+    "72117": {"name":"Rincón","recorded":67683861.6,"attributable":65288308.18,"contracts":750561.18,"individuals":64537747,"uncertain":2395553.42,"award":{"attributableObligations":65897922.79,"attributableOutlays":55730993,"uncertainObligations":816502.2,"uncertainOutlays":408986.01},"awards":{"recorded":168,"attributable":142},"contractAgencies":[["DOD",750561.18]],"individualPrograms":[["96.002",41212817],["96.001",9777144],["64.109",7994449],["96.004",4736418],["64.110",220480]],"uncertainPrograms":[["20.205",2107551.22],["14.871",144101],["10.912",102721.2],["32.004",23403.5],["10.098",12767.72]],"history":{"attributable":[53876506,57727050.3,61372926.61,66041085,65288308.18],"uncertain":[1551917.77,588997.49,-596682.55,415251.97,2395553.42]}},
+    "72119": {"name":"Río Grande","recorded":104147029.35,"attributable":103796077.15,"contracts":3220385.13,"individuals":100575692.02,"uncertain":350952.2,"award":{"attributableObligations":138495934.1,"attributableOutlays":109871804.47,"uncertainObligations":1397282.66,"uncertainOutlays":527778.38},"awards":{"recorded":220,"attributable":206},"contractAgencies":[["DOT",1752207.16],["USDA",1312803.95],["DOI",55325],["DOD",53732],["VA",46317.02]],"individualPrograms":[["96.002",55624412],["64.109",19196414],["96.001",14212343],["96.004",8341656],["64.110",1212988]],"uncertainPrograms":[["20.939",160000],["10.704",140000],["14.871",41880],["10.699",9072.9],["10.912",-0.7]],"history":{"attributable":[97321724.66,103589378.01,102986716.55,120739064.82,103796077.15],"uncertain":[1786062.43,1055479.09,1444608.35,1637834.6,350952.2]}},
+    "72121": {"name":"Sabana Grande","recorded":134509733.45,"attributable":113722680.52,"contracts":13470734.41,"individuals":100251946.11,"uncertain":20787052.93,"award":{"attributableObligations":117370175.92,"attributableOutlays":83952097,"uncertainObligations":6035113.61,"uncertainOutlays":3732423.98},"awards":{"recorded":264,"attributable":194},"contractAgencies":[["DOD",13470734.41]],"individualPrograms":[["96.002",60227836],["96.001",15233912],["64.109",14297586],["96.004",8486860],["64.117",548321]],"uncertainPrograms":[["20.205",17743681.88],["10.912",866337.91],["93.600",745428],["14.871",523409],["20.298",422535.44]],"history":{"attributable":[98965156.15,115188223.6,117517879.21,132221660.68,113722680.52],"uncertain":[3404298.86,790944.6,3122279.17,2070686.75,20787052.93]}},
+    "72123": {"name":"Salinas","recorded":161830172.55,"attributable":113504831.32,"contracts":3579510.71,"individuals":109925320.61,"uncertain":48325341.23,"award":{"attributableObligations":414550121.72,"attributableOutlays":91793540.5,"uncertainObligations":3298601.96,"uncertainOutlays":865570.61},"awards":{"recorded":260,"attributable":220},"contractAgencies":[["DOD",3330226.21],["GSA",249284.5]],"individualPrograms":[["96.002",59905761],["96.001",22092600],["64.109",15712714],["96.004",9773230],["64.110",624629]],"uncertainPrograms":[["20.205",47073345.12],["10.912",685314],["14.871",441756],["32.004",99215.22],["10.991",16291.88]],"history":{"attributable":[96118860.25,99990775.14,113343143.91,114346253.74,113504831.32],"uncertain":[1902050.02,1892624.45,10446579.59,21102509,48325341.23]}},
+    "72125": {"name":"San Germán","recorded":174463560.82,"attributable":124044855.42,"contracts":662964,"individuals":123381891.42,"uncertain":50418705.4,"award":{"attributableObligations":128478796.42,"attributableOutlays":106508242.51,"uncertainObligations":117212675.2,"uncertainOutlays":96580039.25},"awards":{"recorded":271,"attributable":184},"contractAgencies":[["EPA",662964]],"individualPrograms":[["96.002",78379819],["96.001",17418790],["64.109",15235100],["96.004",10121784],["64.110",708228]],"uncertainPrograms":[["20.205",28129642.01],["84.063",15566157.81],["93.600",4452659.34],["10.427",2318062],["14.195",1210099]],"history":{"attributable":[108659936.1,115997885.11,120359365.5,131807280.65,124044855.42],"uncertain":[29280005.51,27873097.3,53796368.93,32420883.84,50418705.4]}},
+    "72127": {"name":"San Juan","recorded":13449200267.01,"attributable":1808378547.7,"contracts":304132957.37,"individuals":1504245590.33,"uncertain":11640821719.31,"award":{"attributableObligations":4380898059.45,"attributableOutlays":1600469266.78,"uncertainObligations":54988448340.05,"uncertainOutlays":17737228933.99},"awards":{"recorded":7556,"attributable":1029},"contractAgencies":[["VA",112752532.19],["DOD",98949985.21],["DHS",39567617.51],["GSA",26067067.7],["DOT",9256887.05]],"individualPrograms":[["96.002",1118874732],["96.004",131842379],["96.001",116924075],["64.109",113600588],["64.110",8441873]],"uncertainPrograms":[["93.774",3723764606.83],["93.773",2400048207.55],["93.770",1964262132.21],["97.036",1334339814.97],["84.063",410238548.65]],"history":{"attributable":[1817787404.64,2757509625.9,2293638459.6,1852792736.96,1808378547.7],"uncertain":[15285722326.06,13087513602.15,12622629931.56,12021141688.05,11640821719.31]}},
+    "72129": {"name":"San Lorenzo","recorded":161406600.84,"attributable":143224903.31,"contracts":51420,"individuals":143173483.31,"uncertain":18181697.53,"award":{"attributableObligations":143316455.48,"attributableOutlays":126781875.96,"uncertainObligations":5343374.6,"uncertainOutlays":4823915.54},"awards":{"recorded":259,"attributable":194},"contractAgencies":[["USDA",52500],["DOJ",-1080]],"individualPrograms":[["96.002",80985255],["96.001",33746756],["64.109",14172454],["96.004",11948664],["64.104",464356]],"uncertainPrograms":[["20.205",15646462.33],["84.063",1695732.54],["14.871",692911],["10.988",33067.65],["32.004",31977.5]],"history":{"attributable":[125112623.89,134287602.23,141438345.31,149803926.94,143224903.31],"uncertain":[3347347.79,1827288.39,3540929.79,2913739.82,18181697.53]}},
+    "72131": {"name":"San Sebastián","recorded":178706951.62,"attributable":169354248.72,"contracts":4938753.55,"individuals":164415495.17,"uncertain":9352702.9,"award":{"attributableObligations":184906408.47,"attributableOutlays":146076229.64,"uncertainObligations":15919725.18,"uncertainOutlays":9977219.99},"awards":{"recorded":434,"attributable":197},"contractAgencies":[["DOT",4654150],["SSA",284603.55]],"individualPrograms":[["96.002",99125732],["96.001",31687656],["96.004",15064518],["64.109",15047641],["10.912",961221.08]],"uncertainPrograms":[["20.205",3698404.26],["93.600",2139337.83],["10.912",1182352.64],["14.871",830940],["14.218",691398]],"history":{"attributable":[137268858.19,147832229,157913051.01,184615310.96,169354248.72],"uncertain":[9425758.31,5146074.11,4669457.7,7429858.14,9352702.9]}},
+    "72133": {"name":"Santa Isabel","recorded":101884249.92,"attributable":81484779.37,"contracts":1017530.25,"individuals":80467249.12,"uncertain":20399470.55,"award":{"attributableObligations":82820430.56,"attributableOutlays":64512015.98,"uncertainObligations":16128720.44,"uncertainOutlays":12776790.16},"awards":{"recorded":255,"attributable":202},"contractAgencies":[["DOD",1003224],["DHS",14306.25]],"individualPrograms":[["96.002",40998689],["96.001",15699078],["64.109",14299565],["96.004",7324363],["64.117",465016]],"uncertainPrograms":[["20.205",19447654.4],["14.195",459711],["14.871",247345],["10.991",84347.04],["10.988",67990.66]],"history":{"attributable":[64178694.92,69851502.69,74923460.5,82921028.28,81484779.37],"uncertain":[1542755.71,1344994.68,989673.8,1611243.99,20399470.55]}},
+    "72135": {"name":"Toa Alta","recorded":267944633.32,"attributable":254130116.29,"contracts":175000.34,"individuals":253955115.95,"uncertain":13814517.03,"award":{"attributableObligations":254131116.29,"attributableOutlays":212956677,"uncertainObligations":4688594.74,"uncertainOutlays":3255680.25},"awards":{"recorded":217,"attributable":177},"contractAgencies":[["VA",175000.34]],"individualPrograms":[["96.002",149017843],["96.001",44229542],["64.109",36407421],["96.004",19687579],["64.028",1226869]],"uncertainPrograms":[["20.205",10831919.92],["14.871",1525344],["14.218",835953],["66.818",500000],["32.004",111048.05]],"history":{"attributable":[207399572.5,219121274.92,233254772.58,254325957.62,254130116.29],"uncertain":[5300035.37,2383229.83,6797187.03,2406842.75,13814517.03]}},
+    "72137": {"name":"Toa Baja","recorded":332956743.12,"attributable":322041704.28,"contracts":2566497.28,"individuals":319475207,"uncertain":10915038.84,"award":{"attributableObligations":337934388.28,"attributableOutlays":278593262.77,"uncertainObligations":4986149.37,"uncertainOutlays":2012487.01},"awards":{"recorded":257,"attributable":183},"contractAgencies":[["DHS",1594575.22],["EPA",897939.33],["DOJ",72790.4],["DOT",15838.56],["DOD",-14646.23]],"individualPrograms":[["96.002",203012900],["96.001",42113604],["64.109",38090183],["96.004",29935675],["64.110",2586844]],"uncertainPrograms":[["20.205",7035142.74],["14.871",1291682],["14.218",930446],["84.282",924984],["14.239",378824.9]],"history":{"attributable":[294918242.56,306898109.08,317332055.72,340050131.19,322041704.28],"uncertain":[6686163.73,4744342.61,2573143.52,5097018.77,10915038.84]}},
+    "72139": {"name":"Trujillo Alto","recorded":228079250.09,"attributable":212059542.19,"contracts":1600692.19,"individuals":210458850,"uncertain":16019707.9,"award":{"attributableObligations":216823558.29,"attributableOutlays":186933406.87,"uncertainObligations":22379114.21,"uncertainOutlays":7185835.7},"awards":{"recorded":217,"attributable":167},"contractAgencies":[["DHS",1273336.4],["VA",327355.79]],"individualPrograms":[["96.002",147512201],["96.001",21483870],["64.109",21043855],["96.004",17080516],["64.110",1090244]],"uncertainPrograms":[["20.205",5613136.86],["10.766",3753000],["14.871",3302568],["14.195",749887],["14.218",739501]],"history":{"attributable":[190550962.31,197054331.92,205232976.12,223789770.01,212059542.19],"uncertain":[10777959.74,6144156.97,10329506.52,6898686.99,16019707.9]}},
+    "72141": {"name":"Utuado","recorded":142817861.87,"attributable":109996374.27,"contracts":5483214.63,"individuals":104513159.64,"uncertain":32821487.6,"award":{"attributableObligations":243161834.81,"attributableOutlays":123774514.9,"uncertainObligations":67417276.17,"uncertainOutlays":51935014.51},"awards":{"recorded":402,"attributable":195},"contractAgencies":[["DOT",4402937.63],["EPA",1080277]],"individualPrograms":[["96.002",58596865],["96.001",22331330],["64.109",11480895],["96.004",10161780],["64.110",513035]],"uncertainPrograms":[["20.205",16916360.42],["93.600",9776981],["84.063",1790824.72],["10.427",1623627],["14.871",1266853]],"history":{"attributable":[123146274.53,196793940.15,103850397.85,110262284.71,109996374.27],"uncertain":[9263236.39,11306295.84,17242545.8,22632273.13,32821487.6]}},
+    "72143": {"name":"Vega Alta","recorded":168888140.22,"attributable":166876518.42,"contracts":-30,"individuals":166876548.42,"uncertain":2011621.8,"award":{"attributableObligations":166898366.42,"attributableOutlays":150689127,"uncertainObligations":2886436.58,"uncertainOutlays":1498557.37},"awards":{"recorded":300,"attributable":210},"contractAgencies":[["USDA",-30]],"individualPrograms":[["96.002",103829404],["96.001",32290040],["96.004",14526410],["64.109",13959823],["64.110",733622]],"uncertainPrograms":[["14.871",907021],["14.267",586690.83],["32.004",323327.57],["10.924",312282],["10.098",3969.74]],"history":{"attributable":[153465754.36,160413058.95,165488745.58,176509159.72,166876518.42],"uncertain":[2453970.16,4978039.05,2028123.91,3059794.63,2011621.8]}},
+    "72145": {"name":"Vega Baja","recorded":211683618.79,"attributable":194310639.62,"contracts":2175398.15,"individuals":192135241.47,"uncertain":17372979.17,"award":{"attributableObligations":206191133.95,"attributableOutlays":174081279.37,"uncertainObligations":18128714.56,"uncertainOutlays":11916452.18},"awards":{"recorded":289,"attributable":231},"contractAgencies":[["DHS",2649300],["USDA",6675],["DOD",950],["DOJ",435],["DOT",-1.32]],"individualPrograms":[["96.002",107776079],["96.001",40297656],["64.109",24091636],["96.004",16104966],["64.110",1203000]],"uncertainPrograms":[["20.205",10051844.97],["14.871",2543700],["93.600",2131740],["14.218",872930],["14.195",690165]],"history":{"attributable":[163726084.1,174256266.8,187185391.21,200277040.23,194310639.62],"uncertain":[9092673.5,7095899.41,17482723.93,8612639.94,17372979.17]}},
+    "72147": {"name":"Vieques","recorded":46144133.92,"attributable":45870915.27,"contracts":20232323.27,"individuals":25638592,"uncertain":273218.65,"award":{"attributableObligations":122491476.77,"attributableOutlays":23015736.01,"uncertainObligations":1798126.68,"uncertainOutlays":1613737.68},"awards":{"recorded":141,"attributable":124},"contractAgencies":[["DOD",18634026.43],["DOI",1598296.84]],"individualPrograms":[["96.002",17577342],["96.001",2838319],["64.109",2745740],["96.004",2000824],["64.104",159635]],"uncertainPrograms":[["14.871",309229],["15.631",20000],["32.004",-10073.64],["20.106",-45936.71]],"history":{"attributable":[44554806.44,46656157.47,56379319.54,49751050.72,45870915.27],"uncertain":[1926531.42,4087871.4,345239.63,350730,273218.65]}},
+    "72149": {"name":"Villalba","recorded":91810286.46,"attributable":84805180.63,"contracts":-11688,"individuals":84816868.63,"uncertain":7005105.83,"award":{"attributableObligations":84950980.86,"attributableOutlays":73489397.75,"uncertainObligations":1777403.99,"uncertainOutlays":1381075.1},"awards":{"recorded":196,"attributable":153},"contractAgencies":[["DOI",-11688]],"individualPrograms":[["96.002",47105316],["96.001",17687628],["64.109",10056906],["96.004",8517227],["64.110",326007]],"uncertainPrograms":[["20.205",5240652.64],["14.195",1073275],["14.871",582244],["10.924",63568],["10.991",29450.64]],"history":{"attributable":[67691649.38,73444200.66,79457322.19,86188712.88,84805180.63],"uncertain":[2883108.92,1844778.79,5980533.87,2124743.95,7005105.83]}},
+    "72151": {"name":"Yabucoa","recorded":158555129.62,"attributable":147132282.71,"contracts":0,"individuals":147132282.71,"uncertain":11422846.91,"award":{"attributableObligations":147337043.73,"attributableOutlays":135546928.26,"uncertainObligations":29696444.91,"uncertainOutlays":21630833.59},"awards":{"recorded":248,"attributable":166},"contractAgencies":[],"individualPrograms":[["96.002",79106198],["96.001",44474676],["96.004",11731124],["64.109",9624727],["64.110",559809]],"uncertainPrograms":[["93.600",6836595],["10.766",2288534.75],["14.871",652581],["32.004",500134.94],["14.195",491276]],"history":{"attributable":[132077768.65,140322780.58,146913838.39,156243047.9,147132282.71],"uncertain":[4438869.14,1487203.53,19701089.94,6276599.63,11422846.91]}},
+    "72153": {"name":"Yauco","recorded":156820582.08,"attributable":146974270.46,"contracts":0,"individuals":146974270.46,"uncertain":9846311.62,"award":{"attributableObligations":147018747.46,"attributableOutlays":125106487.65,"uncertainObligations":5324281.78,"uncertainOutlays":3260590.15},"awards":{"recorded":295,"attributable":185},"contractAgencies":[],"individualPrograms":[["96.002",87729766],["96.001",22019538],["64.109",19093599],["96.004",15302810],["64.110",848729]],"uncertainPrograms":[["20.205",8494149.87],["14.218",449590],["14.871",443417],["20.298",151822.54],["32.004",114645.55]],"history":{"attributable":[124814221.28,135074934.01,141846942.32,152965521.01,146974270.46],"uncertain":[2186651.3,3009699.72,6456346.08,2089491.77,9846311.62]}}
+  }
+}

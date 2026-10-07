@@ -8,17 +8,22 @@ import { deltaWords, rankOf, shortPeriod } from "@/data/pr/present";
 import { PUBLIC_GROUPS, isPublicMetric, publicMetricsInGroup } from "@/data/pr/public";
 import type { Ranking } from "@/data/pr/ranking";
 import { provenanceForMetric } from "@/data/pr/sources";
+import { FUNDS_FY } from "@/data/pr/funds";
+import { FundsIsland, FundsMunicipio } from "./FundsDetail";
 import { LausTrend } from "./LausTrend";
 
 /** Key profile shown under the main value, in this order (the active measure is skipped). */
 const PROFILE: PrMetricId[] = ["population", "income", "medianage", "poverty", "traffic"];
 
 const MONTHLY: PrMetricId = "unemploymentMonthly";
+const FUNDS: PrMetricId[] = ["fedObligations", "fedOutlays", "fedAwards"];
 
 function periodOf(id: PrMetricId): string {
   // Monthly data: the exact month, not the registry's range.
   if (id === MONTHLY)
     return `${monthShort(LAUS_LATEST)}${LAUS_LATEST_PRELIMINARY ? " (preliminar)" : ""}`;
+  // Federal funds: the exact federal fiscal year.
+  if (FUNDS.includes(id)) return `AF ${FUNDS_FY}`;
   const period = provenanceForMetric(id)?.period;
   return period ? shortPeriod(period) : "";
 }
@@ -104,6 +109,7 @@ export function Summary({
               Escoge un municipio en el mapa, en la lista o con el buscador.
             </p>
             {metric.id === MONTHLY && <LausTrend id={null} name="Puerto Rico" />}
+            {FUNDS.includes(metric.id) && <FundsIsland />}
           </>
         )}
       </section>
@@ -155,6 +161,12 @@ export function Summary({
           Preliminar: BLS revisa cada mes la cifra del mes anterior.
         </p>
       )}
+      {metric.signed && value != null && value < 0 && (
+        <p className="mt-1 text-[15px] text-muted">
+          Neto negativo: en este año pesaron más las desobligaciones y ajustes que las obligaciones
+          nuevas. No es un dato que falta ni $0.
+        </p>
+      )}
       {value == null && !island && (
         <p className="mt-1 text-[15px] text-muted">
           {MISSING_COPY[missingReason(metric.id, place.id)].long}
@@ -181,9 +193,10 @@ export function Summary({
       )}
 
       {metric.id === MONTHLY && <LausTrend id={place.id} name={place.name} />}
+      {FUNDS.includes(metric.id) && <FundsMunicipio id={place.id} />}
 
       <dl
-        className={`grid grid-cols-2 border-t border-divider ${metric.id === MONTHLY ? "mt-5" : ""}`}
+        className={`grid grid-cols-2 border-t border-divider ${metric.id === MONTHLY || FUNDS.includes(metric.id) ? "mt-5" : ""}`}
       >
         {others.map((id, index) => {
           const other = prMetricById(id);

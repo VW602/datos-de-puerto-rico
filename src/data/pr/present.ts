@@ -96,6 +96,7 @@ const AGENCY_ES: [RegExp, string, string][] = [
     "Oficina de Estadísticas Laborales de EE. UU. (BLS)",
     "la",
   ],
+  [/^U\.S\. Department of the Treasury/, "Departamento del Tesoro de EE. UU. (USAspending)", "el"],
 ];
 
 /** `from` reads naturally after "Sale de": "la Oficina del Censo…", "los Centros…". */

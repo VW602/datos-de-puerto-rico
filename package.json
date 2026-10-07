@@ -28,8 +28,11 @@
     "data:geo:check": "node scripts/geo/generate.ts --check",
     "data:bls:update": "node scripts/bls/update.ts",
     "data:bls:generate": "node scripts/bls/generate.ts",
-    "data:generate": "npm run data:census:generate && npm run data:geo:generate && npm run data:bls:generate && npm run data:registry:generate",
-    "data:check": "node scripts/census/generate.ts --check && node scripts/geo/generate.ts --check && node scripts/bls/generate.ts --check && node scripts/registry/public.ts --check",
+    "data:usaspending:update": "node scripts/usaspending/update.ts",
+    "data:usaspending:generate": "node scripts/usaspending/generate.ts",
+    "data:usaspending:check": "node scripts/usaspending/generate.ts --check",
+    "data:generate": "npm run data:census:generate && npm run data:geo:generate && npm run data:bls:generate && npm run data:usaspending:generate && npm run data:registry:generate",
+    "data:check": "node scripts/census/generate.ts --check && node scripts/geo/generate.ts --check && node scripts/bls/generate.ts --check && npm run data:usaspending:check && node scripts/registry/public.ts --check",
     "check": "npm run typecheck && npm run lint && npm run data:check && npm test && npm run build"
   },
   "dependencies": {

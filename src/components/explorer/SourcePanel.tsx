@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { LAUS_LATEST, LAUS_SOURCE, isPreliminary, lausBlock, monthLabel } from "@/data/pr/laus";
+import { FUNDS_FY_LABEL, FUNDS_SOURCE, dayLabel } from "@/data/pr/funds";
 import type { PrMetric } from "@/data/pr/metrics";
 import type { Municipio } from "@/data/pr/places";
 import { agencyDisplay, shortPeriod } from "@/data/pr/present";
@@ -56,6 +57,39 @@ function lausRows(place: Municipio | null): [string, ReactNode][] {
   ];
 }
 
+const FIELD_USED: Record<string, string> = {
+  fedObligations:
+    "Suma de federal_action_obligation de las transacciones con fecha de acción en el año fiscal (contratos y asistencia a personas con el municipio como lugar de ejecución). Puede incluir montos negativos: desobligaciones.",
+  fedOutlays:
+    "total_outlays: pagos acumulados que las agencias reportan para cada adjudicación atribuible con actividad en el año fiscal. No se suma con las obligaciones de transacción.",
+  fedAwards:
+    "Número de adjudicaciones primarias (contratos y asistencia a personas) con actividad en el año fiscal y el municipio como lugar de ejecución.",
+};
+
+/** USAspending rows: field used, period, geography rule, dates and what each money word means. */
+function fundsRows(metricId: string): [string, ReactNode][] {
+  return [
+    ["Campo", FIELD_USED[metricId]],
+    ["Año fiscal federal", FUNDS_FY_LABEL],
+    [
+      "Lugar",
+      "Lugar principal de ejecución, no la sede de quien recibe el dinero. El mapa solo pinta lo atribuible a un municipio: contratos que se ejecutan allí y asistencia a personas que viven allí. La asistencia a organizaciones y gobiernos que nombra un municipio puede ser una oficina que sirve a toda la isla: se muestra aparte, sin certeza. Lo que es para todo Puerto Rico o no dice municipio no se le asigna a ninguno.",
+    ],
+    [
+      "Obligado",
+      "El gobierno federal se comprometió legalmente a pagar. Obligado no quiere decir desembolsado ni gastado.",
+    ],
+    [
+      "Desembolsado",
+      `Pagos que la agencia federal reporta, hasta el ${dayLabel(FUNDS_SOURCE.outlaysReportedThrough.periodEnd)}. Un desembolso no reportado queda vacío: no quiere decir $0. Desembolsado tampoco quiere decir gastado por quien lo recibe.`,
+    ],
+    [
+      "Actualizado",
+      `USAspending: ${dayLabel(FUNDS_SOURCE.sourceLastUpdated)}. Copia obtenida de la API el ${dayLabel(FUNDS_SOURCE.retrievedAt)}${FUNDS_SOURCE.retrievedUntil.slice(0, 10) !== FUNDS_SOURCE.retrievedAt.slice(0, 10) ? ` al ${dayLabel(FUNDS_SOURCE.retrievedUntil)}` : ""}.`,
+    ],
+  ];
+}
+
 export function SourcePanel({
   metric,
   place = null,
@@ -71,6 +105,8 @@ export function SourcePanel({
   const survey = source.marginOfErrorAvailable;
   const agency = agencyDisplay(source.sourceAgency);
   const monthly = metric.id === "unemploymentMonthly";
+  const federal =
+    metric.id === "fedObligations" || metric.id === "fedOutlays" || metric.id === "fedAwards";
   const rows: [string, ReactNode][] = [
     [
       "Fuente",
@@ -86,20 +122,26 @@ export function SourcePanel({
       ),
     ],
     ["Dataset", <span lang="en">{source.sourceTitle}</span>],
-    ...(monthly ? lausRows(place) : [["Periodo", source.reportingPeriod] as [string, ReactNode]]),
+    ...(monthly
+      ? lausRows(place)
+      : federal
+        ? fundsRows(metric.id)
+        : [["Periodo", source.reportingPeriod] as [string, ReactNode]]),
     ["Variable / cálculo", source.methodology ?? "Según la publicación oficial."],
     [
       "Margen de error",
       survey
         ? "Sí. El Censo publica un margen de error (90%) para cada estimado; el sitio lo muestra cuando existe para esa cifra."
-        : monthly
-          ? "BLS no publica margen de error para las cifras de municipio. Son estimados de un modelo, no un conteo."
-          : "La fuente no publica margen de error para esta cifra.",
+        : federal
+          ? "No aplica: son montos reportados, no estimados de encuesta."
+          : monthly
+            ? "BLS no publica margen de error para las cifras de municipio. Son estimados de un modelo, no un conteo."
+            : "La fuente no publica margen de error para esta cifra.",
     ],
     [
       "Copia oficial",
       source.retrievedAt
-        ? `${monthly ? "Obtenida de la API de BLS" : "Descargada"} el ${shortDate(source.retrievedAt)}`
+        ? `${monthly ? "Obtenida de la API de BLS" : federal ? "Obtenida de la API de USAspending" : "Descargada"} el ${shortDate(source.retrievedAt)}`
         : `Según la publicación de ${shortPeriod(source.reportingPeriod)}`,
     ],
   ];
@@ -113,7 +155,8 @@ export function SourcePanel({
           ¿De dónde sale este dato?
         </Heading>
         <p className="mt-3 text-[17px] leading-relaxed">
-          <strong>{metric.label}:</strong> {metric.hint.replace(/\.?$/, ".")} Sale de {agency.from}
+          <strong>{metric.label}:</strong> {metric.hint.replace(/\.?$/, ".")} Sale{" "}
+          {agency.from.startsWith("el ") ? `del ${agency.from.slice(3)}` : `de ${agency.from}`}
           {agency.from.endsWith(".") ? "" : "."}
         </p>
         {survey && (
@@ -127,6 +170,14 @@ export function SourcePanel({
             BLS publica estas cifras cada mes con unas semanas de atraso. El mes más reciente es
             preliminar y cambia al mes siguiente. No llevan ajuste estacional: para ver la
             tendencia, compara con el mismo mes del año anterior.
+          </p>
+        )}
+        {federal && (
+          <p className="mt-2 text-[17px] leading-relaxed">
+            USAspending es la publicación oficial del Departamento del Tesoro sobre adjudicaciones
+            federales. Obligado no significa necesariamente desembolsado ni gastado. El lugar es
+            donde se registra que se hace el trabajo, y a veces es la oficina central: por eso el
+            sitio separa lo atribuible a un municipio de lo que no lo es con certeza.
           </p>
         )}
         {source.sourceURL && (

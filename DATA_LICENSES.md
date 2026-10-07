@@ -24,6 +24,7 @@ fuente.
 | Censo, TIGER/Line® 2024 | Los 78 municipios del archivo nacional de condados (`data/raw/geo`) y su versión simplificada | Obra del gobierno federal, sin derechos de autor en EE. UU. (17 U.S.C. §105) | Citar al Censo; mostrar en un lugar visible el aviso de marca registrada de TIGER/Line®; aclarar que los límites son para fines estadísticos |
 | NHTSA, FARS 2022–2023 | Muertes por municipio y la tasa calculada (`src/data/pr/municipios.json`) | Etiqueta de dominio público de EE. UU. en data.gov | Citar a NHTSA (buena práctica) |
 | CDC, BRFSS 2023 | Tres por cientos para toda la isla (`src/data/pr/layers.ts`) | Licencia «Public Domain» en data.cdc.gov | Citar a los CDC |
+| Tesoro, USAspending | Las respuestas de la API tal cual (`data/raw/usaspending`) y los totales generados (`data/generated/usaspending-pr.json`) | Datos abiertos según la página About de USAspending, sujetos a la limitación de Dun & Bradstreet | Citar USAspending.gov con la fecha de acceso; no diseminar en bloque nombres ni direcciones de entidades (el proyecto no los guarda) |
 | BLS, LAUS | Las respuestas de la API tal cual (`data/raw/bls/laus`) y las series mensuales generadas (`data/generated/bls-laus.json`) | Dominio público, según la página de derechos de autor de BLS; términos de servicio de la API | Citar a BLS; decir la fecha en que se obtuvieron los datos; incluir el aviso textual de BLS; no usar el emblema ni el logo de BLS |
 
 ## Censo: American Community Survey
@@ -78,6 +79,23 @@ fuente.
 - **Cita que usa el sitio:** «Fuente: U.S. Bureau of Labor Statistics, Local Area
   Unemployment Statistics (LAUS), datos mensuales sin ajuste estacional.»
 
+## USAspending (Departamento del Tesoro)
+
+- **Evidencia:** la página [About de USAspending.gov](https://www.usaspending.gov/about),
+  sección *Licensing*, leída el 6 de octubre de 2026: los datos del sitio se pueden
+  copiar, adaptar, redistribuir o usar con o sin fines comerciales, sujeto a la
+  [limitación de uso de datos de Dun & Bradstreet](https://www.usaspending.gov/db_info).
+- **La limitación de D&B** cubre el nombre, la dirección, la ciudad, el estado, el
+  país, el condado y el ZIP de las entidades: pide atribución a D&B y prohíbe
+  diseminarlos en bloque. También prohíbe extraer contenido del sitio web con
+  robots. Este proyecto usa la API oficial, y **no guarda ni publica nombres,
+  direcciones ni identificadores de recipientes**: solo montos agregados por
+  municipio, agencia y programa, y números de adjudicación de CDBG.
+- **Cita que usa el sitio:** «Fuente: USAspending.gov, U.S. Department of the
+  Treasury, Bureau of the Fiscal Service, https://www.usaspending.gov.», con la
+  fecha de obtención.
+- **Sin afiliación:** el Tesoro no respalda este proyecto.
+
 ## Si propones una fuente nueva
 
 Una fuente entra solo cuando sus términos permiten, por escrito, mostrar y
@@ -93,5 +111,7 @@ FARS (U.S. Public Domain label on data.gov), CDC BRFSS (Public Domain on
 data.cdc.gov) and BLS LAUS (public domain per the BLS copyright page; the BLS API
 terms require citing the retrieval date and the notice "BLS.gov cannot vouch for
 the data or analyses derived from these data after the data have been retrieved
-from BLS.gov."; no BLS logo or emblem). No Puerto Rico government datasets are included in this version.
+from BLS.gov."; no BLS logo or emblem) and USAspending.gov (U.S. Department of the
+Treasury: copy, adapt and redistribute, subject to the Dun & Bradstreet limitation;
+this project stores no recipient names, addresses or identifiers). No Puerto Rico government datasets are included in this version.
 This is not legal advice.

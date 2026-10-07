@@ -3,7 +3,31 @@ import { Maximize2, Minus, Plus, Search } from "lucide-react";
 import type { PrMetric } from "@/data/pr/metrics";
 import type { Candidate } from "@/data/pr/geo";
 import { searchPlaces } from "@/data/pr/present";
-import { ISLAND_ONLY_FILL, NO_DATA_HATCH, RAMP_GRADIENT } from "@/data/scale";
+import { ISLAND_ONLY_FILL, NO_DATA_HATCH, RAMP_GRADIENT, SIGNED_PATTERNS } from "@/data/scale";
+
+/** Inline swatches for the signed classes, same patterns as the map. */
+export function ZeroSwatch() {
+  const { base, dot } = SIGNED_PATTERNS.zero;
+  return (
+    <svg width="22" height="14" aria-hidden="true" className="shrink-0">
+      <rect x="0.5" y="0.5" width="21" height="13" fill={base} stroke="var(--color-muted)" />
+      {[5, 11, 17].flatMap((x) =>
+        [4.5, 9.5].map((y) => <circle key={`${x}-${y}`} cx={x} cy={y} r="0.9" fill={dot} />),
+      )}
+    </svg>
+  );
+}
+export function NegativeSwatch() {
+  const { base, stripe } = SIGNED_PATTERNS.negative;
+  return (
+    <svg width="22" height="14" aria-hidden="true" className="shrink-0">
+      <rect x="0.5" y="0.5" width="21" height="13" fill={base} stroke="var(--color-muted)" />
+      {[4.5, 9.5].map((y) => (
+        <line key={y} x1="1" x2="21" y1={y} y2={y} stroke={stripe} strokeWidth="1.5" />
+      ))}
+    </svg>
+  );
+}
 
 /** Inline hatch swatch, same pattern as the map's "sin dato". */
 function NoDataSwatch() {
@@ -34,6 +58,8 @@ export function Legend({
   max,
   islandOnly,
   missingCount,
+  zeroCount = 0,
+  negativeCount = 0,
   compact = false,
 }: {
   metric: PrMetric;
@@ -41,6 +67,8 @@ export function Legend({
   max: number;
   islandOnly: boolean;
   missingCount: number;
+  zeroCount?: number;
+  negativeCount?: number;
   compact?: boolean;
 }) {
   if (islandOnly) {
@@ -65,6 +93,18 @@ export function Legend({
         />
         <span className="shrink-0">{metric.formatTick(max)}</span>
       </div>
+      {metric.signed && zeroCount > 0 && (
+        <span className="flex items-center gap-1.5">
+          <ZeroSwatch />
+          {metric.format(0)} ({zeroCount})
+        </span>
+      )}
+      {metric.signed && negativeCount > 0 && (
+        <span className="flex items-center gap-1.5">
+          <NegativeSwatch />
+          Neto negativo ({negativeCount})
+        </span>
+      )}
       <span className="flex items-center gap-1.5">
         <NoDataSwatch />
         Sin dato publicado{missingCount > 0 ? ` (${missingCount})` : ""}

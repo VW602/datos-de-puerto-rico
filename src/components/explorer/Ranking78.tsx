@@ -2,7 +2,7 @@ import { memo } from "react";
 import type { PrMetric } from "@/data/pr/metrics";
 import type { Municipio } from "@/data/pr/places";
 import type { Ranking } from "@/data/pr/ranking";
-import { normalize } from "@/data/scale";
+import { SIGNED_PATTERNS, normalize, valueClass } from "@/data/scale";
 
 const W = 760;
 const X0 = 16;
@@ -62,7 +62,66 @@ export const Ranking78 = memo(function Ranking78({
   onSelect: (id: string) => void;
 }) {
   const { ranked, min, max, median } = ranking;
-  const x = (value: number) => X0 + normalize(value, min, max, metric.scale) * (X1 - X0);
+  // Signed metrics: $0 and net negative values sit in their own zone at the
+  // left, apart from the positive axis, never squeezed onto its lowest point.
+  const values = ranked.map((place) => place.values[metric.id]!);
+  const zone = metric.signed && values.some((v) => v <= 0) ? 56 : 0;
+  const x = (value: number) => {
+    if (zone && value < 0) return X0;
+    if (zone && value === 0) return X0 + zone / 2;
+    return X0 + zone + normalize(value, min, max, metric.scale) * (X1 - X0 - zone);
+  };
+  const dot = (place: Municipio) => {
+    const value = place.values[metric.id]!;
+    const cls = metric.signed ? valueClass(value) : "POSITIVE";
+    const cx = x(value);
+    if (cls === "NEGATIVE")
+      return (
+        <g key={place.id}>
+          <circle
+            cx={cx}
+            cy={26}
+            r={6}
+            fill={SIGNED_PATTERNS.negative.base}
+            stroke="var(--color-muted)"
+            strokeWidth={0.7}
+          />
+          <line
+            x1={cx - 3.5}
+            x2={cx + 3.5}
+            y1={26}
+            y2={26}
+            stroke={SIGNED_PATTERNS.negative.stripe}
+            strokeWidth={1.6}
+          />
+        </g>
+      );
+    if (cls === "ZERO")
+      return (
+        <g key={place.id}>
+          <circle
+            cx={cx}
+            cy={26}
+            r={6}
+            fill={SIGNED_PATTERNS.zero.base}
+            stroke="var(--color-muted)"
+            strokeWidth={0.7}
+          />
+          <circle cx={cx} cy={26} r={1.4} fill={SIGNED_PATTERNS.zero.dot} />
+        </g>
+      );
+    return (
+      <circle
+        key={place.id}
+        cx={cx}
+        cy={26}
+        r={6}
+        fill={fills[place.id]}
+        stroke="var(--color-muted)"
+        strokeWidth={0.7}
+      />
+    );
+  };
   const top = ranked.slice(0, 5);
   const bottom = ranked.slice(-5);
   const selectedIndex = selectedId ? ranked.findIndex((place) => place.id === selectedId) : -1;
@@ -94,17 +153,17 @@ export const Ranking78 = memo(function Ranking78({
           strokeDasharray="4 3"
           strokeWidth={1.2}
         />
-        {ranked.map((place) => (
-          <circle
-            key={place.id}
-            cx={x(place.values[metric.id]!)}
-            cy={26}
-            r={6}
-            fill={fills[place.id]}
-            stroke="var(--color-muted)"
-            strokeWidth={0.7}
+        {zone > 0 && (
+          <line
+            x1={X0 + zone - 6}
+            x2={X0 + zone - 6}
+            y1={12}
+            y2={40}
+            stroke="var(--color-divider)"
+            strokeWidth={1}
           />
-        ))}
+        )}
+        {ranked.map(dot)}
         {selected && (
           <>
             <circle

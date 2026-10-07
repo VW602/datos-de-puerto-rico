@@ -37,3 +37,6 @@ Thumbs.db
 # attach what matters to an issue or PR instead.
 screenshots/
 .local/
+
+# Resumable download cache (data:usaspending:update). Never published.
+.cache/

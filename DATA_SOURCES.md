@@ -14,6 +14,7 @@ Los términos de uso de cada fuente están en [DATA_LICENSES.md](DATA_LICENSES.m
 | NHTSA, FARS | Muertes de tránsito | 2022–2023 | Municipio | 78/78 |
 | CDC, BRFSS | Obesidad e inactividad física | 2023 | Toda la isla | Sí |
 | BLS, LAUS | Desempleo mensual, fuerza laboral, empleo | Mensual (ene 2024 – ago 2026) | Municipio | 78/78 |
+| Tesoro, USAspending | Obligaciones, desembolsos y adjudicaciones federales | Año fiscal federal 2026 (y 4 anteriores) | Municipio, con cuatro estados geográficos | 78/78 |
 
 **Verificado** quiere decir que se tomó la publicación oficial y se reprodujeron las
 cifras del sitio, municipio por municipio. La verificación se hizo el 1 de octubre
@@ -158,6 +159,81 @@ Los detalles técnicos están en [data/README.md](data/README.md).
 - **Aviso que piden los términos de la API:** «BLS.gov cannot vouch for the data or
   analyses derived from these data after the data have been retrieved from
   BLS.gov.»
+
+### USAspending: fondos federales
+
+- **Qué es:** el dinero federal que USAspending registra en Puerto Rico en un año
+  fiscal federal (1 de octubre a 30 de septiembre): obligaciones, desembolsos
+  reportados y número de adjudicaciones. Hoy: AF 2026, con AF 2022–2026 para
+  comparar. Datos de USAspending al 7 de octubre de 2026; copia obtenida el 7 de octubre de 2026.
+- **Quién lo publica:** el Departamento del Tesoro de EE. UU. (Bureau of the
+  Fiscal Service), en [USAspending.gov](https://www.usaspending.gov/), con datos que
+  reportan las agencias (contratos en FPDS, asistencia en FABS, cuentas en File C).
+- **Cómo lo usamos:** solo la [API oficial](https://api.usaspending.gov/docs/endpoints),
+  nunca el sitio web. Unos 450 pedidos, uno a la vez y con pausas; cada respuesta
+  se guarda tal cual en `data/raw/usaspending/` con su SHA-256, el pedido exacto y
+  la hora. La huella del plan de pedidos queda en el manifiesto.
+- **Qué se suma, a qué nivel, en qué periodo y con qué campo:**
+  - *Obligaciones:* `federal_action_obligation` de cada transacción de una
+    adjudicación primaria con fecha de acción dentro del año fiscal, por lugar
+    principal de ejecución. Nivel: transacción. Puede haber negativos
+    (desobligaciones); se conservan.
+  - *Desembolsos:* `total_outlays`, los pagos acumulados que las agencias reportan
+    para cada adjudicación con actividad en el año. Nivel: adjudicación. Cubren
+    toda la vida de la adjudicación, así que **nunca se suman ni se restan** con
+    las obligaciones de transacción. Se comparan con la obligación total de esas
+    mismas adjudicaciones. Reportados hasta el 31 de agosto de 2026.
+  - *Adjudicaciones:* número de adjudicaciones primarias con actividad en el año.
+- **Obligado no es gastado.** Obligado: el gobierno federal se comprometió a pagar.
+  Desembolsado: la agencia reporta que pagó. Ninguno de los dos dice que quien lo
+  recibe lo gastó. USAspending no publica «asignado» ni «gastado» por municipio, y
+  el sitio no los calcula.
+- **Lugar, no sede.** Se usa el lugar principal de ejecución, nunca la dirección de
+  quien recibe el dinero. Cada dólar queda en uno de cuatro estados:
+
+  | Estado | Qué entra | ¿En el mapa? |
+  | --- | --- | --- |
+  | Atribuible a un municipio | Contratos con municipio (FPDS: donde se hace el trabajo) y asistencia a personas con municipio (tipo de negocio P de FABS) | Sí |
+  | Registrado en un municipio, sin certeza | Otra asistencia con municipio: la reporta quien la recibe y puede ser una oficina que sirve a toda la isla | No |
+  | Todo Puerto Rico | Asistencia para Puerto Rico sin municipio (en FABS, el formato de lugar para Puerto Rico sin condado es «State-wide») | No |
+  | Sin municipio registrado | Contratos en Puerto Rico sin municipio | No |
+
+  Los cuatro suman el total de Puerto Rico de cada año (probado, con tolerancia de
+  un centavo más medio centavo por monto sumado). Nada se reasigna por
+  concentración ni por sede: lo incierto se queda incierto.
+- **San Juan.** USAspending registra en San Juan $13.45 mil millones en el AF 2026, pero solo
+  $1.81 mil millones es atribuible al municipio. El resto incluye programas que se
+  administran para toda la isla desde oficinas en San Juan (por ejemplo Medicare,
+  Título I y la Asistencia Pública de FEMA). El sitio muestra las dos cifras por
+  separado y pinta solo la atribuible.
+- **Sin doble conteo.** El generador comprueba que cada desglose suma su parte: los
+  tipos de adjudicación suman el total de Puerto Rico y el de cada municipio; los
+  programas suman la asistencia; las agencias suman los contratos; los municipios
+  más la fila sin municipio suman Puerto Rico a nivel de adjudicación. Una página
+  o un municipio repetido hace fallar la generación.
+- **Sin dato:** si USAspending no registra nada para un municipio, queda vacío con
+  su razón. Un desembolso no reportado queda vacío, no $0. Un $0 solo aparece
+  cuando la fuente suma $0.
+- **Montos con signo.** Una obligación del año puede ser negativa: hubo más
+  desobligaciones y ajustes que obligaciones nuevas. El sitio la muestra con su
+  signo (−$1.2 millones), nunca como $0 ni como el valor positivo más bajo. En el
+  mapa, los positivos usan la escala Arena → Añil; $0 tiene su trama de puntos; un
+  neto negativo, su trama de líneas horizontales; y lo que falta, el rayado de
+  «sin dato». En «Los 78, de mayor a menor», el $0 y los negativos quedan al
+  final, en su propia zona. Ninguna de esas tramas quiere decir «mejor» o «peor».
+  Los desembolsos también pueden traer ajustes negativos y se tratan igual.
+- **CDBG-DR.** Las subvenciones CDBG-DR y CDBG-MIT de HUD a Puerto Rico muestran la
+  diferencia: B-18-DP-72-0002: obligado $8.29 mil millones, desembolsado $644.3 millones, B-18-DP-72-0001: obligado $8.22 mil millones, desembolsado $4.10 mil millones, B-18-DE-72-0001: obligado $1.93 mil millones, desembolsado $171.3 millones.
+- **Recipientes:** el proyecto no guarda nombres, direcciones ni identificadores de
+  quien recibe el dinero (ver la limitación de Dun & Bradstreet en DATA_LICENSES.md).
+- **No hay cifra por persona.** Son dólares nominales. Dividir entre población
+  requiere escoger una fuente y un periodo de población, y eso no se ha hecho.
+- **Limitaciones:** el año fiscal recién cerrado puede seguir subiendo semanas
+  después (las agencias reportan con atraso; Defensa, 90 días). La asistencia
+  incierta incluye dinero que sí es local (por ejemplo, subvenciones a un
+  municipio): el sitio prefiere no asignarla a asignarla mal. Los contratos usan el lugar que
+  FPDS registra como donde se hace el trabajo; si un contrato reporta una oficina,
+  el sitio no lo puede detectar.
 
 ---
 

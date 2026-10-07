@@ -57,13 +57,26 @@ export function PuertoRicoApp() {
   const placeById = useMemo(() => new Map(places.map((place) => [place.id, place])), [places]);
   const ranking = useMemo(() => rankByMetric(places, metric.id, metric.scale), [places, metric]);
   const missingCount = island ? 0 : places.length - ranking.ranked.length;
+  const signedCounts = useMemo(() => {
+    const values = ranking.ranked.map((place) => place.values[metric.id]!);
+    return {
+      zero: values.filter((v) => v === 0).length,
+      negative: values.filter((v) => v < 0).length,
+    };
+  }, [ranking, metric]);
 
   const fills = useMemo(() => {
     const out: Record<string, string> = {};
     for (const place of places) {
       out[place.id] = island
         ? ISLAND_ONLY_FILL
-        : colorForValue(place.values[metric.id], ranking.min, ranking.max, metric.scale);
+        : colorForValue(
+            place.values[metric.id],
+            ranking.min,
+            ranking.max,
+            metric.scale,
+            metric.signed,
+          );
     }
     return out;
   }, [places, metric, ranking, island]);
@@ -289,6 +302,8 @@ export function PuertoRicoApp() {
                 max={ranking.max}
                 islandOnly={Boolean(island)}
                 missingCount={missingCount}
+                zeroCount={signedCounts.zero}
+                negativeCount={signedCounts.negative}
               />
             </div>
           </div>
@@ -385,6 +400,8 @@ export function PuertoRicoApp() {
               max={ranking.max}
               islandOnly={Boolean(island)}
               missingCount={missingCount}
+              zeroCount={signedCounts.zero}
+              negativeCount={signedCounts.negative}
               compact
             />
           </div>
@@ -533,8 +550,9 @@ export function PuertoRicoApp() {
 
       <footer className="border-t border-fg px-4 pt-4 pb-6 text-[13px] leading-normal text-muted md:px-14">
         <p>
-          Fuentes: Oficina del Censo de EE. UU. (ACS y TIGER/Line), NHTSA (FARS), CDC (BRFSS) y BLS
-          (LAUS). Cada medida dice su fuente y su periodo.
+          Fuentes: Oficina del Censo de EE. UU. (ACS y TIGER/Line), NHTSA (FARS), CDC (BRFSS), BLS
+          (LAUS) y USAspending.gov (Departamento del Tesoro). Cada medida dice su fuente y su
+          periodo.
         </p>
         {MAP_ATTRIBUTION && <p className="mt-1">{MAP_ATTRIBUTION}</p>}
         <p className="mt-1">

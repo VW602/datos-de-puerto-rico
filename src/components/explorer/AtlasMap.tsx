@@ -28,7 +28,13 @@ import {
   type Direction,
   type View,
 } from "@/data/pr/geo";
-import { NO_DATA_HATCH, NO_DATA_PATTERN_ID } from "@/data/scale";
+import {
+  NEGATIVE_PATTERN_ID,
+  NO_DATA_HATCH,
+  NO_DATA_PATTERN_ID,
+  SIGNED_PATTERNS,
+  ZERO_PATTERN_ID,
+} from "@/data/scale";
 
 export type MapVariant = "band" | "detail" | "overview";
 
@@ -46,6 +52,40 @@ export function NoDataPattern() {
       <rect width={size} height={size} fill={base} />
       <line x1="0" y1="0" x2="0" y2={size} stroke={stripe} strokeWidth={stripeWidth} />
     </pattern>
+  );
+}
+
+/** Signed metrics: $0 (dot grid) and net negative (horizontal lines). Exported for the regression test. */
+export function SignedPatterns() {
+  const { zero, negative } = SIGNED_PATTERNS;
+  return (
+    <>
+      <pattern
+        id={ZERO_PATTERN_ID}
+        width={zero.size}
+        height={zero.size}
+        patternUnits="userSpaceOnUse"
+      >
+        <rect width={zero.size} height={zero.size} fill={zero.base} />
+        <circle cx={zero.size / 2} cy={zero.size / 2} r={zero.radius} fill={zero.dot} />
+      </pattern>
+      <pattern
+        id={NEGATIVE_PATTERN_ID}
+        width={negative.size}
+        height={negative.size}
+        patternUnits="userSpaceOnUse"
+      >
+        <rect width={negative.size} height={negative.size} fill={negative.base} />
+        <line
+          x1="0"
+          y1={negative.size / 2}
+          x2={negative.size}
+          y2={negative.size / 2}
+          stroke={negative.stripe}
+          strokeWidth={negative.stripeWidth}
+        />
+      </pattern>
+    </>
   );
 }
 
@@ -384,6 +424,7 @@ export function AtlasMap({
         >
           <defs>
             <NoDataPattern />
+            <SignedPatterns />
           </defs>
           <rect
             x={WORLD.x0 - 2000}

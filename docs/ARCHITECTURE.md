@@ -18,6 +18,8 @@ Antes de publicar, fuera del sitio:
    www2.census.gov ─► scripts/census ─► data/raw/census → data/normalized → data/generated
    www2.census.gov ─► scripts/geo    ─► data/raw/geo → data/generated/municipios.geometry.json
    api.bls.gov     ─► scripts/bls    ─► data/raw/bls/laus → data/generated/bls-laus.json
+   api.usaspending.gov ─► scripts/usaspending ─► .cache (reanudable) → data/raw/usaspending
+                                              → data/generated/usaspending-pr.json
    data/registry   ─► scripts/registry ─► data/generated/sources.public.json
 ```
 
@@ -32,6 +34,9 @@ Antes de publicar, fuera del sitio:
   - `laus.ts`: lee `data/generated/bls-laus.json` (desempleo mensual de BLS): el
     último mes, el anterior, el mismo mes del año anterior y la línea de 24 meses.
     El sitio nunca llama a la API de BLS; una prueba lo comprueba.
+  - `funds.ts`: lee `data/generated/usaspending-pr.json` (fondos federales). El mapa
+    solo usa lo atribuible a un municipio; lo incierto, lo de todo Puerto Rico y lo
+    que no tiene municipio se muestran aparte y suman el total.
   - `places.ts`: arma cada municipio con las medidas del Censo generadas (con su
     margen de error) y los datos de FARS.
   - `public.ts`: la frontera de publicación. Las medidas, los grupos, la medida

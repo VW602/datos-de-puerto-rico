@@ -28,13 +28,14 @@ const V1_SOURCES = [
   "nhtsa-fars-2022-2023",
   "cdc-brfss-2023",
   "bls-laus-municipios",
+  "usaspending-pr",
   "geometria-municipios",
 ];
 
 /** Publishers allowed in this version: federal agencies whose terms are written down in DATA_LICENSES.md. */
 const ALLOWED_AGENCY =
-  /^(U\.S\. Census Bureau|National Highway Traffic Safety Administration|Centers for Disease Control and Prevention|U\.S\. Bureau of Labor Statistics)/;
-const ALLOWED_METRIC_SOURCE = /^(Censo|NHTSA|CDC|BLS)\b/;
+  /^(U\.S\. Census Bureau|National Highway Traffic Safety Administration|Centers for Disease Control and Prevention|U\.S\. Bureau of Labor Statistics|U\.S\. Department of the Treasury)/;
+const ALLOWED_METRIC_SOURCE = /^(Censo|NHTSA|CDC|BLS|USAspending)\b/;
 
 function filesUnder(dir: string): string[] {
   const out: string[] = [];
@@ -120,6 +121,7 @@ describe("frontera de publicación", () => {
       "data/generated/census-municipios.json",
       "data/generated/municipios.geometry.json",
       "data/generated/sources.public.json",
+      "data/generated/usaspending-pr.json",
     ]);
   });
 

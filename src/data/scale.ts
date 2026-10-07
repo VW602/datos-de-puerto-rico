@@ -29,6 +29,29 @@ export const NO_DATA_HATCH = {
   size: 5,
   stripeWidth: 1.6,
 } as const;
+/**
+ * Signed metrics (e.g. federal obligations, which can be net negative) keep
+ * zero and negative values off the ramp, each with its own neutral pattern:
+ * a negative amount is not missing, not $0 and not "a little". Neither
+ * pattern implies good or bad.
+ */
+export type ValueClass = "POSITIVE" | "ZERO" | "NEGATIVE" | "NO_DATA";
+export const ZERO_PATTERN_ID = "pr-zero";
+export const NEGATIVE_PATTERN_ID = "pr-negative";
+export const ZERO_FILL = `url(#${ZERO_PATTERN_ID})`;
+export const NEGATIVE_FILL = `url(#${NEGATIVE_PATTERN_ID})`;
+/** Zero: white with a dot grid. Negative: white with horizontal "minus" lines. */
+export const SIGNED_PATTERNS = {
+  zero: { base: "#FFFFFF", dot: "#57534B", size: 5, radius: 0.9 },
+  negative: { base: "#FFFFFF", stripe: "#3E5A62", size: 5, stripeWidth: 1.5 },
+} as const;
+
+export function valueClass(value: number | null): ValueClass {
+  if (value == null || !Number.isFinite(value)) return "NO_DATA";
+  if (value > 0) return "POSITIVE";
+  return value < 0 ? "NEGATIVE" : "ZERO";
+}
+
 /** Metrics that only exist for the whole island paint the land this neutral color. */
 export const ISLAND_ONLY_FILL = "#DDD7CB";
 
@@ -111,15 +134,23 @@ export function valueAt(t: number, min: number, max: number, scale: ScaleKind): 
 /**
  * Fill for one municipio. A published value (0 included) always gets a ramp
  * color; 0 is the lowest valid color. A missing value gets the no-data hatch,
- * never a ramp color and never a flat gray.
+ * never a ramp color and never a flat gray. For signed metrics, zero and
+ * negative values get their own patterns instead (see ValueClass).
  */
 export function colorForValue(
   value: number | null,
   min: number,
   max: number,
   scale: ScaleKind,
+  signed = false,
 ): string {
   if (value == null) return NO_DATA_FILL;
+  if (signed) {
+    // Only positive amounts are on the ramp; never clamp a negative or $0 into its lowest color.
+    const cls = valueClass(value);
+    if (cls === "NEGATIVE") return NEGATIVE_FILL;
+    if (cls === "ZERO") return ZERO_FILL;
+  }
   return rampColor(normalize(value, min, max, scale));
 }
 

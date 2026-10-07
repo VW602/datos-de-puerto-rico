@@ -1,4 +1,5 @@
 import type { ScaleKind } from "@/data/scale";
+import { FUNDS_FY, money } from "./funds";
 import { LAUS_LATEST, LAUS_LATEST_LABEL, LAUS_LATEST_PRELIMINARY, monthShort } from "./laus";
 
 export type PrMetricId =
@@ -27,7 +28,10 @@ export type PrMetricId =
   | "novehicle"
   | "nocomputer"
   | "crowding"
-  | "inactivity";
+  | "inactivity"
+  | "fedObligations"
+  | "fedOutlays"
+  | "fedAwards";
 
 export type PrMetric = {
   id: PrMetricId;
@@ -38,6 +42,8 @@ export type PrMetric = {
   format: (value: number) => string;
   formatTick: (value: number) => string;
   versus: (value: number, median: number) => string;
+  /** Zero and negative values are their own map classes, not the bottom of the ramp. */
+  signed?: boolean;
 };
 
 const people = new Intl.NumberFormat("en-US");
@@ -242,15 +248,58 @@ export const PR_METRICS: PrMetric[] = [
   },
 ];
 
+// USAspending. Only money attributable to a municipio (contracts performed
+// there, assistance to people who live there) is on the map; the rest stays in
+// its own geographic state and is shown apart (see funds.ts).
+const moneyTick = (value: number) => money(value).replace(" mil millones", " mil mill.").replace(" millones", " mill.");
+/** A net negative amount or $0 is described as such, never as a ratio of the median. */
+const signedVersus = (value: number, median: number) =>
+  value < 0 ? "Obligación neta negativa (desobligaciones)" : value === 0 ? "$0" : ratio(value, median);
+PR_METRICS.push(
+  {
+    id: "fedObligations",
+    label: "Obligaciones federales",
+    hint: `Dinero que el gobierno federal se comprometió a pagar en el año fiscal ${FUNDS_FY}, atribuible al municipio: contratos que se ejecutan allí y asistencia a personas que viven allí. Obligado no quiere decir pagado ni gastado`,
+    source: `USAspending, AF ${FUNDS_FY}`,
+    scale: "log",
+    format: money,
+    formatTick: moneyTick,
+    versus: signedVersus,
+    signed: true,
+  },
+  {
+    id: "fedOutlays",
+    label: "Desembolsos federales",
+    hint: `Pagos que las agencias federales reportan, acumulados, de las adjudicaciones atribuibles al municipio con actividad en el año fiscal ${FUNDS_FY}. Si una adjudicación no tiene pagos reportados, no suma: no quiere decir $0`,
+    source: `USAspending, adjudicaciones activas en AF ${FUNDS_FY}`,
+    scale: "log",
+    format: money,
+    formatTick: moneyTick,
+    versus: (value, median) => (value < 0 ? "Desembolsos netos negativos (ajustes)" : value === 0 ? "$0" : ratio(value, median)),
+    signed: true,
+  },
+  {
+    id: "fedAwards",
+    label: "Adjudicaciones federales",
+    hint: `Contratos y asistencias a personas con actividad en el año fiscal ${FUNDS_FY} y lugar de ejecución en el municipio`,
+    source: `USAspending, AF ${FUNDS_FY}`,
+    scale: "log",
+    format: (value) => people.format(Math.round(value)),
+    formatTick: compact,
+    versus: (value, median) => (value === 0 ? "Ninguna" : ratio(value, median)),
+    signed: true,
+  },
+);
+
 export function prMetricById(id: PrMetricId): PrMetric {
   const metric = PR_METRICS.find((item) => item.id === id);
   if (!metric) throw new Error(`Unknown metric: ${id}`);
   return metric;
 }
 
-export type MetricGroup = "Gente" | "Hogar" | "Trabajo" | "Salud" | "Isla";
+export type MetricGroup = "Gente" | "Hogar" | "Trabajo" | "Salud" | "Fondos federales" | "Isla";
 
-export const METRIC_GROUPS: MetricGroup[] = ["Gente", "Hogar", "Trabajo", "Salud", "Isla"];
+export const METRIC_GROUPS: MetricGroup[] = ["Gente", "Hogar", "Trabajo", "Salud", "Fondos federales", "Isla"];
 
 const GROUP: Record<PrMetricId, MetricGroup> = {
   population: "Gente",
@@ -279,6 +328,9 @@ const GROUP: Record<PrMetricId, MetricGroup> = {
   novehicle: "Hogar",
   nocomputer: "Hogar",
   crowding: "Hogar",
+  fedObligations: "Fondos federales",
+  fedOutlays: "Fondos federales",
+  fedAwards: "Fondos federales",
 };
 
 export function metricGroup(id: PrMetricId): MetricGroup {
