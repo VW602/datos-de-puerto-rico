@@ -21,20 +21,22 @@ su fuente oficial, no entra.
 - **Un mapa de los 78 municipios.** Escoges una medida y cada pueblo se colorea
   según su cifra. Puedes acercarte, moverte y escoger un municipio en el mapa o en
   la lista.
-- **25 medidas** en cinco grupos:
+- **26 medidas** en cinco grupos:
   - **Gente:** población, mujeres, menores de 18, 65 años o más, edad mediana y
     discapacidad.
   - **Hogar:** ingreso del hogar y por persona, pobreza, renta, valor de la
     vivienda, viviendas vacías, hacinamiento, viviendas sin plomería completa,
     hogares sin carro, sin computadora o sin internet, y asistencia nutricional
     (PAN).
-  - **Trabajo:** desempleo, escuela superior y bachillerato.
+  - **Trabajo:** desempleo mensual (BLS), desempleo promedio de 5 años (Censo),
+    escuela superior y bachillerato.
   - **Salud:** personas sin plan médico y muertes de tránsito.
   - **Toda la isla:** obesidad e inactividad física en adultos, que solo se publican
     para Puerto Rico completo.
 - **Una ficha por municipio** con la cifra, su lugar entre los 78, el margen de
   error cuando el Censo lo publica, la pirámide de edad y las demás medidas del
-  grupo.
+  grupo. En desempleo mensual, además: el mes anterior, el mismo mes del año
+  anterior, una línea de 24 meses y la fuerza laboral.
 - **«¿De dónde sale este dato?»** en cada ficha: la agencia, el periodo, cómo se
   calcula, qué falta, cuándo se descargó la copia oficial, la cita y el enlace a la
   fuente original.
@@ -47,6 +49,7 @@ su fuente oficial, no entra.
 | Oficina del Censo de EE. UU., TIGER/Line® 2024 | Los límites de los municipios en el mapa |
 | NHTSA, Fatality Analysis Reporting System (FARS) 2022–2023 | Muertes de tránsito |
 | CDC, Behavioral Risk Factor Surveillance System (BRFSS) 2023 | Obesidad e inactividad física, toda la isla |
+| Oficina de Estadísticas Laborales de EE. UU. (BLS), Local Area Unemployment Statistics (LAUS) | Desempleo mensual por municipio, fuerza laboral, personas empleadas y desempleadas |
 
 El detalle de cada fuente está en [DATA_SOURCES.md](DATA_SOURCES.md), y sus
 condiciones de uso, en [DATA_LICENSES.md](DATA_LICENSES.md).
@@ -60,8 +63,9 @@ condiciones de uso, en [DATA_LICENSES.md](DATA_LICENSES.md).
 - **Los estimados del Censo vienen de una encuesta** y tienen margen de error. El
   proyecto guarda el margen oficial junto a cada estimado y lo muestra en la ficha
   cuando el Censo lo publica para esa cifra.
-- **Todo se puede reconstruir.** Los datos del Censo y los límites del mapa salen de
-  copias oficiales guardadas en el repositorio, con su SHA-256. Los scripts los
+- **Todo se puede reconstruir.** Los datos del Censo, los límites del mapa y el
+  desempleo mensual salen de copias oficiales guardadas en el repositorio, con su
+  SHA-256. Los scripts los
   vuelven a generar sin internet y siempre dan los mismos bytes.
 - **La página no consulta ningún servicio** al abrirse. Todo sale de archivos del
   repositorio.
@@ -83,9 +87,10 @@ Abre <http://localhost:8080>.
 | `npm test` | Pruebas (Vitest) |
 | `npm run build` | Compila el sitio y su servidor en `.output/`, sin descargar nada |
 | `npm run data:check` | Comprueba que los datos generados salen de las copias oficiales guardadas |
-| `npm run data:generate` | Vuelve a generar los datos del Censo, el mapa y el registro público, sin red |
+| `npm run data:generate` | Vuelve a generar los datos del Censo, el mapa, el desempleo de BLS y el registro público, sin red |
 | `npm run data:census:update` | Descarga de nuevo la copia oficial del Censo (necesita red) |
 | `npm run data:geo:update` | Descarga de nuevo los límites TIGER/Line 2024 (necesita red) |
+| `npm run data:bls:update` | Pide de nuevo el desempleo mensual a la API oficial de BLS (necesita red) |
 
 ### Actualizar los datos del Censo o del mapa
 
@@ -98,6 +103,18 @@ Abre <http://localhost:8080>.
 
 No hace falta clave de la API del Censo. Los detalles están en
 [data/README.md](data/README.md).
+
+### Actualizar el desempleo mensual (BLS)
+
+1. Corre `npm run data:bls:update`. Solo se conecta a `api.bls.gov` y hace 13
+   pedidos; sin clave, la API de BLS permite pocos pedidos al día. Con una clave
+   gratuita en la variable `BLS_API_KEY` usa la versión 2 (la clave no se guarda).
+2. Corre `npm run data:bls:generate -- --allow-changes` y revisa el cambio. El mes
+   nuevo sale solo: es el último que BLS publica para todas las series.
+3. Corre `npm run data:registry:generate` y `npm run check`.
+
+Usar la API de BLS es aceptar sus
+[términos de servicio](https://www.bls.gov/developers/termsOfService.htm).
 
 ## Cómo está hecho
 
@@ -167,13 +184,13 @@ no cubre los datos. Si los reusas, cita la fuente original.
 ## Sin afiliación
 
 Este es un proyecto independiente. No está afiliado al gobierno de Puerto Rico, a la
-Oficina del Censo, a NHTSA, a los CDC ni a ninguna otra agencia, y ninguna de ellas
+Oficina del Censo, a NHTSA, a los CDC, a BLS ni a ninguna otra agencia, y ninguna de ellas
 lo respalda ni lo certifica.
 
 ---
 
 **English:** An independent, Spanish-first, open-source map of public data for
 Puerto Rico's 78 municipalities, built from U.S. Census Bureau (ACS, TIGER/Line),
-NHTSA (FARS) and CDC (BRFSS) data. Every number links back to its official source.
+NHTSA (FARS), CDC (BRFSS) and Bureau of Labor Statistics (LAUS) data. Every number links back to its official source.
 Code is MIT-licensed; the data keeps its publishers' terms (see DATA_LICENSES.md).
 Not affiliated with or endorsed by any government agency.

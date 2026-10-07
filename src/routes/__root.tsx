@@ -3,7 +3,7 @@ import appCss from "../styles.css?url";
 
 const TITLE = "Puerto Rico · 78 municipios";
 const DESCRIPTION =
-  "Escoge un municipio y conoce sus datos. Cifras públicas del Censo, NHTSA y los CDC, con su fuente al lado.";
+  "Escoge un municipio y conoce sus datos. Cifras públicas del Censo, NHTSA, los CDC y BLS, con su fuente al lado.";
 
 export const Route = createRootRoute({
   head: () => ({

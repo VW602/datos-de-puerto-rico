@@ -1,0 +1,793 @@
+{
+  "schema": 1,
+  "generator": "scripts/bls/update.ts",
+  "generatorVersion": 1,
+  "agency": "U.S. Bureau of Labor Statistics",
+  "dataset": "Local Area Unemployment Statistics (LAUS), municipios y Puerto Rico, mensual, sin ajuste estacional",
+  "api": "https://api.bls.gov/publicAPI/v1/timeseries/data/",
+  "apiVersion": "v1",
+  "retrievedAt": "2026-10-07",
+  "retrievedAtNote": "retrievedAt es la fecha UTC en que se pidieron los datos a la API oficial de BLS.",
+  "startYear": 2024,
+  "endYear": 2026,
+  "terms": {
+    "copyright": "https://www.bls.gov/opub/copyright-information.htm",
+    "api": "https://www.bls.gov/developers/termsOfService.htm",
+    "disclaimer": "BLS.gov cannot vouch for the data or analyses derived from these data after the data have been retrieved from BLS.gov."
+  },
+  "municipios": [
+    {
+      "id": "72001",
+      "name": "Adjuntas"
+    },
+    {
+      "id": "72003",
+      "name": "Aguada"
+    },
+    {
+      "id": "72005",
+      "name": "Aguadilla"
+    },
+    {
+      "id": "72007",
+      "name": "Aguas Buenas"
+    },
+    {
+      "id": "72009",
+      "name": "Aibonito"
+    },
+    {
+      "id": "72011",
+      "name": "Añasco"
+    },
+    {
+      "id": "72013",
+      "name": "Arecibo"
+    },
+    {
+      "id": "72015",
+      "name": "Arroyo"
+    },
+    {
+      "id": "72017",
+      "name": "Barceloneta"
+    },
+    {
+      "id": "72019",
+      "name": "Barranquitas"
+    },
+    {
+      "id": "72021",
+      "name": "Bayamón"
+    },
+    {
+      "id": "72023",
+      "name": "Cabo Rojo"
+    },
+    {
+      "id": "72025",
+      "name": "Caguas"
+    },
+    {
+      "id": "72027",
+      "name": "Camuy"
+    },
+    {
+      "id": "72029",
+      "name": "Canóvanas"
+    },
+    {
+      "id": "72031",
+      "name": "Carolina"
+    },
+    {
+      "id": "72033",
+      "name": "Cataño"
+    },
+    {
+      "id": "72035",
+      "name": "Cayey"
+    },
+    {
+      "id": "72037",
+      "name": "Ceiba"
+    },
+    {
+      "id": "72039",
+      "name": "Ciales"
+    },
+    {
+      "id": "72041",
+      "name": "Cidra"
+    },
+    {
+      "id": "72043",
+      "name": "Coamo"
+    },
+    {
+      "id": "72045",
+      "name": "Comerío"
+    },
+    {
+      "id": "72047",
+      "name": "Corozal"
+    },
+    {
+      "id": "72049",
+      "name": "Culebra"
+    },
+    {
+      "id": "72051",
+      "name": "Dorado"
+    },
+    {
+      "id": "72053",
+      "name": "Fajardo"
+    },
+    {
+      "id": "72054",
+      "name": "Florida"
+    },
+    {
+      "id": "72055",
+      "name": "Guánica"
+    },
+    {
+      "id": "72057",
+      "name": "Guayama"
+    },
+    {
+      "id": "72059",
+      "name": "Guayanilla"
+    },
+    {
+      "id": "72061",
+      "name": "Guaynabo"
+    },
+    {
+      "id": "72063",
+      "name": "Gurabo"
+    },
+    {
+      "id": "72065",
+      "name": "Hatillo"
+    },
+    {
+      "id": "72067",
+      "name": "Hormigueros"
+    },
+    {
+      "id": "72069",
+      "name": "Humacao"
+    },
+    {
+      "id": "72071",
+      "name": "Isabela"
+    },
+    {
+      "id": "72073",
+      "name": "Jayuya"
+    },
+    {
+      "id": "72075",
+      "name": "Juana Díaz"
+    },
+    {
+      "id": "72077",
+      "name": "Juncos"
+    },
+    {
+      "id": "72079",
+      "name": "Lajas"
+    },
+    {
+      "id": "72081",
+      "name": "Lares"
+    },
+    {
+      "id": "72083",
+      "name": "Las Marías"
+    },
+    {
+      "id": "72085",
+      "name": "Las Piedras"
+    },
+    {
+      "id": "72087",
+      "name": "Loíza"
+    },
+    {
+      "id": "72089",
+      "name": "Luquillo"
+    },
+    {
+      "id": "72091",
+      "name": "Manatí"
+    },
+    {
+      "id": "72093",
+      "name": "Maricao"
+    },
+    {
+      "id": "72095",
+      "name": "Maunabo"
+    },
+    {
+      "id": "72097",
+      "name": "Mayagüez"
+    },
+    {
+      "id": "72099",
+      "name": "Moca"
+    },
+    {
+      "id": "72101",
+      "name": "Morovis"
+    },
+    {
+      "id": "72103",
+      "name": "Naguabo"
+    },
+    {
+      "id": "72105",
+      "name": "Naranjito"
+    },
+    {
+      "id": "72107",
+      "name": "Orocovis"
+    },
+    {
+      "id": "72109",
+      "name": "Patillas"
+    },
+    {
+      "id": "72111",
+      "name": "Peñuelas"
+    },
+    {
+      "id": "72113",
+      "name": "Ponce"
+    },
+    {
+      "id": "72115",
+      "name": "Quebradillas"
+    },
+    {
+      "id": "72117",
+      "name": "Rincón"
+    },
+    {
+      "id": "72119",
+      "name": "Río Grande"
+    },
+    {
+      "id": "72121",
+      "name": "Sabana Grande"
+    },
+    {
+      "id": "72123",
+      "name": "Salinas"
+    },
+    {
+      "id": "72125",
+      "name": "San Germán"
+    },
+    {
+      "id": "72127",
+      "name": "San Juan"
+    },
+    {
+      "id": "72129",
+      "name": "San Lorenzo"
+    },
+    {
+      "id": "72131",
+      "name": "San Sebastián"
+    },
+    {
+      "id": "72133",
+      "name": "Santa Isabel"
+    },
+    {
+      "id": "72135",
+      "name": "Toa Alta"
+    },
+    {
+      "id": "72137",
+      "name": "Toa Baja"
+    },
+    {
+      "id": "72139",
+      "name": "Trujillo Alto"
+    },
+    {
+      "id": "72141",
+      "name": "Utuado"
+    },
+    {
+      "id": "72143",
+      "name": "Vega Alta"
+    },
+    {
+      "id": "72145",
+      "name": "Vega Baja"
+    },
+    {
+      "id": "72147",
+      "name": "Vieques"
+    },
+    {
+      "id": "72149",
+      "name": "Villalba"
+    },
+    {
+      "id": "72151",
+      "name": "Yabucoa"
+    },
+    {
+      "id": "72153",
+      "name": "Yauco"
+    }
+  ],
+  "batches": [
+    {
+      "path": "data/raw/bls/laus/batch-01.json",
+      "request": {
+        "seriesid": [
+          "LAUST720000000000003",
+          "LAUST720000000000004",
+          "LAUST720000000000005",
+          "LAUST720000000000006",
+          "LAUCN720010000000003",
+          "LAUCN720010000000004",
+          "LAUCN720010000000005",
+          "LAUCN720010000000006",
+          "LAUCN720030000000003",
+          "LAUCN720030000000004",
+          "LAUCN720030000000005",
+          "LAUCN720030000000006",
+          "LAUCN720050000000003",
+          "LAUCN720050000000004",
+          "LAUCN720050000000005",
+          "LAUCN720050000000006",
+          "LAUCN720070000000003",
+          "LAUCN720070000000004",
+          "LAUCN720070000000005",
+          "LAUCN720070000000006",
+          "LAUCN720090000000003",
+          "LAUCN720090000000004",
+          "LAUCN720090000000005",
+          "LAUCN720090000000006",
+          "LAUCN720110000000003"
+        ],
+        "startyear": "2024",
+        "endyear": "2026"
+      },
+      "bytes": 70294,
+      "sha256": "2962c579d6c1e0138b405fe9771099fd4fdd5f06e3abc72619e513691ec57f33"
+    },
+    {
+      "path": "data/raw/bls/laus/batch-02.json",
+      "request": {
+        "seriesid": [
+          "LAUCN720110000000004",
+          "LAUCN720110000000005",
+          "LAUCN720110000000006",
+          "LAUCN720130000000003",
+          "LAUCN720130000000004",
+          "LAUCN720130000000005",
+          "LAUCN720130000000006",
+          "LAUCN720150000000003",
+          "LAUCN720150000000004",
+          "LAUCN720150000000005",
+          "LAUCN720150000000006",
+          "LAUCN720170000000003",
+          "LAUCN720170000000004",
+          "LAUCN720170000000005",
+          "LAUCN720170000000006",
+          "LAUCN720190000000003",
+          "LAUCN720190000000004",
+          "LAUCN720190000000005",
+          "LAUCN720190000000006",
+          "LAUCN720210000000003",
+          "LAUCN720210000000004",
+          "LAUCN720210000000005",
+          "LAUCN720210000000006",
+          "LAUCN720230000000003",
+          "LAUCN720230000000004"
+        ],
+        "startyear": "2024",
+        "endyear": "2026"
+      },
+      "bytes": 70253,
+      "sha256": "762c5c61a03f172d767df50a60068deb869f25a7cae6eb16cffd0d50c1ebb5d7"
+    },
+    {
+      "path": "data/raw/bls/laus/batch-03.json",
+      "request": {
+        "seriesid": [
+          "LAUCN720230000000005",
+          "LAUCN720230000000006",
+          "LAUCN720250000000003",
+          "LAUCN720250000000004",
+          "LAUCN720250000000005",
+          "LAUCN720250000000006",
+          "LAUCN720270000000003",
+          "LAUCN720270000000004",
+          "LAUCN720270000000005",
+          "LAUCN720270000000006",
+          "LAUCN720290000000003",
+          "LAUCN720290000000004",
+          "LAUCN720290000000005",
+          "LAUCN720290000000006",
+          "LAUCN720310000000003",
+          "LAUCN720310000000004",
+          "LAUCN720310000000005",
+          "LAUCN720310000000006",
+          "LAUCN720330000000003",
+          "LAUCN720330000000004",
+          "LAUCN720330000000005",
+          "LAUCN720330000000006",
+          "LAUCN720350000000003",
+          "LAUCN720350000000004",
+          "LAUCN720350000000005"
+        ],
+        "startyear": "2024",
+        "endyear": "2026"
+      },
+      "bytes": 70429,
+      "sha256": "7582b65611a80f418a6857378b5f117f89d7425ea6f260bc4614a9695cbfb110"
+    },
+    {
+      "path": "data/raw/bls/laus/batch-04.json",
+      "request": {
+        "seriesid": [
+          "LAUCN720350000000006",
+          "LAUCN720370000000003",
+          "LAUCN720370000000004",
+          "LAUCN720370000000005",
+          "LAUCN720370000000006",
+          "LAUCN720390000000003",
+          "LAUCN720390000000004",
+          "LAUCN720390000000005",
+          "LAUCN720390000000006",
+          "LAUCN720410000000003",
+          "LAUCN720410000000004",
+          "LAUCN720410000000005",
+          "LAUCN720410000000006",
+          "LAUCN720430000000003",
+          "LAUCN720430000000004",
+          "LAUCN720430000000005",
+          "LAUCN720430000000006",
+          "LAUCN720450000000003",
+          "LAUCN720450000000004",
+          "LAUCN720450000000005",
+          "LAUCN720450000000006",
+          "LAUCN720470000000003",
+          "LAUCN720470000000004",
+          "LAUCN720470000000005",
+          "LAUCN720470000000006"
+        ],
+        "startyear": "2024",
+        "endyear": "2026"
+      },
+      "bytes": 70239,
+      "sha256": "cf13435e11fdc4d80b59ae3c28f9344109774040078578106166aac8b705e1f5"
+    },
+    {
+      "path": "data/raw/bls/laus/batch-05.json",
+      "request": {
+        "seriesid": [
+          "LAUCN720490000000003",
+          "LAUCN720490000000004",
+          "LAUCN720490000000005",
+          "LAUCN720490000000006",
+          "LAUCN720510000000003",
+          "LAUCN720510000000004",
+          "LAUCN720510000000005",
+          "LAUCN720510000000006",
+          "LAUCN720530000000003",
+          "LAUCN720530000000004",
+          "LAUCN720530000000005",
+          "LAUCN720530000000006",
+          "LAUCN720540000000003",
+          "LAUCN720540000000004",
+          "LAUCN720540000000005",
+          "LAUCN720540000000006",
+          "LAUCN720550000000003",
+          "LAUCN720550000000004",
+          "LAUCN720550000000005",
+          "LAUCN720550000000006",
+          "LAUCN720570000000003",
+          "LAUCN720570000000004",
+          "LAUCN720570000000005",
+          "LAUCN720570000000006",
+          "LAUCN720590000000003"
+        ],
+        "startyear": "2024",
+        "endyear": "2026"
+      },
+      "bytes": 70150,
+      "sha256": "2e321745a7f1608504295fb77b347bf068e5c8111ed505faf25f530d8336f7fd"
+    },
+    {
+      "path": "data/raw/bls/laus/batch-06.json",
+      "request": {
+        "seriesid": [
+          "LAUCN720590000000004",
+          "LAUCN720590000000005",
+          "LAUCN720590000000006",
+          "LAUCN720610000000003",
+          "LAUCN720610000000004",
+          "LAUCN720610000000005",
+          "LAUCN720610000000006",
+          "LAUCN720630000000003",
+          "LAUCN720630000000004",
+          "LAUCN720630000000005",
+          "LAUCN720630000000006",
+          "LAUCN720650000000003",
+          "LAUCN720650000000004",
+          "LAUCN720650000000005",
+          "LAUCN720650000000006",
+          "LAUCN720670000000003",
+          "LAUCN720670000000004",
+          "LAUCN720670000000005",
+          "LAUCN720670000000006",
+          "LAUCN720690000000003",
+          "LAUCN720690000000004",
+          "LAUCN720690000000005",
+          "LAUCN720690000000006",
+          "LAUCN720710000000003",
+          "LAUCN720710000000004"
+        ],
+        "startyear": "2024",
+        "endyear": "2026"
+      },
+      "bytes": 70294,
+      "sha256": "c76ad24bfc0ace738a85f453130497d6deaf4ef6d5f04b312daa6b1aff086248"
+    },
+    {
+      "path": "data/raw/bls/laus/batch-07.json",
+      "request": {
+        "seriesid": [
+          "LAUCN720710000000005",
+          "LAUCN720710000000006",
+          "LAUCN720730000000003",
+          "LAUCN720730000000004",
+          "LAUCN720730000000005",
+          "LAUCN720730000000006",
+          "LAUCN720750000000003",
+          "LAUCN720750000000004",
+          "LAUCN720750000000005",
+          "LAUCN720750000000006",
+          "LAUCN720770000000003",
+          "LAUCN720770000000004",
+          "LAUCN720770000000005",
+          "LAUCN720770000000006",
+          "LAUCN720790000000003",
+          "LAUCN720790000000004",
+          "LAUCN720790000000005",
+          "LAUCN720790000000006",
+          "LAUCN720810000000003",
+          "LAUCN720810000000004",
+          "LAUCN720810000000005",
+          "LAUCN720810000000006",
+          "LAUCN720830000000003",
+          "LAUCN720830000000004",
+          "LAUCN720830000000005"
+        ],
+        "startyear": "2024",
+        "endyear": "2026"
+      },
+      "bytes": 70249,
+      "sha256": "240cf2a5dd01c0241decbcdb1bb286d5903f439bb8577b66d6e6e5929f13581b"
+    },
+    {
+      "path": "data/raw/bls/laus/batch-08.json",
+      "request": {
+        "seriesid": [
+          "LAUCN720830000000006",
+          "LAUCN720850000000003",
+          "LAUCN720850000000004",
+          "LAUCN720850000000005",
+          "LAUCN720850000000006",
+          "LAUCN720870000000003",
+          "LAUCN720870000000004",
+          "LAUCN720870000000005",
+          "LAUCN720870000000006",
+          "LAUCN720890000000003",
+          "LAUCN720890000000004",
+          "LAUCN720890000000005",
+          "LAUCN720890000000006",
+          "LAUCN720910000000003",
+          "LAUCN720910000000004",
+          "LAUCN720910000000005",
+          "LAUCN720910000000006",
+          "LAUCN720930000000003",
+          "LAUCN720930000000004",
+          "LAUCN720930000000005",
+          "LAUCN720930000000006",
+          "LAUCN720950000000003",
+          "LAUCN720950000000004",
+          "LAUCN720950000000005",
+          "LAUCN720950000000006"
+        ],
+        "startyear": "2024",
+        "endyear": "2026"
+      },
+      "bytes": 70197,
+      "sha256": "c0c4fc105fc4c6996c6a350ff64db5e2a1372ad12de5a0f3eff809f6e64a65d3"
+    },
+    {
+      "path": "data/raw/bls/laus/batch-09.json",
+      "request": {
+        "seriesid": [
+          "LAUCN720970000000003",
+          "LAUCN720970000000004",
+          "LAUCN720970000000005",
+          "LAUCN720970000000006",
+          "LAUCN720990000000003",
+          "LAUCN720990000000004",
+          "LAUCN720990000000005",
+          "LAUCN720990000000006",
+          "LAUCN721010000000003",
+          "LAUCN721010000000004",
+          "LAUCN721010000000005",
+          "LAUCN721010000000006",
+          "LAUCN721030000000003",
+          "LAUCN721030000000004",
+          "LAUCN721030000000005",
+          "LAUCN721030000000006",
+          "LAUCN721050000000003",
+          "LAUCN721050000000004",
+          "LAUCN721050000000005",
+          "LAUCN721050000000006",
+          "LAUCN721070000000003",
+          "LAUCN721070000000004",
+          "LAUCN721070000000005",
+          "LAUCN721070000000006",
+          "LAUCN721090000000003"
+        ],
+        "startyear": "2024",
+        "endyear": "2026"
+      },
+      "bytes": 70176,
+      "sha256": "176c6587f73f50484260453ed56153ab5759f323f8ca2c1f3802405f5d9c9287"
+    },
+    {
+      "path": "data/raw/bls/laus/batch-10.json",
+      "request": {
+        "seriesid": [
+          "LAUCN721090000000004",
+          "LAUCN721090000000005",
+          "LAUCN721090000000006",
+          "LAUCN721110000000003",
+          "LAUCN721110000000004",
+          "LAUCN721110000000005",
+          "LAUCN721110000000006",
+          "LAUCN721130000000003",
+          "LAUCN721130000000004",
+          "LAUCN721130000000005",
+          "LAUCN721130000000006",
+          "LAUCN721150000000003",
+          "LAUCN721150000000004",
+          "LAUCN721150000000005",
+          "LAUCN721150000000006",
+          "LAUCN721170000000003",
+          "LAUCN721170000000004",
+          "LAUCN721170000000005",
+          "LAUCN721170000000006",
+          "LAUCN721190000000003",
+          "LAUCN721190000000004",
+          "LAUCN721190000000005",
+          "LAUCN721190000000006",
+          "LAUCN721210000000003",
+          "LAUCN721210000000004"
+        ],
+        "startyear": "2024",
+        "endyear": "2026"
+      },
+      "bytes": 70203,
+      "sha256": "5a32d21ad73672ce01fbb064677e38d14808fce8211827fe7cd9df1ee7844f4e"
+    },
+    {
+      "path": "data/raw/bls/laus/batch-11.json",
+      "request": {
+        "seriesid": [
+          "LAUCN721210000000005",
+          "LAUCN721210000000006",
+          "LAUCN721230000000003",
+          "LAUCN721230000000004",
+          "LAUCN721230000000005",
+          "LAUCN721230000000006",
+          "LAUCN721250000000003",
+          "LAUCN721250000000004",
+          "LAUCN721250000000005",
+          "LAUCN721250000000006",
+          "LAUCN721270000000003",
+          "LAUCN721270000000004",
+          "LAUCN721270000000005",
+          "LAUCN721270000000006",
+          "LAUCN721290000000003",
+          "LAUCN721290000000004",
+          "LAUCN721290000000005",
+          "LAUCN721290000000006",
+          "LAUCN721310000000003",
+          "LAUCN721310000000004",
+          "LAUCN721310000000005",
+          "LAUCN721310000000006",
+          "LAUCN721330000000003",
+          "LAUCN721330000000004",
+          "LAUCN721330000000005"
+        ],
+        "startyear": "2024",
+        "endyear": "2026"
+      },
+      "bytes": 70364,
+      "sha256": "c06add1c81648f102e6a5be67ae80c1f153384a8e0d70d3096c231fbb8b8b6d6"
+    },
+    {
+      "path": "data/raw/bls/laus/batch-12.json",
+      "request": {
+        "seriesid": [
+          "LAUCN721330000000006",
+          "LAUCN721350000000003",
+          "LAUCN721350000000004",
+          "LAUCN721350000000005",
+          "LAUCN721350000000006",
+          "LAUCN721370000000003",
+          "LAUCN721370000000004",
+          "LAUCN721370000000005",
+          "LAUCN721370000000006",
+          "LAUCN721390000000003",
+          "LAUCN721390000000004",
+          "LAUCN721390000000005",
+          "LAUCN721390000000006",
+          "LAUCN721410000000003",
+          "LAUCN721410000000004",
+          "LAUCN721410000000005",
+          "LAUCN721410000000006",
+          "LAUCN721430000000003",
+          "LAUCN721430000000004",
+          "LAUCN721430000000005",
+          "LAUCN721430000000006",
+          "LAUCN721450000000003",
+          "LAUCN721450000000004",
+          "LAUCN721450000000005",
+          "LAUCN721450000000006"
+        ],
+        "startyear": "2024",
+        "endyear": "2026"
+      },
+      "bytes": 70428,
+      "sha256": "c431e2cc8e5b09baea49ec6a4b2f8e033629aeb6cda7aa126f8262790daf94bb"
+    },
+    {
+      "path": "data/raw/bls/laus/batch-13.json",
+      "request": {
+        "seriesid": [
+          "LAUCN721470000000003",
+          "LAUCN721470000000004",
+          "LAUCN721470000000005",
+          "LAUCN721470000000006",
+          "LAUCN721490000000003",
+          "LAUCN721490000000004",
+          "LAUCN721490000000005",
+          "LAUCN721490000000006",
+          "LAUCN721510000000003",
+          "LAUCN721510000000004",
+          "LAUCN721510000000005",
+          "LAUCN721510000000006",
+          "LAUCN721530000000003",
+          "LAUCN721530000000004",
+          "LAUCN721530000000005",
+          "LAUCN721530000000006"
+        ],
+        "startyear": "2024",
+        "endyear": "2026"
+      },
+      "bytes": 44944,
+      "sha256": "df01cd7967c8befc4e0a32af3be69e45b647c0911ca0b3d9c2dddc365ce673b2"
+    }
+  ]
+}

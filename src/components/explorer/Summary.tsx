@@ -1,4 +1,5 @@
 import { X } from "lucide-react";
+import { LAUS_LATEST, LAUS_LATEST_PRELIMINARY, comparisons, monthShort } from "@/data/pr/laus";
 import { islandStat } from "@/data/pr/layers";
 import { prMetricById, type PrMetric, type PrMetricId } from "@/data/pr/metrics";
 import { MISSING_COPY, missingReason } from "@/data/pr/missing";
@@ -7,11 +8,17 @@ import { deltaWords, rankOf, shortPeriod } from "@/data/pr/present";
 import { PUBLIC_GROUPS, isPublicMetric, publicMetricsInGroup } from "@/data/pr/public";
 import type { Ranking } from "@/data/pr/ranking";
 import { provenanceForMetric } from "@/data/pr/sources";
+import { LausTrend } from "./LausTrend";
 
 /** Key profile shown under the main value, in this order (the active measure is skipped). */
 const PROFILE: PrMetricId[] = ["population", "income", "medianage", "poverty", "traffic"];
 
+const MONTHLY: PrMetricId = "unemploymentMonthly";
+
 function periodOf(id: PrMetricId): string {
+  // Monthly data: the exact month, not the registry's range.
+  if (id === MONTHLY)
+    return `${monthShort(LAUS_LATEST)}${LAUS_LATEST_PRELIMINARY ? " (preliminar)" : ""}`;
   const period = provenanceForMetric(id)?.period;
   return period ? shortPeriod(period) : "";
 }
@@ -30,6 +37,18 @@ function ValueWithMoe({ place, id }: { place: Municipio; id: PrMetricId }) {
         <span className="ml-1 text-[15px] font-normal text-muted">± {metric.format(moe)}</span>
       )}
     </>
+  );
+}
+
+/** Puerto Rico's own published rate (series LAUST72…), next to the municipio median. */
+function PuertoRicoRate() {
+  const value = comparisons(null, "rate")?.latest.value ?? null;
+  if (value == null) return null;
+  return (
+    <p className="mt-1 text-base text-muted tabular">
+      Puerto Rico completo: {value.toFixed(1)}% ({monthShort(LAUS_LATEST)}
+      {LAUS_LATEST_PRELIMINARY ? ", preliminar" : ""}).
+    </p>
   );
 }
 
@@ -80,9 +99,11 @@ export function Summary({
                 {metric.format(ranking.ranked[0].values[metric.id]!)} en {ranking.ranked[0].name}.
               </p>
             )}
+            {metric.id === MONTHLY && <PuertoRicoRate />}
             <p className="mt-4 text-base">
               Escoge un municipio en el mapa, en la lista o con el buscador.
             </p>
+            {metric.id === MONTHLY && <LausTrend id={null} name="Puerto Rico" />}
           </>
         )}
       </section>
@@ -129,6 +150,11 @@ export function Summary({
         {metric.label} · {metric.source}
         {island ? " · cifra de toda la isla, no del municipio" : ""}
       </p>
+      {metric.id === MONTHLY && LAUS_LATEST_PRELIMINARY && value != null && (
+        <p className="mt-1 text-[15px] text-warning">
+          Preliminar: BLS revisa cada mes la cifra del mes anterior.
+        </p>
+      )}
       {value == null && !island && (
         <p className="mt-1 text-[15px] text-muted">
           {MISSING_COPY[missingReason(metric.id, place.id)].long}
@@ -154,7 +180,11 @@ export function Summary({
         </dl>
       )}
 
-      <dl className="grid grid-cols-2 border-t border-divider">
+      {metric.id === MONTHLY && <LausTrend id={place.id} name={place.name} />}
+
+      <dl
+        className={`grid grid-cols-2 border-t border-divider ${metric.id === MONTHLY ? "mt-5" : ""}`}
+      >
         {others.map((id, index) => {
           const other = prMetricById(id);
           return (

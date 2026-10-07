@@ -13,6 +13,7 @@ Los términos de uso de cada fuente están en [DATA_LICENSES.md](DATA_LICENSES.m
 | Censo, TIGER/Line® | Límites de los 78 municipios | Edición 2024 | Municipio | 78/78 |
 | NHTSA, FARS | Muertes de tránsito | 2022–2023 | Municipio | 78/78 |
 | CDC, BRFSS | Obesidad e inactividad física | 2023 | Toda la isla | Sí |
+| BLS, LAUS | Desempleo mensual, fuerza laboral, empleo | Mensual (ene 2024 – ago 2026) | Municipio | 78/78 |
 
 **Verificado** quiere decir que se tomó la publicación oficial y se reprodujeron las
 cifras del sitio, municipio por municipio. La verificación se hizo el 1 de octubre
@@ -121,6 +122,42 @@ Los detalles técnicos están en [data/README.md](data/README.md).
   [conjunto de datos BRFSS](https://data.cdc.gov/Behavioral-Risk-Factors/Behavioral-Risk-Factor-Surveillance-System-BRFSS-P/dttw-5yxu).
 - **Limitaciones:** no hay cifra por municipio. El mapa pinta toda la isla de un
   color y lo dice.
+
+### BLS: desempleo mensual (LAUS)
+
+- **Qué es:** la tasa de desempleo de cada municipio, mes a mes: el por ciento de
+  la fuerza laboral que no tiene empleo y lo está buscando. Además, la fuerza
+  laboral, las personas empleadas y las desempleadas. También la serie de Puerto
+  Rico completo, para comparar.
+- **Quién lo publica:** la Oficina de Estadísticas Laborales de EE. UU. (U.S.
+  Bureau of Labor Statistics, BLS), en su programa
+  [Local Area Unemployment Statistics](https://www.bls.gov/lau/) (LAUS).
+- **Cómo lo usamos:** se pide a la
+  [API pública oficial](https://api.bls.gov/publicAPI/v1/timeseries/data/) cada
+  serie LAUS sin ajuste estacional: `LAUCN` + código FIPS del municipio + ocho ceros
+  + la medida (03 tasa, 04 desempleados, 05 empleados, 06 fuerza laboral). Puerto
+  Rico completo es `LAUST720000000000003`. Las respuestas se guardan tal cual en
+  `data/raw/bls/laus/` con su SHA-256. El sitio muestra los valores como BLS los
+  publica; las diferencias con el mes anterior y con el mismo mes del año anterior
+  son una resta que hace el proyecto.
+- **Qué mes se ve:** el último que BLS publica para las 316 series (4 medidas ×
+  Puerto Rico y 78 municipios). No está fijo en el código: si una serie trae un mes
+  que las demás no tienen, la generación falla. Hoy: agosto de 2026.
+- **Preliminar:** BLS marca el mes más reciente como preliminar (nota «P») y lo
+  revisa al mes siguiente. El sitio dice «Preliminar» junto a la cifra.
+- **Revisiones:** cada año, a principios de año, BLS revisa los meses de los años
+  recientes. Al actualizar, el proyecto reemplaza la copia completa.
+- **Historia guardada:** desde enero del año antepasado (hoy, enero de 2024): lo
+  justo para el mes anterior, el cambio de 12 meses y una línea de 24 meses.
+- **Sin dato:** si BLS no publica un valor, o lo publica como texto, queda vacío
+  con su razón. Nunca se vuelve 0. En la copia actual no falta ninguno.
+- **Limitaciones:** son estimados de un modelo, no un conteo, y BLS no publica
+  margen de error por municipio. Sin ajuste estacional: para ver la tendencia
+  conviene comparar con el mismo mes del año anterior. La tasa del Censo (ACS, 5
+  años) mide otra cosa en otro periodo y no tiene por qué coincidir.
+- **Aviso que piden los términos de la API:** «BLS.gov cannot vouch for the data or
+  analyses derived from these data after the data have been retrieved from
+  BLS.gov.»
 
 ---
 

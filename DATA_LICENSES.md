@@ -24,6 +24,7 @@ fuente.
 | Censo, TIGER/Line® 2024 | Los 78 municipios del archivo nacional de condados (`data/raw/geo`) y su versión simplificada | Obra del gobierno federal, sin derechos de autor en EE. UU. (17 U.S.C. §105) | Citar al Censo; mostrar en un lugar visible el aviso de marca registrada de TIGER/Line®; aclarar que los límites son para fines estadísticos |
 | NHTSA, FARS 2022–2023 | Muertes por municipio y la tasa calculada (`src/data/pr/municipios.json`) | Etiqueta de dominio público de EE. UU. en data.gov | Citar a NHTSA (buena práctica) |
 | CDC, BRFSS 2023 | Tres por cientos para toda la isla (`src/data/pr/layers.ts`) | Licencia «Public Domain» en data.cdc.gov | Citar a los CDC |
+| BLS, LAUS | Las respuestas de la API tal cual (`data/raw/bls/laus`) y las series mensuales generadas (`data/generated/bls-laus.json`) | Dominio público, según la página de derechos de autor de BLS; términos de servicio de la API | Citar a BLS; decir la fecha en que se obtuvieron los datos; incluir el aviso textual de BLS; no usar el emblema ni el logo de BLS |
 
 ## Censo: American Community Survey
 
@@ -60,6 +61,23 @@ fuente.
 - **Cita que usa el sitio:** «Fuente: CDC, Behavioral Risk Factor Surveillance
   System 2023.»
 
+## BLS: LAUS
+
+- **Evidencia:** la [página de derechos de autor de BLS](https://www.bls.gov/opub/copyright-information.htm)
+  dice que lo que BLS publica es de dominio público y se puede usar sin permiso,
+  citando a BLS como fuente; el emblema de BLS es marca registrada. Los
+  [términos de servicio de la API](https://www.bls.gov/developers/termsOfService.htm)
+  (modificados el 30 de agosto de 2023) piden citar la fecha en que se obtuvieron
+  los datos, incluir el aviso de abajo, no modificar ni falsear el contenido
+  atribuyéndolo a BLS, y no usar el logo. Leídos el 6 de octubre de 2026 (hora local).
+- **Aviso (textual, en inglés):** «BLS.gov cannot vouch for the data or analyses
+  derived from these data after the data have been retrieved from BLS.gov.» Está en
+  la cita, en «¿De dónde sale este dato?» y en `data/generated/bls-laus.json`.
+- **Fecha de obtención:** 7 de octubre de 2026 (UTC), en
+  `data/raw/bls/laus/manifest.json` y en el sitio.
+- **Cita que usa el sitio:** «Fuente: U.S. Bureau of Labor Statistics, Local Area
+  Unemployment Statistics (LAUS), datos mensuales sin ajuste estacional.»
+
 ## Si propones una fuente nueva
 
 Una fuente entra solo cuando sus términos permiten, por escrito, mostrar y
@@ -71,6 +89,9 @@ redistribuir los datos. Que algo sea del gobierno no basta. Ver
 **English:** The MIT license covers the code only. The data stays under its
 publishers' terms: U.S. Census Bureau ACS and TIGER/Line® (federal works, no U.S.
 copyright; cite the Census Bureau and show the TIGER/Line® trademark notice), NHTSA
-FARS (U.S. Public Domain label on data.gov) and CDC BRFSS (Public Domain on
-data.cdc.gov). No Puerto Rico government datasets are included in this version.
+FARS (U.S. Public Domain label on data.gov), CDC BRFSS (Public Domain on
+data.cdc.gov) and BLS LAUS (public domain per the BLS copyright page; the BLS API
+terms require citing the retrieval date and the notice "BLS.gov cannot vouch for
+the data or analyses derived from these data after the data have been retrieved
+from BLS.gov."; no BLS logo or emblem). No Puerto Rico government datasets are included in this version.
 This is not legal advice.

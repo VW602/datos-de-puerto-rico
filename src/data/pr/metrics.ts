@@ -1,4 +1,5 @@
 import type { ScaleKind } from "@/data/scale";
+import { LAUS_LATEST, LAUS_LATEST_LABEL, LAUS_LATEST_PRELIMINARY, monthShort } from "./laus";
 
 export type PrMetricId =
   | "population"
@@ -11,6 +12,7 @@ export type PrMetricId =
   | "traffic"
   | "poverty"
   | "uninsured"
+  | "unemploymentMonthly"
   | "unemployment"
   | "highschool"
   | "bachelors"
@@ -168,7 +170,14 @@ export const PR_METRICS: PrMetric[] = [
   },
   percentMetric("poverty", "Pobreza", "Por ciento de personas con ingreso bajo el nivel de pobreza federal", "Censo, ACS 2020–2024"),
   percentMetric("uninsured", "Sin plan médico", "Por ciento de la población civil sin plan médico de ningún tipo", "Censo, ACS 2020–2024"),
-  percentMetric("unemployment", "Desempleo", "Por ciento de la fuerza laboral civil que no tiene empleo y lo está buscando", "Censo, ACS 2020–2024"),
+  // BLS LAUS: the most recent monthly figure. The month comes from the generated data, never typed in.
+  percentMetric(
+    "unemploymentMonthly",
+    "Desempleo mensual",
+    `Tasa de desempleo de ${LAUS_LATEST_LABEL}${LAUS_LATEST_PRELIMINARY ? " (preliminar)" : ""}: por ciento de la fuerza laboral que no tiene empleo y lo está buscando`,
+    `BLS, LAUS, ${monthShort(LAUS_LATEST)}${LAUS_LATEST_PRELIMINARY ? " (preliminar)" : ""}`,
+  ),
+  percentMetric("unemployment", "Desempleo (5 años)", "Por ciento de la fuerza laboral civil que no tiene empleo y lo está buscando. Promedio de la encuesta de 5 años del Censo", "Censo, ACS 2020–2024"),
   percentMetric("highschool", "Escuela superior", "Adultos de 25 años o más con cuarto año (o equivalente) o más", "Censo, ACS 2020–2024"),
   percentMetric("bachelors", "Bachillerato", "Adultos de 25 años o más con bachillerato o un grado más alto", "Censo, ACS 2020–2024"),
   percentMetric("nointernet", "Sin internet", "Hogares sin acceso a internet", "Censo, ACS 2020–2024"),
@@ -256,6 +265,7 @@ const GROUP: Record<PrMetricId, MetricGroup> = {
   homevalue: "Hogar",
   plumbing: "Hogar",
   nointernet: "Hogar",
+  unemploymentMonthly: "Trabajo",
   unemployment: "Trabajo",
   highschool: "Trabajo",
   bachelors: "Trabajo",

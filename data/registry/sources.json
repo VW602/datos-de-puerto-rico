@@ -253,6 +253,68 @@
       "notes": "Verificado el 2026-10-01 contra la API oficial de CDC: los tres valores coinciden."
     },
     {
+      "datasetId": "bls-laus-municipios",
+      "title": "Desempleo mensual por municipio (LAUS)",
+      "topic": "economia",
+      "sourceAgency": "U.S. Bureau of Labor Statistics (BLS), Local Area Unemployment Statistics (LAUS)",
+      "sourceTitle": "Local Area Unemployment Statistics: county-equivalent (municipio) and Puerto Rico series, monthly, not seasonally adjusted",
+      "sourceURL": "https://www.bls.gov/lau/",
+      "additionalURLs": [
+        {
+          "label": "API pública de BLS, versión 1 (lo que usa data:bls:update)",
+          "url": "https://api.bls.gov/publicAPI/v1/timeseries/data/",
+          "linkHealth": "LIVE"
+        },
+        {
+          "label": "Derechos de autor de BLS",
+          "url": "https://www.bls.gov/opub/copyright-information.htm",
+          "linkHealth": "LIVE"
+        },
+        {
+          "label": "Términos de servicio de la API de BLS",
+          "url": "https://www.bls.gov/developers/termsOfService.htm",
+          "linkHealth": "LIVE"
+        }
+      ],
+      "sourceType": "API",
+      "sourceStatus": "RESOLVED",
+      "linkHealth": "LIVE",
+      "reportingPeriod": "Mensual, desde enero de 2024 hasta el último mes que BLS publica para los 78 municipios (el sitio muestra el mes exacto)",
+      "sourcePublishedAt": "UNKNOWN",
+      "originalRetrievalAt": "2026-10-07",
+      "verifiedAt": "2026-10-07",
+      "geography": "municipio",
+      "nativeGeography": "COUNTY_EQUIVALENT",
+      "geographyJoin": "Por código FIPS: la serie LAUCN72xxx… corresponde al municipio 72xxx. Puerto Rico completo: LAUST72… Sin unión por nombre.",
+      "updateFrequency": "Mensual. BLS revisa el mes anterior al publicar uno nuevo y revisa los últimos años cada año (en febrero o marzo).",
+      "redistributionStatus": "ATTRIBUTION_REQUIRED",
+      "rightsEvidence": "Página de derechos de autor de BLS (bls.gov/opub/copyright-information.htm): todo lo que BLS publica es de dominio público y se puede usar sin permiso; pide citar a BLS como fuente; el emblema de BLS es marca registrada y no se puede usar. Términos de la API (bls.gov/developers/termsOfService.htm, modificados el 30 de agosto de 2023): citar la fecha en que se obtuvieron los datos; decir textualmente «BLS.gov cannot vouch for the data or analyses derived from these data after the data have been retrieved from BLS.gov.»; no modificar ni falsear el contenido citando a BLS; no usar el logo. Leídos el 2026-10-06 (hora local). Ninguno impide mostrar, transformar o redistribuir los valores ni guardar las respuestas de la API en un repositorio público.",
+      "attribution": "Fuente: U.S. Bureau of Labor Statistics, Local Area Unemployment Statistics (LAUS), datos mensuales sin ajuste estacional. BLS.gov cannot vouch for the data or analyses derived from these data after the data have been retrieved from BLS.gov.",
+      "methodology": "Valores tal como los publica BLS en las series LAUS sin ajuste estacional de cada municipio: tasa de desempleo (medida 03), personas desempleadas (04), personas empleadas (05) y fuerza laboral (06). LAUS combina encuestas, datos de nómina y seguro por desempleo en un modelo; no es un conteo. Las diferencias con el mes anterior y con el mismo mes del año anterior las calcula este proyecto restando las tasas publicadas.",
+      "fieldMap": {
+        "unemploymentMonthly": "LAUCN{FIPS}00000000 + 03 (tasa de desempleo), último mes común de las 316 series",
+        "laborForce": "LAUCN{FIPS}00000000 + 06",
+        "employment": "LAUCN{FIPS}00000000 + 05",
+        "unemployment": "LAUCN{FIPS}00000000 + 04",
+        "puertoRico": "LAUST72 + 11 ceros + medida"
+      },
+      "missingValuePolicy": "Si BLS no publica un valor para un mes, o lo publica como texto no numérico, queda vacío con su razón; nunca se vuelve 0. El mes más reciente suele ser preliminar: el sitio lo dice.",
+      "provenanceStatus": "VERIFIED",
+      "readiness": "READY",
+      "publicationDecision": "KEEP_FOR_PUBLIC_LAUNCH",
+      "publicStatus": "PUBLIC_READY",
+      "valueExclusions": [],
+      "files": [
+        "data/raw/bls/laus/manifest.json",
+        "data/generated/bls-laus.json",
+        "scripts/bls/source.ts"
+      ],
+      "metrics": [
+        "unemploymentMonthly"
+      ],
+      "notes": "Descargado de la API oficial v1 sin clave el 2026-10-07 (UTC): 316 series (4 medidas × Puerto Rico y 78 municipios) en 13 pedidos, guardadas byte por byte con SHA-256. El sitio de BLS bloquea robots que no siguen su política; la API es la vía oficial para programas. En cada mes, empleo + desempleo = fuerza laboral en las 79 áreas."
+    },
+    {
       "datasetId": "geometria-municipios",
       "title": "Límites de los 78 municipios",
       "topic": "geografia",

@@ -91,6 +91,11 @@ const AGENCY_ES: [RegExp, string, string][] = [
     "Centros para el Control y la Prevención de Enfermedades (CDC)",
     "los",
   ],
+  [
+    /^U\.S\. Bureau of Labor Statistics/,
+    "Oficina de Estadísticas Laborales de EE. UU. (BLS)",
+    "la",
+  ],
 ];
 
 /** `from` reads naturally after "Sale de": "la Oficina del Censo…", "los Centros…". */

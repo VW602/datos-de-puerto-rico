@@ -104,6 +104,26 @@
       "valueExclusions": []
     },
     {
+      "datasetId": "bls-laus-municipios",
+      "title": "Desempleo mensual por municipio (LAUS)",
+      "sourceAgency": "U.S. Bureau of Labor Statistics (BLS), Local Area Unemployment Statistics (LAUS)",
+      "sourceTitle": "Local Area Unemployment Statistics: county-equivalent (municipio) and Puerto Rico series, monthly, not seasonally adjusted",
+      "reportingPeriod": "Mensual, desde enero de 2024 hasta el último mes que BLS publica para los 78 municipios (el sitio muestra el mes exacto)",
+      "geography": "municipio",
+      "attribution": "Fuente: U.S. Bureau of Labor Statistics, Local Area Unemployment Statistics (LAUS), datos mensuales sin ajuste estacional. BLS.gov cannot vouch for the data or analyses derived from these data after the data have been retrieved from BLS.gov.",
+      "missingValuePolicy": "Si BLS no publica un valor para un mes, o lo publica como texto no numérico, queda vacío con su razón; nunca se vuelve 0. El mes más reciente suele ser preliminar: el sitio lo dice.",
+      "publicStatus": "PUBLIC_READY",
+      "metrics": [
+        "unemploymentMonthly"
+      ],
+      "sourceURL": "https://www.bls.gov/lau/",
+      "methodology": "Valores tal como los publica BLS en las series LAUS sin ajuste estacional de cada municipio: tasa de desempleo (medida 03), personas desempleadas (04), personas empleadas (05) y fuerza laboral (06). LAUS combina encuestas, datos de nómina y seguro por desempleo en un modelo; no es un conteo. Las diferencias con el mes anterior y con el mismo mes del año anterior las calcula este proyecto restando las tasas publicadas.",
+      "verified": true,
+      "retrievedAt": "2026-10-07",
+      "marginOfErrorAvailable": false,
+      "valueExclusions": []
+    },
+    {
       "datasetId": "geometria-municipios",
       "title": "Límites de los 78 municipios",
       "sourceAgency": "U.S. Census Bureau, Geography Division",

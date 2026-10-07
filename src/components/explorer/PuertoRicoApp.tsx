@@ -501,7 +501,7 @@ export function PuertoRicoApp() {
                   )}
                 </>
               ))}
-            {tab === "fuente" && <SourcePanel metric={metric} headingLevel={3} />}
+            {tab === "fuente" && <SourcePanel metric={metric} place={selected} headingLevel={3} />}
           </div>
         </div>
 
@@ -527,14 +527,14 @@ export function PuertoRicoApp() {
           </section>
         )}
         <div id="fuente" className="hidden border-t border-divider px-14 py-8 md:block">
-          <SourcePanel metric={metric} />
+          <SourcePanel metric={metric} place={selected} />
         </div>
       </main>
 
       <footer className="border-t border-fg px-4 pt-4 pb-6 text-[13px] leading-normal text-muted md:px-14">
         <p>
-          Fuentes: Oficina del Censo de EE. UU. (ACS y TIGER/Line), NHTSA (FARS) y CDC (BRFSS). Cada
-          medida dice su fuente y su periodo.
+          Fuentes: Oficina del Censo de EE. UU. (ACS y TIGER/Line), NHTSA (FARS), CDC (BRFSS) y BLS
+          (LAUS). Cada medida dice su fuente y su periodo.
         </p>
         {MAP_ATTRIBUTION && <p className="mt-1">{MAP_ATTRIBUTION}</p>}
         <p className="mt-1">

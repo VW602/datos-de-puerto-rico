@@ -21,19 +21,20 @@ import { SOURCES, sourceById } from "./sources.internal";
 const ROOT = fileURLToPath(new URL("../../../", import.meta.url));
 const publicPlaces = toPublicPlaces(applyLayers(municipios));
 
-/** The five source families of the first public version. */
+/** The source families of the public version: the five of v1, plus BLS LAUS. */
 const V1_SOURCES = [
   "acs-2019-2023-base",
   "acs-2020-2024-layers",
   "nhtsa-fars-2022-2023",
   "cdc-brfss-2023",
+  "bls-laus-municipios",
   "geometria-municipios",
 ];
 
 /** Publishers allowed in this version: federal agencies whose terms are written down in DATA_LICENSES.md. */
 const ALLOWED_AGENCY =
-  /^(U\.S\. Census Bureau|National Highway Traffic Safety Administration|Centers for Disease Control and Prevention)/;
-const ALLOWED_METRIC_SOURCE = /^(Censo|NHTSA|CDC)\b/;
+  /^(U\.S\. Census Bureau|National Highway Traffic Safety Administration|Centers for Disease Control and Prevention|U\.S\. Bureau of Labor Statistics)/;
+const ALLOWED_METRIC_SOURCE = /^(Censo|NHTSA|CDC|BLS)\b/;
 
 function filesUnder(dir: string): string[] {
   const out: string[] = [];
@@ -46,7 +47,7 @@ function filesUnder(dir: string): string[] {
 }
 
 describe("frontera de publicación", () => {
-  it("el registro tiene exactamente las cinco fuentes de esta versión", () => {
+  it("el registro tiene exactamente las fuentes de esta versión", () => {
     expect(SOURCES.map((record) => record.datasetId).sort()).toEqual([...V1_SOURCES].sort());
     expect(publicRegistry.records.map((record) => record.datasetId).sort()).toEqual(
       [...V1_SOURCES].sort(),
@@ -115,6 +116,7 @@ describe("frontera de publicación", () => {
   it("los archivos públicos son solo los esperados", () => {
     expect(filesUnder("public").sort()).toEqual(["public/favicon.svg"]);
     expect(filesUnder("data/generated").sort()).toEqual([
+      "data/generated/bls-laus.json",
       "data/generated/census-municipios.json",
       "data/generated/municipios.geometry.json",
       "data/generated/sources.public.json",

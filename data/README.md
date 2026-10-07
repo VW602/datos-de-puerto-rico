@@ -10,7 +10,8 @@ dónde sale cada cosa.
 | `raw/census/` | `npm run data:census:update` | Copia oficial del Censo: encabezado y las 78 filas de Puerto Rico de cada tabla, sin cambiar un byte, más `manifest.json` con enlaces, fecha de descarga (UTC) y SHA-256. |
 | `normalized/census/` | `npm run data:census:generate` | Cada estimado y margen de error de la copia, por municipio. Los códigos especiales del Censo quedan como `null` con su razón. **Generado: no editar a mano.** |
 | `raw/geo/` | `npm run data:geo:update` | Copia oficial de los límites: los 78 municipios de TIGER/Line 2024, con coordenadas y atributos tal cual, más `manifest.json` (enlace, tamaño y SHA-256 del ZIP nacional y de cada archivo dentro, fecha de descarga UTC, sistema de coordenadas). |
-| `generated/` | `npm run data:generate` | Lo que lee el sitio: `census-municipios.json` (medidas del Censo con su margen de error), `municipios.geometry.json` (límites del mapa) y `sources.public.json` (la parte pública del registro). **Generado: no editar a mano.** |
+| `raw/bls/laus/` | `npm run data:bls:update` | Respuestas de la API oficial de BLS (LAUS), byte por byte: 13 lotes de 25 series o menos, más `manifest.json` con los pedidos, la fecha de obtención (UTC), los términos y el SHA-256 de cada lote. |
+| `generated/` | `npm run data:generate` | Lo que lee el sitio: `census-municipios.json` (medidas del Censo con su margen de error), `municipios.geometry.json` (límites del mapa), `bls-laus.json` (desempleo mensual de BLS) y `sources.public.json` (la parte pública del registro). **Generado: no editar a mano.** |
 
 ## Datos del Censo
 
@@ -70,6 +71,26 @@ sitio (src/data/pr/geo.ts → src/components/explorer/AtlasMap.tsx)
   marca registrada de TIGER/Line®; el aviso está al pie del sitio.
 - **Cambiar de edición:** editar `scripts/geo/source.ts`, correr `data:geo:update` y
   `data:geo:generate -- --allow-changes`, y revisar el cambio.
+
+## Desempleo mensual (BLS LAUS)
+
+- **De dónde:** la API pública de BLS, versión 1, sin clave
+  (`https://api.bls.gov/publicAPI/v1/timeseries/data/`). Con `BLS_API_KEY` usa la
+  versión 2; la clave no se escribe en ningún archivo.
+- **Qué se pide:** 316 series sin ajuste estacional (tasa, desempleados, empleados
+  y fuerza laboral de Puerto Rico y de los 78 municipios), desde enero del año
+  antepasado hasta el año en curso. Los municipios y sus códigos FIPS salen de
+  `generated/census-municipios.json`.
+- **`data:bls:update`** no guarda nada si falta una serie o si la API no responde
+  `REQUEST_SUCCEEDED`. No hay otro proveedor de respaldo.
+- **`data:bls:generate`** (sin red) comprueba el SHA-256 de cada lote, los 78
+  municipios, que cada serie corresponda a su FIPS, los meses (M01–M12; M13 es el
+  promedio anual y se omite), los rangos, que empleo + desempleo = fuerza laboral,
+  y que todas las series terminen en el mismo mes. Si algo no cuadra, falla.
+  Lo marcado «P» por BLS queda en `preliminary`. Un valor que falta queda `null`
+  con su razón en `missing`.
+- **`--check`** (parte de `npm run data:check`) falla si `bls-laus.json` no es
+  exactamente lo que sale de la copia guardada.
 
 ## Lo demás
 
