@@ -21,7 +21,7 @@ su fuente oficial, no entra.
 - **Un mapa de los 78 municipios.** Escoges una medida y cada pueblo se colorea
   según su cifra. Puedes acercarte, moverte y escoger un municipio en el mapa o en
   la lista.
-- **29 medidas** en seis grupos:
+- **33 medidas** en siete grupos:
   - **Gente:** población, mujeres, menores de 18, 65 años o más, edad mediana y
     discapacidad.
   - **Hogar:** ingreso del hogar y por persona, pobreza, renta, valor de la
@@ -31,6 +31,9 @@ su fuente oficial, no entra.
   - **Trabajo:** desempleo mensual (BLS), desempleo promedio de 5 años (Censo),
     escuela superior y bachillerato.
   - **Salud:** personas sin plan médico y muertes de tránsito.
+  - **Recuperación y desastres:** Asistencia Pública de FEMA (obligado federal y
+    proyectos), asistencia aprobada a hogares y mitigación, para todos los
+    desastres o uno solo, con la lista de proyectos de cada desastre.
   - **Fondos federales:** obligaciones, desembolsos reportados y adjudicaciones
     federales del último año fiscal, solo lo que se puede atribuir al municipio.
   - **Toda la isla:** obesidad e inactividad física en adultos, que solo se publican
@@ -52,6 +55,7 @@ su fuente oficial, no entra.
 | NHTSA, Fatality Analysis Reporting System (FARS) 2022–2023 | Muertes de tránsito |
 | CDC, Behavioral Risk Factor Surveillance System (BRFSS) 2023 | Obesidad e inactividad física, toda la isla |
 | Oficina de Estadísticas Laborales de EE. UU. (BLS), Local Area Unemployment Statistics (LAUS) | Desempleo mensual por municipio, fuerza laboral, personas empleadas y desempleadas |
+| Agencia Federal para el Manejo de Emergencias (FEMA), OpenFEMA | Declaraciones de desastre, Asistencia Pública, asistencia a hogares y mitigación |
 | Departamento del Tesoro de EE. UU., USAspending.gov | Obligaciones, desembolsos y adjudicaciones federales por lugar de ejecución |
 
 El detalle de cada fuente está en [DATA_SOURCES.md](DATA_SOURCES.md), y sus
@@ -93,6 +97,7 @@ Abre <http://localhost:8080>.
 | `npm run data:generate` | Vuelve a generar los datos del Censo, el mapa, el desempleo de BLS y el registro público, sin red |
 | `npm run data:census:update` | Descarga de nuevo la copia oficial del Censo (necesita red) |
 | `npm run data:geo:update` | Descarga de nuevo los límites TIGER/Line 2024 (necesita red) |
+| `npm run data:fema:update` | Pide de nuevo los datos de recuperación a la API OpenFEMA (necesita red; se puede reanudar) |
 | `npm run data:usaspending:update` | Pide de nuevo los fondos federales a la API oficial de USAspending (necesita red; se puede reanudar) |
 | `npm run data:bls:update` | Pide de nuevo el desempleo mensual a la API oficial de BLS (necesita red) |
 
@@ -116,6 +121,17 @@ No hace falta clave de la API del Censo. Los detalles están en
 2. Corre `npm run data:bls:generate -- --allow-changes` y revisa el cambio. El mes
    nuevo sale solo: es el último que BLS publica para todas las series.
 3. Corre `npm run data:registry:generate` y `npm run check`.
+
+### Actualizar los datos de recuperación (FEMA)
+
+1. Corre `npm run data:fema:update`. Solo se conecta a `www.fema.gov/api/open`, un
+   pedido a la vez. Si OpenFEMA actualizó un dataset desde la última copia temporal,
+   la descarta y vuelve a pedir. `data/source/fema/` (extracto público; las respuestas exactas se quedan en `.cache/`) solo se reemplaza cuando la copia
+   completa pasa todas las comprobaciones.
+2. Corre `npm run data:fema:generate -- --allow-changes` y revisa el cambio.
+3. Corre `npm run data:registry:generate` y `npm run check`.
+
+Usar la API es aceptar los [términos de OpenFEMA](https://www.fema.gov/about/openfema/terms-conditions).
 
 ### Actualizar los fondos federales (USAspending)
 
@@ -198,13 +214,13 @@ no cubre los datos. Si los reusas, cita la fuente original.
 ## Sin afiliación
 
 Este es un proyecto independiente. No está afiliado al gobierno de Puerto Rico, a la
-Oficina del Censo, a NHTSA, a los CDC, a BLS, al Departamento del Tesoro ni a ninguna otra agencia, y ninguna de ellas
+Oficina del Censo, a NHTSA, a los CDC, a BLS, al Departamento del Tesoro, a FEMA ni a ninguna otra agencia, y ninguna de ellas
 lo respalda ni lo certifica.
 
 ---
 
 **English:** An independent, Spanish-first, open-source map of public data for
 Puerto Rico's 78 municipalities, built from U.S. Census Bureau (ACS, TIGER/Line),
-NHTSA (FARS), CDC (BRFSS), Bureau of Labor Statistics (LAUS) and USAspending.gov (U.S. Treasury) data. Every number links back to its official source.
+NHTSA (FARS), CDC (BRFSS), Bureau of Labor Statistics (LAUS), USAspending.gov (U.S. Treasury) and OpenFEMA data. This product uses the Federal Emergency Management Agency’s OpenFEMA API, but is not endorsed by FEMA. Every number links back to its official source.
 Code is MIT-licensed; the data keeps its publishers' terms (see DATA_LICENSES.md).
 Not affiliated with or endorsed by any government agency.

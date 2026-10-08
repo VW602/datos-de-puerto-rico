@@ -1,5 +1,6 @@
 import type { ScaleKind } from "@/data/scale";
-import { FUNDS_FY, money } from "./funds";
+import { FUNDS_FY } from "./funds";
+import { money } from "./money";
 import { LAUS_LATEST, LAUS_LATEST_LABEL, LAUS_LATEST_PRELIMINARY, monthShort } from "./laus";
 
 export type PrMetricId =
@@ -31,7 +32,11 @@ export type PrMetricId =
   | "inactivity"
   | "fedObligations"
   | "fedOutlays"
-  | "fedAwards";
+  | "fedAwards"
+  | "femaPaObligated"
+  | "femaPaProjects"
+  | "femaIhpApproved"
+  | "femaHmaObligated";
 
 export type PrMetric = {
   id: PrMetricId;
@@ -269,8 +274,8 @@ PR_METRICS.push(
   },
   {
     id: "fedOutlays",
-    label: "Desembolsos federales",
-    hint: `Pagos que las agencias federales reportan, acumulados, de las adjudicaciones atribuibles al municipio con actividad en el año fiscal ${FUNDS_FY}. Si una adjudicación no tiene pagos reportados, no suma: no quiere decir $0`,
+    label: "Desembolsos acumulados reportados",
+    hint: `Pagos que las agencias federales reportan desde el inicio de cada adjudicación atribuible al municipio con actividad en el año fiscal ${FUNDS_FY}. Son acumulados: no son solo los pagos de ese año. Si una adjudicación no tiene pagos reportados, no suma: no quiere decir $0`,
     source: `USAspending, adjudicaciones activas en AF ${FUNDS_FY}`,
     scale: "log",
     format: money,
@@ -291,15 +296,73 @@ PR_METRICS.push(
   },
 );
 
+// OpenFEMA. Each measure is one FEMA field for one program; none is added to
+// another, nor to USAspending. Only what FEMA places in one municipio is on
+// the map; "Statewide" stays apart (see fema.ts).
+PR_METRICS.push(
+  {
+    id: "femaPaObligated",
+    label: "Asistencia Pública por municipio del solicitante",
+    hint: "Parte federal obligada (federalShareObligated) de los proyectos de Asistencia Pública de FEMA cuyos solicitantes FEMA ubica en el municipio. Es el lugar de quien solicita, no necesariamente el de la obra. Obligado no quiere decir gastado. Lo que FEMA registra para todo Puerto Rico no se le asigna a ningún municipio",
+    source: "FEMA, OpenFEMA",
+    scale: "log",
+    format: money,
+    formatTick: (value) => money(value).replace(" mil millones", " mil mill.").replace(" millones", " mill."),
+    versus: (value, median) => (value < 0 ? "Obligación neta negativa (ajustes)" : value === 0 ? "$0" : ratio(value, median)),
+    signed: true,
+  },
+  {
+    id: "femaPaProjects",
+    label: "Proyectos de Asistencia Pública por municipio del solicitante",
+    hint: "Número de proyectos de Asistencia Pública de FEMA (hojas de trabajo de proyecto) cuyos solicitantes FEMA ubica en el municipio. No es necesariamente el lugar de la obra",
+    source: "FEMA, OpenFEMA",
+    scale: "log",
+    format: (value) => people.format(Math.round(value)),
+    formatTick: compact,
+    versus: (value, median) => (value === 0 ? "Ninguno" : ratio(value, median)),
+    signed: true,
+  },
+  {
+    id: "femaIhpApproved",
+    label: "Asistencia aprobada a hogares (IHP)",
+    hint: "Monto que FEMA aprobó a hogares (dueños e inquilinos) bajo su programa de Individuos y Hogares (IHP), en el municipio de los hogares registrados, sumando los totales que FEMA publica por zona. Aprobado no quiere decir pagado",
+    source: "FEMA, OpenFEMA",
+    scale: "log",
+    format: money,
+    formatTick: (value) => money(value).replace(" mil millones", " mil mill.").replace(" millones", " mill."),
+    versus: (value, median) => (value === 0 ? "$0" : ratio(value, median)),
+    signed: true,
+  },
+  {
+    id: "femaHmaObligated",
+    label: "Mitigación: obligado federal",
+    hint: "Parte federal obligada (federalShareObligated) de los proyectos de Asistencia para la Mitigación de Riesgos (HMA) de FEMA en el municipio. Si FEMA no reporta el monto de un proyecto, no suma: no quiere decir $0",
+    source: "FEMA, OpenFEMA",
+    scale: "log",
+    format: money,
+    formatTick: (value) => money(value).replace(" mil millones", " mil mill.").replace(" millones", " mill."),
+    versus: (value, median) => (value < 0 ? "Obligación neta negativa (ajustes)" : value === 0 ? "$0" : ratio(value, median)),
+    signed: true,
+  },
+);
+
 export function prMetricById(id: PrMetricId): PrMetric {
   const metric = PR_METRICS.find((item) => item.id === id);
   if (!metric) throw new Error(`Unknown metric: ${id}`);
   return metric;
 }
 
-export type MetricGroup = "Gente" | "Hogar" | "Trabajo" | "Salud" | "Fondos federales" | "Isla";
+export type MetricGroup = "Gente" | "Hogar" | "Trabajo" | "Salud" | "Fondos federales" | "Recuperación y desastres" | "Isla";
 
-export const METRIC_GROUPS: MetricGroup[] = ["Gente", "Hogar", "Trabajo", "Salud", "Fondos federales", "Isla"];
+export const METRIC_GROUPS: MetricGroup[] = [
+  "Gente",
+  "Hogar",
+  "Trabajo",
+  "Salud",
+  "Fondos federales",
+  "Recuperación y desastres",
+  "Isla",
+];
 
 const GROUP: Record<PrMetricId, MetricGroup> = {
   population: "Gente",
@@ -331,6 +394,10 @@ const GROUP: Record<PrMetricId, MetricGroup> = {
   fedObligations: "Fondos federales",
   fedOutlays: "Fondos federales",
   fedAwards: "Fondos federales",
+  femaPaObligated: "Recuperación y desastres",
+  femaPaProjects: "Recuperación y desastres",
+  femaIhpApproved: "Recuperación y desastres",
+  femaHmaObligated: "Recuperación y desastres",
 };
 
 export function metricGroup(id: PrMetricId): MetricGroup {

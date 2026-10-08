@@ -14,6 +14,7 @@ Los términos de uso de cada fuente están en [DATA_LICENSES.md](DATA_LICENSES.m
 | NHTSA, FARS | Muertes de tránsito | 2022–2023 | Municipio | 78/78 |
 | CDC, BRFSS | Obesidad e inactividad física | 2023 | Toda la isla | Sí |
 | BLS, LAUS | Desempleo mensual, fuerza laboral, empleo | Mensual (ene 2024 – ago 2026) | Municipio | 78/78 |
+| FEMA, OpenFEMA | Declaraciones, Asistencia Pública, asistencia a hogares, mitigación | Todos los desastres con registros para Puerto Rico | Municipio, con estados geográficos | 78/78 |
 | Tesoro, USAspending | Obligaciones, desembolsos y adjudicaciones federales | Año fiscal federal 2026 (y 4 anteriores) | Municipio, con cuatro estados geográficos | 78/78 |
 
 **Verificado** quiere decir que se tomó la publicación oficial y se reprodujeron las
@@ -234,6 +235,87 @@ Los detalles técnicos están en [data/README.md](data/README.md).
   municipio): el sitio prefiere no asignarla a asignarla mal. Los contratos usan el lugar que
   FPDS registra como donde se hace el trabajo; si un contrato reporta una oficina,
   el sitio no lo puede detectar.
+
+### FEMA: recuperación y desastres (OpenFEMA)
+
+- **Qué es:** lo que FEMA publica en OpenFEMA sobre los desastres de Puerto Rico,
+  separado por programa: declaraciones, Asistencia Pública (proyectos), asistencia
+  a hogares del programa de Individuos y Hogares (IHP) y Asistencia para la
+  Mitigación de Riesgos (HMA). El sitio permite ver todos los desastres juntos o
+  uno solo. La lista de desastres sale de la fuente, no está fija en el código.
+- **Quién lo publica:** la Agencia Federal para el Manejo de Emergencias (FEMA), en
+  [OpenFEMA](https://www.fema.gov/about/openfema/data-sets).
+- **Versiones fijadas:** DisasterDeclarationsSummaries v2 (FEMA lo actualizó el 8 de octubre de 2026); PublicAssistanceFundedProjectsDetails v2 (FEMA lo actualizó el 6 de octubre de 2026); HazardMitigationAssistanceProjects v4 (FEMA lo actualizó el 31 de agosto de 2026); HousingAssistanceOwners v2 (FEMA lo actualizó el 7 de octubre de 2026); HousingAssistanceRenters v2 (FEMA lo actualizó el 7 de octubre de 2026). Copia obtenida el 8 de octubre de 2026.
+- **Cómo lo usamos:** solo la API OpenFEMA, nunca páginas web. Cada dataset se pide
+  completo para Puerto Rico, en páginas de 10,000 con orden estable, y se comprueba
+  que los registros recibidos sean exactamente los que OpenFEMA dice que hay. Las
+  respuestas exactas de la API se quedan solo en la copia local (`.cache/fema/raw`,
+  fuera del repositorio). El repositorio guarda un **extracto público**
+  (`data/source/fema/`): los mismos registros y valores, pero solo con los campos de
+  una lista permitida (`scripts/fema/extract.ts`). No es la respuesta original; el
+  manifiesto guarda el SHA-256 de la respuesta original junto al del extracto.
+- **Qué quiere decir cada monto (nunca son lo mismo):**
+  - *Costo estimado del proyecto* (`projectAmount`, Asistencia Pública): costo total
+    estimado, sin costos administrativos. No es lo obligado.
+  - *Obligado federal* (`federalShareObligated`): la parte federal que FEMA obligó
+    para el proyecto aprobado. Es la cifra del mapa.
+  - *Total obligado* (`totalObligated`): la parte federal más los costos
+    administrativos del recipiente y del subrecipiente.
+  - *Monto aprobado bajo IHP* (`totalApprovedIhpAmount`): lo que FEMA aprobó bajo
+    IHP, dueños más inquilinos. No es lo pagado. Los *solicitantes aprobados* son
+    `approvedForFemaAssistance`; los *registros válidos* (`validRegistrations`) son
+    registros aceptados, no aprobados.
+  - *Mitigación* (`federalShareObligated` de HMA): parte federal obligada, sin costos
+    administrativos.
+  - OpenFEMA no publica lo **gastado** en estos datasets, y el sitio nunca dice
+    «gastado».
+- **Lugar.** Se usa el municipio que FEMA indica, por nombre y código a la vez:
+
+  | Estado | Qué entra | ¿En el mapa? |
+  | --- | --- | --- |
+  | En un municipio | Mitigación: municipio principal del proyecto. Hogares: municipio de los registros. Nombre y código coinciden | Sí |
+  | Solicitante ubicado en un municipio | Asistencia Pública: FEMA registra el municipio de quien solicita, no necesariamente el de la obra | Sí, como «por municipio del solicitante» |
+  | Varios municipios, sin certeza | Un proyecto de mitigación con varios municipios, o nombre y código que no coinciden | No |
+  | Todo Puerto Rico | FEMA dice «Statewide» (o «PUERTO RICO» / «ISLANDWIDE» en los municipios de un proyecto de mitigación) | No |
+  | Sin municipio | FEMA no indica municipio | No |
+
+  Los estados suman el total de Puerto Rico de cada medida y cada desastre (probado).
+  Una medida nunca mezcla «en un municipio» con «solicitante ubicado en» (probado).
+- **«Statewide» con el código de San Juan.** En Asistencia Pública, la mayoría de
+  los proyectos «Statewide» traen el código de condado 127, que es San Juan. El sitio
+  usa el nombre: esos proyectos son de todo Puerto Rico y nunca se le asignan a San
+  Juan ni se reparten entre municipios. De $39.04 mil millones obligados en todos los
+  desastres, $30.39 mil millones son «Statewide» y $8.65 mil millones están en un municipio.
+- **Asistencia Pública: el municipio es el del solicitante.** En este dataset, el
+  campo `county` es la ubicación de quien solicita, no necesariamente el lugar de la
+  obra. Por eso el sitio nunca lo llama «dinero del municipio» ni «proyectos en» el
+  municipio: dice «de solicitantes ubicados en». Decisión de mapa: se mantiene el
+  mapa de Asistencia Pública, con el nombre «por municipio del solicitante», porque
+  dice exactamente lo que la fuente sostiene (a quién se le obligó, según dónde está)
+  y quitarlo escondería el dato; la ficha y la tabla repiten la aclaración. El sitio
+  no deduce nada de direcciones: no usa el dataset de solicitantes, que las trae.
+- **Estado de los proyectos.** El dataset PublicAssistanceProjectsStatus aparece en
+  el catálogo de OpenFEMA, pero su API y sus archivos respondían «404» al construir
+  este pipeline. Por eso el sitio no publica un estado de proyecto propio: muestra el
+  paso del proceso (`projectProcessStep`) tal como lo escribe FEMA, en inglés.
+- **Desastres raros.** Algunos registros de hogares de Puerto Rico están bajo
+  desastres declarados para otro estado (4337, 1561): se muestran con su número y sin
+  título. Los proyectos de mitigación de programas que no dependen de un desastre
+  (PDM, FMA) van aparte, aunque su sistema les ponga un número (9008, 9082).
+- **Sin dato:** un monto que FEMA deja vacío no suma y queda contado; nunca se
+  vuelve $0. Los ajustes negativos se conservan con su signo.
+- **Privacidad:** de hogares solo se usan las filas que FEMA ya publica agregadas, y
+  se piden **sin ciudad ni código postal**. El sitio solo muestra totales por
+  municipio y desastre. No se usan datos por propiedad ni por hogar, ni nombres.
+  Los títulos libres de los proyectos de Asistencia Pública (`applicationTitle`)
+  no se publican, porque a veces nombran familias junto a un camino o kilómetro; la
+  tabla muestra la categoría de daño de FEMA.
+- **FEMA no se suma con USAspending.** Son dos publicaciones oficiales que pueden
+  contar el mismo dinero. Las subvenciones CDBG-DR son de HUD, no de FEMA, y se
+  quedan en «Fondos federales».
+- **Limitaciones:** el municipio de Asistencia Pública es el del solicitante según
+  FEMA, no necesariamente el sitio exacto de la obra; el sitio lo dice así. Que un municipio esté en una
+  declaración no quiere decir que cada residente recibió ayuda.
 
 ---
 

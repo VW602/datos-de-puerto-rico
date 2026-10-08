@@ -12,7 +12,8 @@ dónde sale cada cosa.
 | `raw/geo/` | `npm run data:geo:update` | Copia oficial de los límites: los 78 municipios de TIGER/Line 2024, con coordenadas y atributos tal cual, más `manifest.json` (enlace, tamaño y SHA-256 del ZIP nacional y de cada archivo dentro, fecha de descarga UTC, sistema de coordenadas). |
 | `raw/bls/laus/` | `npm run data:bls:update` | Respuestas de la API oficial de BLS (LAUS), byte por byte: 13 lotes de 25 series o menos, más `manifest.json` con los pedidos, la fecha de obtención (UTC), los términos y el SHA-256 de cada lote. |
 | `raw/usaspending/` | `npm run data:usaspending:update` | Respuestas de la API oficial de USAspending, byte por byte, más `manifest.json` con cada pedido exacto, la hora, el SHA-256, la huella del plan y la fecha de actualización de USAspending. |
-| `generated/` | `npm run data:generate` | Lo que lee el sitio: `census-municipios.json` (medidas del Censo con su margen de error), `municipios.geometry.json` (límites del mapa), `bls-laus.json` (desempleo mensual de BLS), `usaspending-pr.json` (fondos federales) y `sources.public.json` (la parte pública del registro). **Generado: no editar a mano.** |
+| `source/fema/` | `npm run data:fema:update` | **Extracto público** de las respuestas de la API OpenFEMA (versiones fijadas): los mismos registros y valores, solo con los campos de la lista permitida (`scripts/fema/extract.ts`), sin títulos libres, nombres, direcciones ni datos de contacto. No es la respuesta original. `manifest.json` guarda cada pedido exacto, la hora, el total de OpenFEMA, el SHA-256 de la respuesta original (que solo se guarda en `.cache/fema/raw`, fuera del repositorio) y el del extracto. |
+| `generated/` | `npm run data:generate` | Lo que lee el sitio: `census-municipios.json` (medidas del Censo con su margen de error), `municipios.geometry.json` (límites del mapa), `bls-laus.json` (desempleo mensual de BLS), `usaspending-pr.json` (fondos federales), `fema-pr.json` y `fema-projects/` (recuperación; los proyectos se cargan por desastre, solo cuando se piden) y `sources.public.json` (la parte pública del registro). **Generado: no editar a mano.** |
 
 ## Datos del Censo
 
@@ -112,6 +113,18 @@ sitio (src/data/pr/geo.ts → src/components/explorer/AtlasMap.tsx)
   cada desglose sume su parte (ver DATA_SOURCES.md). Si algo no cuadra, falla.
 - **`--check`** (parte de `npm run data:check`) falla si `usaspending-pr.json` no es
   exactamente lo que sale de la copia guardada.
+
+## Recuperación y desastres (OpenFEMA)
+
+- **`data:fema:update`** (con red) funciona como el de USAspending: copia temporal en
+  `.cache/fema/`, reanudable, pausas, reintentos con espera exponencial y
+  `Retry-After`, y todo o nada. Pide primero la entrada de catálogo de cada dataset;
+  si alguno se actualizó desde la copia temporal, la descarta.
+- **`data:fema:generate`** (sin red) comprueba el SHA-256, el plan, que cada dataset
+  esté completo, los identificadores de desastre (DR/EM-número-PR), los 78
+  municipios, los montos, las fechas, proyectos y registros únicos, que los hogares
+  no traigan campos de ubicación fina, y que los cuatro estados geográficos sumen el
+  total de cada medida y desastre.
 
 ## Lo demás
 

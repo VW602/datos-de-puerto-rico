@@ -1,0 +1,23 @@
+{
+ "extract": "PUBLIC-SAFE EXTRACT: registros de una respuesta de la API OpenFEMA con solo los campos de la lista permitida (scripts/fema/extract.ts). No es la respuesta original; su SHA-256 está en el manifiesto como rawSha256.",
+ "fields": [
+  "name",
+  "version",
+  "title",
+  "lastRefresh",
+  "lastDataSetRefresh",
+  "recordCount",
+  "webService"
+ ],
+ "DataSets": [
+  {
+   "name": "DisasterDeclarationsSummaries",
+   "version": 2,
+   "title": "Disaster Declarations Summaries",
+   "lastRefresh": "2025-09-25T13:40:12.615Z",
+   "lastDataSetRefresh": "2026-10-08T00:27:04.611Z",
+   "recordCount": 70431,
+   "webService": "https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries"
+  }
+ ]
+}

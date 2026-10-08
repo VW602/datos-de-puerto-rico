@@ -8,6 +8,7 @@ import {
   type Candidate,
   type View,
 } from "@/data/pr/geo";
+import { ALL, femaPlaceValues } from "@/data/pr/fema";
 import { applyLayers, islandStat } from "@/data/pr/layers";
 import { metricGroup, prMetricById, type MetricGroup, type PrMetricId } from "@/data/pr/metrics";
 import { MISSING_COPY, missingReason } from "@/data/pr/missing";
@@ -25,6 +26,7 @@ import { publicSourceById } from "@/data/pr/sources";
 import { ISLAND_ONLY_FILL, colorForValue } from "@/data/scale";
 import { AtlasMap } from "./AtlasMap";
 import { DataTable } from "./DataTable";
+import { DisasterFilter } from "./FemaDetail";
 import { Legend, MunicipioSearch, TapChooser, ZoomControls } from "./MapBits";
 import { Ranking78 } from "./Ranking78";
 import { SourcePanel } from "./SourcePanel";
@@ -49,11 +51,24 @@ export function PuertoRicoApp() {
   const [detailSize, setDetailSize] = useState<Size>({ width: 0, height: 0 });
   const [tab, setTab] = useState<MobileTab>("los78");
   const [showTable, setShowTable] = useState(false);
+  // FEMA recovery measures can be read for one disaster or all of them.
+  const [disaster, setDisaster] = useState<string>(ALL);
 
   const metric = prMetricById(metricId);
   const group = metricGroup(metricId);
   const island = islandStat(metricId);
-  const places = useMemo(() => toPublicPlaces(applyLayers(municipios)), []);
+  const basePlaces = useMemo(() => toPublicPlaces(applyLayers(municipios)), []);
+  const places = useMemo(
+    () =>
+      disaster === ALL
+        ? basePlaces
+        : basePlaces.map((place) => ({
+            ...place,
+            values: { ...place.values, ...femaPlaceValues(place.id, disaster) },
+          })),
+    [basePlaces, disaster],
+  );
+  const recovery = group === "Recuperación y desastres";
   const placeById = useMemo(() => new Map(places.map((place) => [place.id, place])), [places]);
   const ranking = useMemo(() => rankByMetric(places, metric.id, metric.scale), [places, metric]);
   const missingCount = island ? 0 : places.length - ranking.ranked.length;
@@ -172,14 +187,14 @@ export function PuertoRicoApp() {
 
   return (
     <div className="min-h-dvh bg-bg text-fg">
-      <header className="flex items-center justify-between gap-6 border-b border-fg px-4 py-1.5 md:px-14 md:py-3">
+      <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 border-b border-fg px-4 py-1.5 md:px-14 md:py-3">
         <div className="flex items-baseline gap-3">
           <span className="font-display text-[21px] font-semibold md:text-[26px]">
             Datos de Puerto Rico
           </span>
           <span className="hidden text-sm text-muted lg:inline">78 municipios, con su fuente</span>
         </div>
-        <nav aria-label="Temas" className="hidden gap-0.5 md:flex">
+        <nav aria-label="Temas" className="hidden flex-wrap gap-0.5 md:flex">
           {PUBLIC_GROUPS.map((item) => (
             <button
               key={item}
@@ -233,6 +248,7 @@ export function PuertoRicoApp() {
               </select>
             </label>
             <p className="mt-2 text-[15px] text-muted md:text-lg">{metric.hint}</p>
+            {recovery && <DisasterFilter value={disaster} onChange={setDisaster} />}
           </div>
           <div className="hidden flex-col items-end gap-2.5 md:flex">
             <div
@@ -418,6 +434,7 @@ export function PuertoRicoApp() {
               place={selected}
               ranking={ranking}
               onClear={() => setSelectedId(null)}
+              disaster={disaster}
               size="desktop"
             />
             {selected && (
@@ -518,7 +535,9 @@ export function PuertoRicoApp() {
                   )}
                 </>
               ))}
-            {tab === "fuente" && <SourcePanel metric={metric} place={selected} headingLevel={3} />}
+            {tab === "fuente" && (
+              <SourcePanel metric={metric} place={selected} disaster={disaster} headingLevel={3} />
+            )}
           </div>
         </div>
 
@@ -544,7 +563,7 @@ export function PuertoRicoApp() {
           </section>
         )}
         <div id="fuente" className="hidden border-t border-divider px-14 py-8 md:block">
-          <SourcePanel metric={metric} place={selected} />
+          <SourcePanel metric={metric} place={selected} disaster={disaster} />
         </div>
       </main>
 

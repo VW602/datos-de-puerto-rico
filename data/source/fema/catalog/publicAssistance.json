@@ -1,0 +1,23 @@
+{
+ "extract": "PUBLIC-SAFE EXTRACT: registros de una respuesta de la API OpenFEMA con solo los campos de la lista permitida (scripts/fema/extract.ts). No es la respuesta original; su SHA-256 está en el manifiesto como rawSha256.",
+ "fields": [
+  "name",
+  "version",
+  "title",
+  "lastRefresh",
+  "lastDataSetRefresh",
+  "recordCount",
+  "webService"
+ ],
+ "DataSets": [
+  {
+   "name": "PublicAssistanceFundedProjectsDetails",
+   "version": 2,
+   "title": "Public Assistance Funded Projects Details",
+   "lastRefresh": "2026-07-21T21:40:34.077Z",
+   "lastDataSetRefresh": "2026-10-06T15:12:55.572Z",
+   "recordCount": 849838,
+   "webService": "https://www.fema.gov/api/open/v2/PublicAssistanceFundedProjectsDetails"
+  }
+ ]
+}

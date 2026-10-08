@@ -22,6 +22,7 @@ const manifest = readManifest(ROOT);
 const geoManifest = JSON.parse(readFileSync(join(ROOT, "data/raw/geo/tiger-2024/manifest.json"), "utf8"));
 const blsManifest = JSON.parse(readFileSync(join(ROOT, "data/raw/bls/laus/manifest.json"), "utf8"));
 const usaManifest = JSON.parse(readFileSync(join(ROOT, "data/raw/usaspending/manifest.json"), "utf8"));
+const femaManifest = JSON.parse(readFileSync(join(ROOT, "data/source/fema/manifest.json"), "utf8"));
 const generated = JSON.parse(read("data/generated/census-municipios.json")) as GeneratedCensus;
 const registry = JSON.parse(read("data/registry/sources.json"));
 const publicRegistry = JSON.parse(read("data/generated/sources.public.json"));
@@ -177,7 +178,7 @@ describe("generación reproducible sin red", () => {
 
   it("generar dos veces da el mismo resultado", () => {
     expect(buildCensusArtifacts(ROOT)).toEqual(buildCensusArtifacts(ROOT));
-    expect(buildPublicRegistry(registry, manifest, geoManifest, blsManifest, usaManifest)).toBe(buildPublicRegistry(registry, manifest, geoManifest, blsManifest, usaManifest));
+    expect(buildPublicRegistry(registry, manifest, geoManifest, blsManifest, usaManifest, femaManifest)).toBe(buildPublicRegistry(registry, manifest, geoManifest, blsManifest, usaManifest, femaManifest));
   });
 
   it("los archivos generados avisan que no se editan a mano", () => {
@@ -189,7 +190,7 @@ describe("generación reproducible sin red", () => {
 
 describe("registro público", () => {
   it("está al día con el registro interno", () => {
-    expect(read("data/generated/sources.public.json")).toBe(buildPublicRegistry(registry, manifest, geoManifest, blsManifest, usaManifest));
+    expect(read("data/generated/sources.public.json")).toBe(buildPublicRegistry(registry, manifest, geoManifest, blsManifest, usaManifest, femaManifest));
   });
 
   it("no lleva campos internos ni fuentes excluidas", () => {

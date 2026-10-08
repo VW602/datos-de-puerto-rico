@@ -97,6 +97,11 @@ const AGENCY_ES: [RegExp, string, string][] = [
     "la",
   ],
   [/^U\.S\. Department of the Treasury/, "Departamento del Tesoro de EE. UU. (USAspending)", "el"],
+  [
+    /^Federal Emergency Management Agency/,
+    "Agencia Federal para el Manejo de Emergencias (FEMA)",
+    "la",
+  ],
 ];
 
 /** `from` reads naturally after "Sale de": "la Oficina del Censo…", "los Centros…". */

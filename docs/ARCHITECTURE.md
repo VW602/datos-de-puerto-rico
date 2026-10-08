@@ -18,6 +18,8 @@ Antes de publicar, fuera del sitio:
    www2.census.gov ─► scripts/census ─► data/raw/census → data/normalized → data/generated
    www2.census.gov ─► scripts/geo    ─► data/raw/geo → data/generated/municipios.geometry.json
    api.bls.gov     ─► scripts/bls    ─► data/raw/bls/laus → data/generated/bls-laus.json
+   www.fema.gov/api/open ─► scripts/fema ─► .cache (reanudable; respuestas exactas, locales) → data/source/fema (extracto público)
+                                       → data/generated/fema-pr.json + fema-projects/<desastre>.json
    api.usaspending.gov ─► scripts/usaspending ─► .cache (reanudable) → data/raw/usaspending
                                               → data/generated/usaspending-pr.json
    data/registry   ─► scripts/registry ─► data/generated/sources.public.json
@@ -37,6 +39,10 @@ Antes de publicar, fuera del sitio:
   - `funds.ts`: lee `data/generated/usaspending-pr.json` (fondos federales). El mapa
     solo usa lo atribuible a un municipio; lo incierto, lo de todo Puerto Rico y lo
     que no tiene municipio se muestran aparte y suman el total.
+  - `fema.ts`: lee `data/generated/fema-pr.json` (recuperación por programa y
+    desastre). Los proyectos de cada desastre son archivos aparte que Vite separa en
+    su propio pedazo y solo se cargan al abrir la tabla. No importa `funds.ts`: FEMA y
+    USAspending nunca se suman (hay una prueba).
   - `places.ts`: arma cada municipio con las medidas del Censo generadas (con su
     margen de error) y los datos de FARS.
   - `public.ts`: la frontera de publicación. Las medidas, los grupos, la medida

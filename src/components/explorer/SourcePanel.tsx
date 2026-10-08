@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { LAUS_LATEST, LAUS_SOURCE, isPreliminary, lausBlock, monthLabel } from "@/data/pr/laus";
+import { ALL, FEMA_SOURCE, disasterLabel, femaDisaster, dayLabel as femaDay } from "@/data/pr/fema";
 import { FUNDS_FY_LABEL, FUNDS_SOURCE, dayLabel } from "@/data/pr/funds";
 import type { PrMetric } from "@/data/pr/metrics";
 import type { Municipio } from "@/data/pr/places";
@@ -90,13 +91,88 @@ function fundsRows(metricId: string): [string, ReactNode][] {
   ];
 }
 
+/** OpenFEMA dataset and field behind each FEMA measure. */
+const FEMA_FIELD: Record<
+  string,
+  { dataset: keyof typeof FEMA_SOURCE.datasets | "housing"; field: string }
+> = {
+  femaPaObligated: {
+    dataset: "publicAssistance",
+    field:
+      "federalShareObligated: parte federal obligada para los proyectos aprobados (suma de todos los proyectos)",
+  },
+  femaPaProjects: {
+    dataset: "publicAssistance",
+    field: "Número de registros de proyecto (número de desastre + número de hoja de trabajo)",
+  },
+  femaIhpApproved: {
+    dataset: "housing",
+    field:
+      "totalApprovedIhpAmount: monto aprobado bajo el programa de Individuos y Hogares, dueños más inquilinos. Aprobado no quiere decir pagado; un registro válido (validRegistrations) no quiere decir aprobado.",
+  },
+  femaHmaObligated: {
+    dataset: "mitigation",
+    field:
+      "federalShareObligated: parte federal obligada (sin costos administrativos); los proyectos sin monto no suman",
+  },
+};
+
+function femaRows(metricId: string, disaster: string): [string, ReactNode][] {
+  const spec = FEMA_FIELD[metricId];
+  const sets =
+    spec.dataset === "housing"
+      ? [FEMA_SOURCE.datasets.housingOwners, FEMA_SOURCE.datasets.housingRenters]
+      : [FEMA_SOURCE.datasets[spec.dataset]];
+  const d = disaster === ALL ? null : femaDisaster(disaster);
+  return [
+    [
+      "Dataset de OpenFEMA",
+      <>
+        {sets.map((set) => (
+          <span key={set.name} className="block" lang="en">
+            {set.name} v{set.version}
+          </span>
+        ))}
+      </>,
+    ],
+    ["Campo", spec.field],
+    [
+      "Desastre",
+      d
+        ? `${disasterLabel(disaster)}${d.number ? ` (número ${d.number})` : ""}`
+        : "Todos los desastres con registros de FEMA para Puerto Rico",
+    ],
+    [
+      "Lugar",
+      spec.dataset === "publicAssistance"
+        ? "El municipio del solicitante, según FEMA (el campo county de este dataset es la ubicación de quien solicita), no necesariamente el lugar de la obra. Si FEMA dice «Statewide», el dinero es de todo Puerto Rico: no se le asigna a San Juan ni se reparte entre municipios, aunque el registro traiga el código de condado de San Juan. El sitio no deduce nada de direcciones."
+        : spec.dataset === "housing"
+          ? "El municipio de los hogares registrados, según las filas agregadas de FEMA. «Statewide» queda como todo Puerto Rico."
+          : "El municipio principal del proyecto, según FEMA. Si FEMA indica varios municipios, queda sin certeza; si dice «Statewide», «PUERTO RICO» o «ISLANDWIDE», es todo Puerto Rico y no se le asigna a ningún municipio.",
+    ],
+    [
+      "Fecha del dato",
+      sets
+        .map((set) => `${set.name}: actualizado por FEMA el ${femaDay(set.lastDataSetRefresh)}`)
+        .join(" · "),
+    ],
+    [
+      "Fecha de obtención",
+      `Copia obtenida de la API OpenFEMA el ${femaDay(FEMA_SOURCE.retrievedAt)}`,
+    ],
+    ["Aviso de FEMA", <span lang="en">{FEMA_SOURCE.terms.disclaimer}</span>],
+  ];
+}
+
 export function SourcePanel({
   metric,
   place = null,
+  disaster = ALL,
   headingLevel = 2,
 }: {
   metric: PrMetric;
   place?: Municipio | null;
+  disaster?: string;
   headingLevel?: 2 | 3;
 }) {
   const source = publicSourceForMetric(metric.id);
@@ -107,6 +183,7 @@ export function SourcePanel({
   const monthly = metric.id === "unemploymentMonthly";
   const federal =
     metric.id === "fedObligations" || metric.id === "fedOutlays" || metric.id === "fedAwards";
+  const recovery = metric.id in FEMA_FIELD;
   const rows: [string, ReactNode][] = [
     [
       "Fuente",
@@ -126,13 +203,15 @@ export function SourcePanel({
       ? lausRows(place)
       : federal
         ? fundsRows(metric.id)
-        : [["Periodo", source.reportingPeriod] as [string, ReactNode]]),
+        : recovery
+          ? femaRows(metric.id, disaster)
+          : [["Periodo", source.reportingPeriod] as [string, ReactNode]]),
     ["Variable / cálculo", source.methodology ?? "Según la publicación oficial."],
     [
       "Margen de error",
       survey
         ? "Sí. El Censo publica un margen de error (90%) para cada estimado; el sitio lo muestra cuando existe para esa cifra."
-        : federal
+        : federal || recovery
           ? "No aplica: son montos reportados, no estimados de encuesta."
           : monthly
             ? "BLS no publica margen de error para las cifras de municipio. Son estimados de un modelo, no un conteo."
@@ -141,7 +220,7 @@ export function SourcePanel({
     [
       "Copia oficial",
       source.retrievedAt
-        ? `${monthly ? "Obtenida de la API de BLS" : federal ? "Obtenida de la API de USAspending" : "Descargada"} el ${shortDate(source.retrievedAt)}`
+        ? `${monthly ? "Obtenida de la API de BLS" : federal ? "Obtenida de la API de USAspending" : recovery ? "Obtenida de la API OpenFEMA" : "Descargada"} el ${shortDate(source.retrievedAt)}`
         : `Según la publicación de ${shortPeriod(source.reportingPeriod)}`,
     ],
   ];
@@ -178,6 +257,14 @@ export function SourcePanel({
             federales. Obligado no significa necesariamente desembolsado ni gastado. El lugar es
             donde se registra que se hace el trabajo, y a veces es la oficina central: por eso el
             sitio separa lo atribuible a un municipio de lo que no lo es con certeza.
+          </p>
+        )}
+        {recovery && (
+          <p className="mt-2 text-[17px] leading-relaxed">
+            Sale de OpenFEMA, los datos abiertos de FEMA. Obligado no significa necesariamente
+            gastado: OpenFEMA no publica lo gastado. Lo aprobado a hogares tampoco es lo pagado.
+            FEMA y USAspending son publicaciones distintas que pueden contar el mismo dinero; el
+            sitio no las suma.
           </p>
         )}
         {source.sourceURL && (

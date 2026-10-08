@@ -1,0 +1,23 @@
+{
+ "extract": "PUBLIC-SAFE EXTRACT: registros de una respuesta de la API OpenFEMA con solo los campos de la lista permitida (scripts/fema/extract.ts). No es la respuesta original; su SHA-256 está en el manifiesto como rawSha256.",
+ "fields": [
+  "name",
+  "version",
+  "title",
+  "lastRefresh",
+  "lastDataSetRefresh",
+  "recordCount",
+  "webService"
+ ],
+ "DataSets": [
+  {
+   "name": "HousingAssistanceRenters",
+   "version": 2,
+   "title": "Housing Assistance Program Data - Renters",
+   "lastRefresh": "2026-10-07T20:39:07.874Z",
+   "lastDataSetRefresh": "2026-10-07T20:39:07.874Z",
+   "recordCount": 148030,
+   "webService": "https://www.fema.gov/api/open/v2/HousingAssistanceRenters"
+  }
+ ]
+}

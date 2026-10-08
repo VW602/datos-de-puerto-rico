@@ -102,9 +102,7 @@ describe("fondos federales en el sitio", () => {
 
   it("las fuentes del gobierno de Puerto Rico, LUMA y cáncer siguen fuera", () => {
     const text = JSON.stringify(publicRegistry);
-    expect(text).not.toMatch(
-      /LUMA|cancer|cáncer|Registro Central|Gobierno de Puerto Rico|COR3|OpenFEMA/i,
-    );
+    expect(text).not.toMatch(/LUMA|cancer|cáncer|Registro Central|Gobierno de Puerto Rico|COR3/i);
   });
 
   it("el sitio nunca llama a USAspending: solo lee el archivo generado", () => {

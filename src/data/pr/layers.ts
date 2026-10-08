@@ -1,3 +1,4 @@
+import { femaPlaceValues } from "./fema";
 import { fundsValues } from "./funds";
 import { latestRates } from "./laus";
 import type { Municipio } from "./places";
@@ -39,6 +40,8 @@ export function applyLayers(places: Municipio[]): Municipio[] {
       fedObligations: FUNDS[place.id]?.obligations ?? null,
       fedOutlays: FUNDS[place.id]?.outlays ?? null,
       fedAwards: FUNDS[place.id]?.awards ?? null,
+      // OpenFEMA, all disasters together; the disaster filter recomputes these.
+      ...femaPlaceValues(place.id),
       // Island-wide only: no municipio has its own figure.
       obesity: null,
       inactivity: null,

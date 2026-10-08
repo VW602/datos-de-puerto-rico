@@ -24,6 +24,7 @@ fuente.
 | Censo, TIGER/Line® 2024 | Los 78 municipios del archivo nacional de condados (`data/raw/geo`) y su versión simplificada | Obra del gobierno federal, sin derechos de autor en EE. UU. (17 U.S.C. §105) | Citar al Censo; mostrar en un lugar visible el aviso de marca registrada de TIGER/Line®; aclarar que los límites son para fines estadísticos |
 | NHTSA, FARS 2022–2023 | Muertes por municipio y la tasa calculada (`src/data/pr/municipios.json`) | Etiqueta de dominio público de EE. UU. en data.gov | Citar a NHTSA (buena práctica) |
 | CDC, BRFSS 2023 | Tres por cientos para toda la isla (`src/data/pr/layers.ts`) | Licencia «Public Domain» en data.cdc.gov | Citar a los CDC |
+| FEMA, OpenFEMA | Un extracto público de las respuestas de la API, solo con los campos que usa el sitio (`data/source/fema`; no es la respuesta original), y los totales y proyectos generados (`data/generated/fema-pr.json`, `data/generated/fema-projects/`) | Términos y condiciones de OpenFEMA | Citar el dataset con su versión y la fecha de obtención; incluir el aviso textual de FEMA; no usar logos de FEMA ni DHS; no reidentificar personas |
 | Tesoro, USAspending | Las respuestas de la API tal cual (`data/raw/usaspending`) y los totales generados (`data/generated/usaspending-pr.json`) | Datos abiertos según la página About de USAspending, sujetos a la limitación de Dun & Bradstreet | Citar USAspending.gov con la fecha de acceso; no diseminar en bloque nombres ni direcciones de entidades (el proyecto no los guarda) |
 | BLS, LAUS | Las respuestas de la API tal cual (`data/raw/bls/laus`) y las series mensuales generadas (`data/generated/bls-laus.json`) | Dominio público, según la página de derechos de autor de BLS; términos de servicio de la API | Citar a BLS; decir la fecha en que se obtuvieron los datos; incluir el aviso textual de BLS; no usar el emblema ni el logo de BLS |
 
@@ -96,6 +97,27 @@ fuente.
   fecha de obtención.
 - **Sin afiliación:** el Tesoro no respalda este proyecto.
 
+## FEMA: OpenFEMA
+
+- **Evidencia:** los [términos y condiciones de OpenFEMA](https://www.fema.gov/about/openfema/terms-conditions)
+  (actualizados el 22 de enero de 2025; leídos el 7 de octubre de 2026). Los datos
+  de la API no tienen controles sobre su uso. Piden:
+  - citar el endpoint con su versión, y la fecha y hora en que se obtuvieron;
+  - decir textualmente: «This product uses the Federal Emergency Management
+    Agency’s OpenFEMA API, but is not endorsed by FEMA. The Federal Government or
+    FEMA cannot vouch for the data or analyses derived from these data after the
+    data have been retrieved from the Agency's website(s).»;
+  - no usar logos ni sellos de FEMA o DHS sin permiso escrito;
+  - no modificar ni falsear el contenido y seguir diciendo que es de FEMA;
+  - no reidentificar ni intentar reidentificar a personas, ni publicar datos que
+    puedan identificarlas.
+- **Riesgo anotado:** FEMA puede pedir que se deje de usar los datos y se destruyan
+  las copias. En un repositorio público eso no se puede deshacer del todo; si FEMA lo
+  pidiera, el proyecto quitaría los datos. Por eso la copia guardada es solo de
+  Puerto Rico y, para hogares, sin ciudad ni código postal.
+- **Cita que usa el sitio:** «Fuente: Federal Emergency Management Agency (FEMA),
+  OpenFEMA», con el dataset, la versión, la fecha de obtención y el aviso de arriba.
+
 ## Si propones una fuente nueva
 
 Una fuente entra solo cuando sus términos permiten, por escrito, mostrar y
@@ -113,5 +135,7 @@ terms require citing the retrieval date and the notice "BLS.gov cannot vouch for
 the data or analyses derived from these data after the data have been retrieved
 from BLS.gov."; no BLS logo or emblem) and USAspending.gov (U.S. Department of the
 Treasury: copy, adapt and redistribute, subject to the Dun & Bradstreet limitation;
-this project stores no recipient names, addresses or identifiers). No Puerto Rico government datasets are included in this version.
+this project stores no recipient names, addresses or identifiers) and OpenFEMA
+(FEMA terms: cite dataset, version and retrieval date; include FEMA's notice that
+it does not endorse the product; no FEMA or DHS logos; no re-identification). No Puerto Rico government datasets are included in this version.
 This is not legal advice.

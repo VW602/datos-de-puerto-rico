@@ -1,0 +1,602 @@
+{
+  "schema": 1,
+  "generator": "scripts/fema/update.ts",
+  "generatorVersion": 1,
+  "publisher": "Federal Emergency Management Agency (FEMA), OpenFEMA",
+  "api": "https://www.fema.gov/api/open/",
+  "retrievedAt": "2026-10-08T00:44:16.820Z",
+  "retrievedUntil": "2026-10-08T00:45:31.047Z",
+  "retrievedAtNote": "retrievedAt y retrievedUntil son la primera y la última respuesta (UTC) de la API OpenFEMA en esta copia. Cada archivo es un EXTRACTO PÚBLICO (solo campos permitidos, ver scripts/fema/extract.ts), no la respuesta original. rawSha256 y rawBytes son de los bytes exactos que respondió la API, que solo se guardan en la copia local (.cache/fema/raw); sha256 y bytes son del extracto.",
+  "planFingerprint": "c6141a5baa6cd1110b48796425197a589e6c7c722d2580071fc7813b8f5ad3b6",
+  "terms": {
+    "terms": "https://www.fema.gov/about/openfema/terms-conditions",
+    "dataSets": "https://www.fema.gov/about/openfema/data-sets",
+    "apiDocs": "https://www.fema.gov/about/openfema/api",
+    "disclaimer": "This product uses the Federal Emergency Management Agency’s OpenFEMA API, but is not endorsed by FEMA. The Federal Government or FEMA cannot vouch for the data or analyses derived from these data after the data have been retrieved from the Agency's website(s)."
+  },
+  "municipios": [
+    {
+      "id": "72001",
+      "name": "Adjuntas"
+    },
+    {
+      "id": "72003",
+      "name": "Aguada"
+    },
+    {
+      "id": "72005",
+      "name": "Aguadilla"
+    },
+    {
+      "id": "72007",
+      "name": "Aguas Buenas"
+    },
+    {
+      "id": "72009",
+      "name": "Aibonito"
+    },
+    {
+      "id": "72011",
+      "name": "Añasco"
+    },
+    {
+      "id": "72013",
+      "name": "Arecibo"
+    },
+    {
+      "id": "72015",
+      "name": "Arroyo"
+    },
+    {
+      "id": "72017",
+      "name": "Barceloneta"
+    },
+    {
+      "id": "72019",
+      "name": "Barranquitas"
+    },
+    {
+      "id": "72021",
+      "name": "Bayamón"
+    },
+    {
+      "id": "72023",
+      "name": "Cabo Rojo"
+    },
+    {
+      "id": "72025",
+      "name": "Caguas"
+    },
+    {
+      "id": "72027",
+      "name": "Camuy"
+    },
+    {
+      "id": "72029",
+      "name": "Canóvanas"
+    },
+    {
+      "id": "72031",
+      "name": "Carolina"
+    },
+    {
+      "id": "72033",
+      "name": "Cataño"
+    },
+    {
+      "id": "72035",
+      "name": "Cayey"
+    },
+    {
+      "id": "72037",
+      "name": "Ceiba"
+    },
+    {
+      "id": "72039",
+      "name": "Ciales"
+    },
+    {
+      "id": "72041",
+      "name": "Cidra"
+    },
+    {
+      "id": "72043",
+      "name": "Coamo"
+    },
+    {
+      "id": "72045",
+      "name": "Comerío"
+    },
+    {
+      "id": "72047",
+      "name": "Corozal"
+    },
+    {
+      "id": "72049",
+      "name": "Culebra"
+    },
+    {
+      "id": "72051",
+      "name": "Dorado"
+    },
+    {
+      "id": "72053",
+      "name": "Fajardo"
+    },
+    {
+      "id": "72054",
+      "name": "Florida"
+    },
+    {
+      "id": "72055",
+      "name": "Guánica"
+    },
+    {
+      "id": "72057",
+      "name": "Guayama"
+    },
+    {
+      "id": "72059",
+      "name": "Guayanilla"
+    },
+    {
+      "id": "72061",
+      "name": "Guaynabo"
+    },
+    {
+      "id": "72063",
+      "name": "Gurabo"
+    },
+    {
+      "id": "72065",
+      "name": "Hatillo"
+    },
+    {
+      "id": "72067",
+      "name": "Hormigueros"
+    },
+    {
+      "id": "72069",
+      "name": "Humacao"
+    },
+    {
+      "id": "72071",
+      "name": "Isabela"
+    },
+    {
+      "id": "72073",
+      "name": "Jayuya"
+    },
+    {
+      "id": "72075",
+      "name": "Juana Díaz"
+    },
+    {
+      "id": "72077",
+      "name": "Juncos"
+    },
+    {
+      "id": "72079",
+      "name": "Lajas"
+    },
+    {
+      "id": "72081",
+      "name": "Lares"
+    },
+    {
+      "id": "72083",
+      "name": "Las Marías"
+    },
+    {
+      "id": "72085",
+      "name": "Las Piedras"
+    },
+    {
+      "id": "72087",
+      "name": "Loíza"
+    },
+    {
+      "id": "72089",
+      "name": "Luquillo"
+    },
+    {
+      "id": "72091",
+      "name": "Manatí"
+    },
+    {
+      "id": "72093",
+      "name": "Maricao"
+    },
+    {
+      "id": "72095",
+      "name": "Maunabo"
+    },
+    {
+      "id": "72097",
+      "name": "Mayagüez"
+    },
+    {
+      "id": "72099",
+      "name": "Moca"
+    },
+    {
+      "id": "72101",
+      "name": "Morovis"
+    },
+    {
+      "id": "72103",
+      "name": "Naguabo"
+    },
+    {
+      "id": "72105",
+      "name": "Naranjito"
+    },
+    {
+      "id": "72107",
+      "name": "Orocovis"
+    },
+    {
+      "id": "72109",
+      "name": "Patillas"
+    },
+    {
+      "id": "72111",
+      "name": "Peñuelas"
+    },
+    {
+      "id": "72113",
+      "name": "Ponce"
+    },
+    {
+      "id": "72115",
+      "name": "Quebradillas"
+    },
+    {
+      "id": "72117",
+      "name": "Rincón"
+    },
+    {
+      "id": "72119",
+      "name": "Río Grande"
+    },
+    {
+      "id": "72121",
+      "name": "Sabana Grande"
+    },
+    {
+      "id": "72123",
+      "name": "Salinas"
+    },
+    {
+      "id": "72125",
+      "name": "San Germán"
+    },
+    {
+      "id": "72127",
+      "name": "San Juan"
+    },
+    {
+      "id": "72129",
+      "name": "San Lorenzo"
+    },
+    {
+      "id": "72131",
+      "name": "San Sebastián"
+    },
+    {
+      "id": "72133",
+      "name": "Santa Isabel"
+    },
+    {
+      "id": "72135",
+      "name": "Toa Alta"
+    },
+    {
+      "id": "72137",
+      "name": "Toa Baja"
+    },
+    {
+      "id": "72139",
+      "name": "Trujillo Alto"
+    },
+    {
+      "id": "72141",
+      "name": "Utuado"
+    },
+    {
+      "id": "72143",
+      "name": "Vega Alta"
+    },
+    {
+      "id": "72145",
+      "name": "Vega Baja"
+    },
+    {
+      "id": "72147",
+      "name": "Vieques"
+    },
+    {
+      "id": "72149",
+      "name": "Villalba"
+    },
+    {
+      "id": "72151",
+      "name": "Yabucoa"
+    },
+    {
+      "id": "72153",
+      "name": "Yauco"
+    }
+  ],
+  "files": [
+    {
+      "path": "data/source/fema/catalog/declarations.json",
+      "key": "catalog/declarations",
+      "page": null,
+      "endpoint": "v1/DataSets",
+      "params": {
+        "$filter": "name eq 'DisasterDeclarationsSummaries' and version eq 2",
+        "$top": "10"
+      },
+      "retrievedAt": "2026-10-08T00:45:23.705Z",
+      "rawSha256": "f95627250f701ed7639094472bb9d9a3a0520c4dcae2c23dcf107c1ca7c5c8d1",
+      "rawBytes": 4462,
+      "sourceCount": null,
+      "records": 1,
+      "sha256": "5e7d1c5a73579bca928f7957458aecb1bc04f158ac55560262c2c7d3e4f3b920",
+      "bytes": 698
+    },
+    {
+      "path": "data/source/fema/catalog/publicAssistance.json",
+      "key": "catalog/publicAssistance",
+      "page": null,
+      "endpoint": "v1/DataSets",
+      "params": {
+        "$filter": "name eq 'PublicAssistanceFundedProjectsDetails' and version eq 2",
+        "$top": "10"
+      },
+      "retrievedAt": "2026-10-08T00:45:25.367Z",
+      "rawSha256": "32c6430ee1b94b64bea74c0cf25ba39581c74b8613c0b4b8af4b32651fc56a44",
+      "rawBytes": 5288,
+      "sourceCount": null,
+      "records": 1,
+      "sha256": "4959974164ad94e7f7e0a716870e4573cfe50f6f955a9591396e8b1e3da00ad7",
+      "bytes": 725
+    },
+    {
+      "path": "data/source/fema/catalog/mitigation.json",
+      "key": "catalog/mitigation",
+      "page": null,
+      "endpoint": "v1/DataSets",
+      "params": {
+        "$filter": "name eq 'HazardMitigationAssistanceProjects' and version eq 4",
+        "$top": "10"
+      },
+      "retrievedAt": "2026-10-08T00:45:27.395Z",
+      "rawSha256": "760e62029fa87f1cb245ce4680a7fb581bb1b48a156c663a264aed2a6e27fb59",
+      "rawBytes": 4858,
+      "sourceCount": null,
+      "records": 1,
+      "sha256": "645460f5a8c219ab44ff720507dc17e6dffd65302ff13e8bd9ad71066dd8a4b2",
+      "bytes": 714
+    },
+    {
+      "path": "data/source/fema/catalog/housingOwners.json",
+      "key": "catalog/housingOwners",
+      "page": null,
+      "endpoint": "v1/DataSets",
+      "params": {
+        "$filter": "name eq 'HousingAssistanceOwners' and version eq 2",
+        "$top": "10"
+      },
+      "retrievedAt": "2026-10-08T00:45:29.193Z",
+      "rawSha256": "018e29cd5910ba2baa60ac49018e033ca99e5c8cac752c69a913ed4d2b810597",
+      "rawBytes": 4325,
+      "sourceCount": null,
+      "records": 1,
+      "sha256": "5da69a74ba5e3774518787c8ad952ab6af18fb6f6442af4f7060b92878dfa477",
+      "bytes": 696
+    },
+    {
+      "path": "data/source/fema/catalog/housingRenters.json",
+      "key": "catalog/housingRenters",
+      "page": null,
+      "endpoint": "v1/DataSets",
+      "params": {
+        "$filter": "name eq 'HousingAssistanceRenters' and version eq 2",
+        "$top": "10"
+      },
+      "retrievedAt": "2026-10-08T00:45:31.047Z",
+      "rawSha256": "94154ca186fc553b302a63820449709766a2c54c25fb344081138b10e99ffd0e",
+      "rawBytes": 4352,
+      "sourceCount": null,
+      "records": 1,
+      "sha256": "8447a9576691ca51e77d68dc1d92eabe6c3b3e76550ad375f4bfd4ba21150786",
+      "bytes": 699
+    },
+    {
+      "path": "data/source/fema/data/declarations-p1.json",
+      "key": "data/declarations",
+      "page": 1,
+      "endpoint": "v2/DisasterDeclarationsSummaries",
+      "params": {
+        "$filter": "state eq 'PR'",
+        "$orderby": "id",
+        "$top": "10000",
+        "$inlinecount": "allpages",
+        "$skip": "0"
+      },
+      "retrievedAt": "2026-10-08T00:44:16.820Z",
+      "rawSha256": "4fb28a57706c1c40d2ace736eb693ef6af80dee7aec883836c530248176ccc11",
+      "rawBytes": 1933620,
+      "sourceCount": 2116,
+      "records": 2116,
+      "sha256": "c9f76abbe0b49212ef889c8cb4d3eda09481b2a25285bfd072e486bc4d5b3848",
+      "bytes": 1228818
+    },
+    {
+      "path": "data/source/fema/data/publicAssistance-p1.json",
+      "key": "data/publicAssistance",
+      "page": 1,
+      "endpoint": "v2/PublicAssistanceFundedProjectsDetails",
+      "params": {
+        "$filter": "stateAbbreviation eq 'PR'",
+        "$orderby": "hash",
+        "$top": "10000",
+        "$inlinecount": "allpages",
+        "$skip": "0"
+      },
+      "retrievedAt": "2026-10-08T00:44:21.599Z",
+      "rawSha256": "d5c32e038e61160d63437fd4d0ee3aa6667588f38becef92355d65eae172b5bd",
+      "rawBytes": 7928305,
+      "sourceCount": 23009,
+      "records": 10000,
+      "sha256": "62f16a49c49eb58ada90c83ad83eb80ca1b81e38e294163e74e1383ef0456d90",
+      "bytes": 4477148
+    },
+    {
+      "path": "data/source/fema/data/publicAssistance-p2.json",
+      "key": "data/publicAssistance",
+      "page": 2,
+      "endpoint": "v2/PublicAssistanceFundedProjectsDetails",
+      "params": {
+        "$filter": "stateAbbreviation eq 'PR'",
+        "$orderby": "hash",
+        "$top": "10000",
+        "$inlinecount": "allpages",
+        "$skip": "10000"
+      },
+      "retrievedAt": "2026-10-08T00:44:26.107Z",
+      "rawSha256": "69aca2201a10b37ee225911e67e179cab708fee9261a8f9fcf7df489c57405d1",
+      "rawBytes": 7933009,
+      "sourceCount": 23009,
+      "records": 10000,
+      "sha256": "b519e3d6d12cd535962da205fdb855265169ec193bb4323443a2d28498dc9a44",
+      "bytes": 4479585
+    },
+    {
+      "path": "data/source/fema/data/publicAssistance-p3.json",
+      "key": "data/publicAssistance",
+      "page": 3,
+      "endpoint": "v2/PublicAssistanceFundedProjectsDetails",
+      "params": {
+        "$filter": "stateAbbreviation eq 'PR'",
+        "$orderby": "hash",
+        "$top": "10000",
+        "$inlinecount": "allpages",
+        "$skip": "20000"
+      },
+      "retrievedAt": "2026-10-08T00:44:29.076Z",
+      "rawSha256": "0a950768198a7060885904ab39ba62b9ce2718aa5d5872d1d883cbee779de460",
+      "rawBytes": 2386093,
+      "sourceCount": 23009,
+      "records": 3009,
+      "sha256": "55cbd9f9de551cced9fce166ff89ad68857207164580dc25030a06d5ea2450de",
+      "bytes": 1347758
+    },
+    {
+      "path": "data/source/fema/data/mitigation-p1.json",
+      "key": "data/mitigation",
+      "page": 1,
+      "endpoint": "v4/HazardMitigationAssistanceProjects",
+      "params": {
+        "$filter": "state eq 'Puerto Rico'",
+        "$orderby": "id",
+        "$top": "10000",
+        "$inlinecount": "allpages",
+        "$skip": "0"
+      },
+      "retrievedAt": "2026-10-08T00:44:31.227Z",
+      "rawSha256": "276f22819be18b801d3888d18f16b8ecaded197131a3325ddd4a35c43ff8b862",
+      "rawBytes": 1176298,
+      "sourceCount": 1232,
+      "records": 1232,
+      "sha256": "57f0010274b7482ea6a254cf48b55f7b5e7506a386bbe2017eb75d4fac08db90",
+      "bytes": 385351
+    },
+    {
+      "path": "data/source/fema/data/housingOwners-p1.json",
+      "key": "data/housingOwners",
+      "page": 1,
+      "endpoint": "v2/HousingAssistanceOwners",
+      "params": {
+        "$filter": "state eq 'PR'",
+        "$orderby": "id",
+        "$top": "10000",
+        "$inlinecount": "allpages",
+        "$select": "id,disasterNumber,state,county,validRegistrations,totalInspected,approvedForFemaAssistance,totalApprovedIhpAmount,repairReplaceAmount,rentalAmount,otherNeedsAmount",
+        "$skip": "0"
+      },
+      "retrievedAt": "2026-10-08T00:44:34.788Z",
+      "rawSha256": "e0503b7ef34da3758a2364b61b8bd5ab31f3e52c18a3ed7be15b1658d3574c3d",
+      "rawBytes": 2807002,
+      "sourceCount": 15095,
+      "records": 10000,
+      "sha256": "9df6e2a24eee72709313cb2d56517adb2e6db76abe82656441f3c882fb105637",
+      "bytes": 1966140
+    },
+    {
+      "path": "data/source/fema/data/housingOwners-p2.json",
+      "key": "data/housingOwners",
+      "page": 2,
+      "endpoint": "v2/HousingAssistanceOwners",
+      "params": {
+        "$filter": "state eq 'PR'",
+        "$orderby": "id",
+        "$top": "10000",
+        "$inlinecount": "allpages",
+        "$select": "id,disasterNumber,state,county,validRegistrations,totalInspected,approvedForFemaAssistance,totalApprovedIhpAmount,repairReplaceAmount,rentalAmount,otherNeedsAmount",
+        "$skip": "10000"
+      },
+      "retrievedAt": "2026-10-08T00:44:37.424Z",
+      "rawSha256": "4c83aa50c7ada51990e547ef81d23640082be7fade6c99958b3f5f6dd7ddbf0e",
+      "rawBytes": 1430706,
+      "sourceCount": 15095,
+      "records": 5095,
+      "sha256": "a568423ff74d6e0fd6d83285714227f18371212c96bf06b5c5d590539f0c73ce",
+      "bytes": 1002166
+    },
+    {
+      "path": "data/source/fema/data/housingRenters-p1.json",
+      "key": "data/housingRenters",
+      "page": 1,
+      "endpoint": "v2/HousingAssistanceRenters",
+      "params": {
+        "$filter": "state eq 'PR'",
+        "$orderby": "id",
+        "$top": "10000",
+        "$inlinecount": "allpages",
+        "$select": "id,disasterNumber,state,county,validRegistrations,totalInspected,approvedForFemaAssistance,totalApprovedIhpAmount,repairReplaceAmount,rentalAmount,otherNeedsAmount",
+        "$skip": "0"
+      },
+      "retrievedAt": "2026-10-08T00:44:40.850Z",
+      "rawSha256": "675b597626896c1c090f74d052b32a6883dae56dccc671cfc1dfc42cdc4a7291",
+      "rawBytes": 2796406,
+      "sourceCount": 10177,
+      "records": 10000,
+      "sha256": "144f3657db2dbe5fc9364ee89e88b735a8954eafa02dd09148f7ef90e6e4c128",
+      "bytes": 1966255
+    },
+    {
+      "path": "data/source/fema/data/housingRenters-p2.json",
+      "key": "data/housingRenters",
+      "page": 2,
+      "endpoint": "v2/HousingAssistanceRenters",
+      "params": {
+        "$filter": "state eq 'PR'",
+        "$orderby": "id",
+        "$top": "10000",
+        "$inlinecount": "allpages",
+        "$select": "id,disasterNumber,state,county,validRegistrations,totalInspected,approvedForFemaAssistance,totalApprovedIhpAmount,repairReplaceAmount,rentalAmount,otherNeedsAmount",
+        "$skip": "10000"
+      },
+      "retrievedAt": "2026-10-08T00:44:43.041Z",
+      "rawSha256": "86e00e4a61f988a525c545dfb5af8cc0309260633eb7d9892bf7a47bfd9f1b42",
+      "rawBytes": 50445,
+      "sourceCount": 10177,
+      "records": 177,
+      "sha256": "ebcd0381e1626fa5afb61bb75ddcae25e70562998c79d0fdfbbb85131fd22120",
+      "bytes": 35371
+    }
+  ]
+}

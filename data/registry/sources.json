@@ -383,6 +383,223 @@
       "notes": "Obtenido de la API oficial sin clave entre el 2026-10-07T22:39:40.118Z y el 2026-10-07T22:59:39.920Z (UTC), de forma reanudable: 530 respuestas guardadas byte por byte con SHA-256 y la huella del plan 4b4d640f7418. USAspending actualizado el 2026-10-07. AF 2026: total de Puerto Rico $38.97 mil millones; atribuible a municipios $15.67 mil millones, registrado en municipios sin certeza $15.32 mil millones, todo Puerto Rico $7.97 mil millones, sin municipio $0. La respuesta de la API para todas las adjudicaciones por condado omitió a Culebra (su fila existe al pedirla sola); por eso cada municipio se pide aparte a nivel de adjudicación y todo se cuadra con el total de Puerto Rico."
     },
     {
+      "datasetId": "openfema-declaraciones-pr",
+      "title": "Declaraciones de desastre en Puerto Rico (FEMA)",
+      "topic": "seguridad",
+      "sourceAgency": "Federal Emergency Management Agency (FEMA), OpenFEMA",
+      "sourceTitle": "Disaster Declarations Summaries v2 (OpenFEMA)",
+      "sourceURL": "https://www.fema.gov/openfema-data-page/disaster-declarations-summaries-v2",
+      "additionalURLs": [
+        {
+          "label": "API OpenFEMA: DisasterDeclarationsSummaries v2",
+          "url": "https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries",
+          "linkHealth": "LIVE"
+        },
+        {
+          "label": "Términos y condiciones de OpenFEMA",
+          "url": "https://www.fema.gov/about/openfema/terms-conditions",
+          "linkHealth": "LIVE"
+        }
+      ],
+      "sourceType": "API",
+      "sourceStatus": "RESOLVED",
+      "linkHealth": "LIVE",
+      "reportingPeriod": "Todos los desastres con registros de FEMA para Puerto Rico; el sitio permite escoger uno",
+      "sourcePublishedAt": "2026-10-08",
+      "originalRetrievalAt": "2026-10-08",
+      "verifiedAt": "2026-10-08",
+      "geography": "municipio",
+      "nativeGeography": "COUNTY_EQUIVALENT",
+      "geographyJoin": "Por el municipio que FEMA indica, por nombre y código a la vez. «Statewide» es todo Puerto Rico aunque traiga un código de condado (en Asistencia Pública muchos traen 127, San Juan): nunca se asigna a San Juan ni se reparte. Varios municipios en un proyecto: sin certeza. Sin condado: sin municipio. Nunca se deduce el municipio de la dirección del solicitante.",
+      "updateFrequency": "OpenFEMA actualiza cada dataset por su cuenta (diario o semanal); la fecha de cada uno está en el catálogo y en el sitio.",
+      "redistributionStatus": "ATTRIBUTION_REQUIRED",
+      "rightsEvidence": "Términos y condiciones de OpenFEMA (fema.gov/about/openfema/terms-conditions, actualizados el 22 de enero de 2025; leídos el 2026-10-07): los datos de la API no tienen controles sobre su uso; hay que citar el endpoint con su versión y la fecha y hora de obtención; decir textualmente «This product uses the Federal Emergency Management Agency’s OpenFEMA API, but is not endorsed by FEMA. The Federal Government or FEMA cannot vouch for the data or analyses derived from these data after the data have been retrieved from the Agency's website(s).»; no usar logos ni sellos de FEMA o DHS; no modificar ni falsear el contenido diciendo que es de FEMA; no reidentificar ni publicar datos que identifiquen personas; usar los datos para investigación estadística o como registro informativo. FEMA puede pedir que se deje de usar y se destruyan las copias: el proyecto lo haría y lo anota como riesgo de un repositorio público. Ninguna condición impide mostrar, transformar ni redistribuir estos datos agregados.",
+      "attribution": "Fuente: Federal Emergency Management Agency (FEMA), OpenFEMA. This product uses the Federal Emergency Management Agency’s OpenFEMA API, but is not endorsed by FEMA. The Federal Government or FEMA cannot vouch for the data or analyses derived from these data after the data have been retrieved from the Agency's website(s).",
+      "methodology": "Una fila por desastre y área designada: número, identificador (DR/EM), título, fechas del incidente y de la declaración, y si se declararon los programas de Individuos y Hogares, Asistencia Individual, Asistencia Pública y Mitigación para esa área. Que un municipio esté designado no quiere decir que cada residente recibió ayuda.",
+      "fieldMap": {
+        "designaciones": "designatedArea + fipsCountyCode, banderas ihProgramDeclared, iaProgramDeclared, paProgramDeclared, hmProgramDeclared"
+      },
+      "missingValuePolicy": "Las fechas vacías quedan vacías.",
+      "provenanceStatus": "VERIFIED",
+      "readiness": "READY",
+      "publicationDecision": "KEEP_FOR_PUBLIC_LAUNCH",
+      "publicStatus": "PUBLIC_READY",
+      "valueExclusions": [],
+      "files": [
+        "data/source/fema/manifest.json",
+        "data/generated/fema-pr.json",
+        "scripts/fema/source.ts"
+      ],
+      "metrics": [],
+      "notes": "2116 filas de Puerto Rico; 51 desastres declarados. El repositorio guarda un extracto público de cada respuesta (solo campos permitidos); las respuestas originales se quedan fuera, con su SHA-256 en el manifiesto."
+    },
+    {
+      "datasetId": "openfema-asistencia-publica-pr",
+      "title": "Asistencia Pública de FEMA por municipio",
+      "topic": "seguridad",
+      "sourceAgency": "Federal Emergency Management Agency (FEMA), OpenFEMA",
+      "sourceTitle": "Public Assistance Funded Projects Details v2 (OpenFEMA)",
+      "sourceURL": "https://www.fema.gov/openfema-data-page/public-assistance-funded-projects-details-v2",
+      "additionalURLs": [
+        {
+          "label": "API OpenFEMA: PublicAssistanceFundedProjectsDetails v2",
+          "url": "https://www.fema.gov/api/open/v2/PublicAssistanceFundedProjectsDetails",
+          "linkHealth": "LIVE"
+        },
+        {
+          "label": "Términos y condiciones de OpenFEMA",
+          "url": "https://www.fema.gov/about/openfema/terms-conditions",
+          "linkHealth": "LIVE"
+        }
+      ],
+      "sourceType": "API",
+      "sourceStatus": "RESOLVED",
+      "linkHealth": "LIVE",
+      "reportingPeriod": "Todos los desastres con registros de FEMA para Puerto Rico; el sitio permite escoger uno",
+      "sourcePublishedAt": "2026-10-06",
+      "originalRetrievalAt": "2026-10-08",
+      "verifiedAt": "2026-10-08",
+      "geography": "municipio",
+      "nativeGeography": "COUNTY_EQUIVALENT",
+      "geographyJoin": "Por el campo county de FEMA, que en este dataset es la ubicación del solicitante (no necesariamente el lugar de la obra), por nombre y código a la vez. Esos montos se publican como «de solicitantes ubicados en» el municipio (estado APPLICANT_MUNICIPIO), nunca como dinero atribuible al lugar del proyecto. «Statewide» es todo Puerto Rico aunque traiga un código de condado (la mayoría trae 127, San Juan): nunca se asigna a San Juan ni se reparte. Sin condado: sin municipio. Nunca se usan direcciones.",
+      "updateFrequency": "OpenFEMA actualiza cada dataset por su cuenta (diario o semanal); la fecha de cada uno está en el catálogo y en el sitio.",
+      "redistributionStatus": "ATTRIBUTION_REQUIRED",
+      "rightsEvidence": "Términos y condiciones de OpenFEMA (fema.gov/about/openfema/terms-conditions, actualizados el 22 de enero de 2025; leídos el 2026-10-07): los datos de la API no tienen controles sobre su uso; hay que citar el endpoint con su versión y la fecha y hora de obtención; decir textualmente «This product uses the Federal Emergency Management Agency’s OpenFEMA API, but is not endorsed by FEMA. The Federal Government or FEMA cannot vouch for the data or analyses derived from these data after the data have been retrieved from the Agency's website(s).»; no usar logos ni sellos de FEMA o DHS; no modificar ni falsear el contenido diciendo que es de FEMA; no reidentificar ni publicar datos que identifiquen personas; usar los datos para investigación estadística o como registro informativo. FEMA puede pedir que se deje de usar y se destruyan las copias: el proyecto lo haría y lo anota como riesgo de un repositorio público. Ninguna condición impide mostrar, transformar ni redistribuir estos datos agregados.",
+      "attribution": "Fuente: Federal Emergency Management Agency (FEMA), OpenFEMA. This product uses the Federal Emergency Management Agency’s OpenFEMA API, but is not endorsed by FEMA. The Federal Government or FEMA cannot vouch for the data or analyses derived from these data after the data have been retrieved from the Agency's website(s).",
+      "methodology": "Obligado federal: suma de federalShareObligated de los proyectos, por municipio del solicitante según FEMA (una fila por número de desastre y hoja de trabajo). Se muestran aparte projectAmount (costo estimado, sin costos administrativos) y totalObligated (parte federal más costos administrativos). Obligado no quiere decir gastado; OpenFEMA no publica lo gastado. El paso del proceso (projectProcessStep) se muestra tal como lo escribe FEMA. No se usa PublicAssistanceProjectsStatus: su API respondía 404 al construir el pipeline. El extracto público guardado en el repositorio no incluye el título libre de los proyectos (applicationTitle) ni identificadores de solicitante.",
+      "fieldMap": {
+        "femaPaObligated": "Σ federalShareObligated",
+        "femaPaProjects": "número de proyectos (disasterNumber + pwNumber)"
+      },
+      "missingValuePolicy": "Un monto vacío queda vacío y no suma; nunca se vuelve $0. Los negativos (ajustes) se conservan con su signo.",
+      "provenanceStatus": "VERIFIED",
+      "readiness": "READY",
+      "publicationDecision": "KEEP_FOR_PUBLIC_LAUNCH",
+      "publicStatus": "PUBLIC_READY",
+      "valueExclusions": [],
+      "files": [
+        "data/source/fema/manifest.json",
+        "data/generated/fema-pr.json",
+        "scripts/fema/source.ts"
+      ],
+      "metrics": [
+        "femaPaObligated",
+        "femaPaProjects"
+      ],
+      "notes": "23009 proyectos de Puerto Rico. 5,779 son «Statewide» y la mayoría trae el código 127 (San Juan); se cuentan en todo Puerto Rico. El repositorio guarda un extracto público de cada respuesta (solo campos permitidos); las respuestas originales se quedan fuera, con su SHA-256 en el manifiesto."
+    },
+    {
+      "datasetId": "openfema-hogares-pr",
+      "title": "Asistencia de FEMA a hogares por municipio (IHP)",
+      "topic": "seguridad",
+      "sourceAgency": "Federal Emergency Management Agency (FEMA), OpenFEMA",
+      "sourceTitle": "Housing Assistance Program Data: Owners v2 y Renters v2 (OpenFEMA)",
+      "sourceURL": "https://www.fema.gov/openfema-data-page/housing-assistance-program-data-owners-v2",
+      "additionalURLs": [
+        {
+          "label": "API OpenFEMA: HousingAssistanceOwners v2",
+          "url": "https://www.fema.gov/api/open/v2/HousingAssistanceOwners",
+          "linkHealth": "LIVE"
+        },
+        {
+          "label": "API OpenFEMA: HousingAssistanceRenters v2",
+          "url": "https://www.fema.gov/api/open/v2/HousingAssistanceRenters",
+          "linkHealth": "LIVE"
+        },
+        {
+          "label": "Términos y condiciones de OpenFEMA",
+          "url": "https://www.fema.gov/about/openfema/terms-conditions",
+          "linkHealth": "LIVE"
+        }
+      ],
+      "sourceType": "API",
+      "sourceStatus": "RESOLVED",
+      "linkHealth": "LIVE",
+      "reportingPeriod": "Todos los desastres con registros de FEMA para Puerto Rico; el sitio permite escoger uno",
+      "sourcePublishedAt": "2026-10-07",
+      "originalRetrievalAt": "2026-10-08",
+      "verifiedAt": "2026-10-08",
+      "geography": "municipio",
+      "nativeGeography": "COUNTY_EQUIVALENT",
+      "geographyJoin": "Por el municipio que FEMA indica, por nombre y código a la vez. «Statewide» es todo Puerto Rico aunque traiga un código de condado (en Asistencia Pública muchos traen 127, San Juan): nunca se asigna a San Juan ni se reparte. Varios municipios en un proyecto: sin certeza. Sin condado: sin municipio. Nunca se deduce el municipio de la dirección del solicitante.",
+      "updateFrequency": "OpenFEMA actualiza cada dataset por su cuenta (diario o semanal); la fecha de cada uno está en el catálogo y en el sitio.",
+      "redistributionStatus": "ATTRIBUTION_REQUIRED",
+      "rightsEvidence": "Términos y condiciones de OpenFEMA (fema.gov/about/openfema/terms-conditions, actualizados el 22 de enero de 2025; leídos el 2026-10-07): los datos de la API no tienen controles sobre su uso; hay que citar el endpoint con su versión y la fecha y hora de obtención; decir textualmente «This product uses the Federal Emergency Management Agency’s OpenFEMA API, but is not endorsed by FEMA. The Federal Government or FEMA cannot vouch for the data or analyses derived from these data after the data have been retrieved from the Agency's website(s).»; no usar logos ni sellos de FEMA o DHS; no modificar ni falsear el contenido diciendo que es de FEMA; no reidentificar ni publicar datos que identifiquen personas; usar los datos para investigación estadística o como registro informativo. FEMA puede pedir que se deje de usar y se destruyan las copias: el proyecto lo haría y lo anota como riesgo de un repositorio público. Ninguna condición impide mostrar, transformar ni redistribuir estos datos agregados.",
+      "attribution": "Fuente: Federal Emergency Management Agency (FEMA), OpenFEMA. This product uses the Federal Emergency Management Agency’s OpenFEMA API, but is not endorsed by FEMA. The Federal Government or FEMA cannot vouch for the data or analyses derived from these data after the data have been retrieved from the Agency's website(s).",
+      "methodology": "Suma de totalApprovedIhpAmount de las filas agregadas que publica FEMA para dueños e inquilinos. Es el monto aprobado bajo el programa de Individuos y Hogares, no lo pagado. Un registro válido (validRegistrations) no quiere decir aprobado; los solicitantes aprobados son approvedForFemaAssistance. Solo filas agregadas de FEMA: el pipeline no pide ciudad ni código postal, y el sitio solo publica totales por municipio y desastre.",
+      "fieldMap": {
+        "femaIhpApproved": "Σ totalApprovedIhpAmount (dueños + inquilinos)"
+      },
+      "missingValuePolicy": "Un monto vacío queda vacío; nunca se vuelve $0.",
+      "provenanceStatus": "VERIFIED",
+      "readiness": "READY",
+      "publicationDecision": "KEEP_FOR_PUBLIC_LAUNCH",
+      "publicStatus": "PUBLIC_READY",
+      "valueExclusions": [],
+      "files": [
+        "data/source/fema/manifest.json",
+        "data/generated/fema-pr.json",
+        "scripts/fema/source.ts"
+      ],
+      "metrics": [
+        "femaIhpApproved"
+      ],
+      "notes": "15095 filas de dueños y 10177 de inquilinos de Puerto Rico. Algunas filas son de desastres declarados fuera de Puerto Rico (4337, 1561); se muestran con su número. El repositorio guarda un extracto público de cada respuesta (solo campos permitidos); las respuestas originales se quedan fuera, con su SHA-256 en el manifiesto."
+    },
+    {
+      "datasetId": "openfema-mitigacion-pr",
+      "title": "Asistencia de FEMA para la mitigación de riesgos (HMA)",
+      "topic": "seguridad",
+      "sourceAgency": "Federal Emergency Management Agency (FEMA), OpenFEMA",
+      "sourceTitle": "Hazard Mitigation Assistance Projects v4 (OpenFEMA)",
+      "sourceURL": "https://www.fema.gov/openfema-data-page/hazard-mitigation-assistance-projects-v4",
+      "additionalURLs": [
+        {
+          "label": "API OpenFEMA: HazardMitigationAssistanceProjects v4",
+          "url": "https://www.fema.gov/api/open/v4/HazardMitigationAssistanceProjects",
+          "linkHealth": "LIVE"
+        },
+        {
+          "label": "Términos y condiciones de OpenFEMA",
+          "url": "https://www.fema.gov/about/openfema/terms-conditions",
+          "linkHealth": "LIVE"
+        }
+      ],
+      "sourceType": "API",
+      "sourceStatus": "RESOLVED",
+      "linkHealth": "LIVE",
+      "reportingPeriod": "Todos los desastres con registros de FEMA para Puerto Rico; el sitio permite escoger uno",
+      "sourcePublishedAt": "2026-08-31",
+      "originalRetrievalAt": "2026-10-08",
+      "verifiedAt": "2026-10-08",
+      "geography": "municipio",
+      "nativeGeography": "COUNTY_EQUIVALENT",
+      "geographyJoin": "Por el municipio que FEMA indica, por nombre y código a la vez. «Statewide» es todo Puerto Rico aunque traiga un código de condado (en Asistencia Pública muchos traen 127, San Juan): nunca se asigna a San Juan ni se reparte. Varios municipios en un proyecto: sin certeza. Sin condado: sin municipio. Nunca se deduce el municipio de la dirección del solicitante.",
+      "updateFrequency": "OpenFEMA actualiza cada dataset por su cuenta (diario o semanal); la fecha de cada uno está en el catálogo y en el sitio.",
+      "redistributionStatus": "ATTRIBUTION_REQUIRED",
+      "rightsEvidence": "Términos y condiciones de OpenFEMA (fema.gov/about/openfema/terms-conditions, actualizados el 22 de enero de 2025; leídos el 2026-10-07): los datos de la API no tienen controles sobre su uso; hay que citar el endpoint con su versión y la fecha y hora de obtención; decir textualmente «This product uses the Federal Emergency Management Agency’s OpenFEMA API, but is not endorsed by FEMA. The Federal Government or FEMA cannot vouch for the data or analyses derived from these data after the data have been retrieved from the Agency's website(s).»; no usar logos ni sellos de FEMA o DHS; no modificar ni falsear el contenido diciendo que es de FEMA; no reidentificar ni publicar datos que identifiquen personas; usar los datos para investigación estadística o como registro informativo. FEMA puede pedir que se deje de usar y se destruyan las copias: el proyecto lo haría y lo anota como riesgo de un repositorio público. Ninguna condición impide mostrar, transformar ni redistribuir estos datos agregados.",
+      "attribution": "Fuente: Federal Emergency Management Agency (FEMA), OpenFEMA. This product uses the Federal Emergency Management Agency’s OpenFEMA API, but is not endorsed by FEMA. The Federal Government or FEMA cannot vouch for the data or analyses derived from these data after the data have been retrieved from the Agency's website(s).",
+      "methodology": "Suma de federalShareObligated de los proyectos HMA (HMGP, PDM, FMA) sin costos administrativos. projectAmount (costo de la solicitud) y el estado del proyecto se muestran aparte, con los términos de FEMA. Los proyectos de programas que no dependen de un desastre (PDM, FMA) van aparte del filtro de desastres. No se usan datos por propiedad.",
+      "fieldMap": {
+        "femaHmaObligated": "Σ federalShareObligated"
+      },
+      "missingValuePolicy": "Si FEMA no reporta el monto obligado de un proyecto (452 casos), no suma: no quiere decir $0.",
+      "provenanceStatus": "VERIFIED",
+      "readiness": "READY",
+      "publicationDecision": "KEEP_FOR_PUBLIC_LAUNCH",
+      "publicStatus": "PUBLIC_READY",
+      "valueExclusions": [],
+      "files": [
+        "data/source/fema/manifest.json",
+        "data/generated/fema-pr.json",
+        "scripts/fema/source.ts"
+      ],
+      "metrics": [
+        "femaHmaObligated"
+      ],
+      "notes": "1232 proyectos de Puerto Rico. El repositorio guarda un extracto público de cada respuesta (solo campos permitidos); las respuestas originales se quedan fuera, con su SHA-256 en el manifiesto."
+    },
+    {
       "datasetId": "geometria-municipios",
       "title": "Límites de los 78 municipios",
       "topic": "geografia",

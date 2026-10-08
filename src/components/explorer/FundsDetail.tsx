@@ -121,7 +121,7 @@ export function FundsMunicipio({ id }: { id: string }) {
           </dd>
         </div>
         <div className="border-l border-divider-2 py-2.5 pl-2.5">
-          <dt className="text-[13px] text-muted">Desembolsado (reportado)</dt>
+          <dt className="text-[13px] text-muted">Desembolsado acumulado (reportado)</dt>
           <dd className="text-lg font-semibold tabular">
             {outlays == null ? "Sin desembolsos reportados" : money(outlays)}
           </dd>

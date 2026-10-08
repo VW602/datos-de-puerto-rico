@@ -29,13 +29,17 @@ const V1_SOURCES = [
   "cdc-brfss-2023",
   "bls-laus-municipios",
   "usaspending-pr",
+  "openfema-declaraciones-pr",
+  "openfema-asistencia-publica-pr",
+  "openfema-hogares-pr",
+  "openfema-mitigacion-pr",
   "geometria-municipios",
 ];
 
 /** Publishers allowed in this version: federal agencies whose terms are written down in DATA_LICENSES.md. */
 const ALLOWED_AGENCY =
-  /^(U\.S\. Census Bureau|National Highway Traffic Safety Administration|Centers for Disease Control and Prevention|U\.S\. Bureau of Labor Statistics|U\.S\. Department of the Treasury)/;
-const ALLOWED_METRIC_SOURCE = /^(Censo|NHTSA|CDC|BLS|USAspending)\b/;
+  /^(U\.S\. Census Bureau|National Highway Traffic Safety Administration|Centers for Disease Control and Prevention|U\.S\. Bureau of Labor Statistics|U\.S\. Department of the Treasury|Federal Emergency Management Agency)/;
+const ALLOWED_METRIC_SOURCE = /^(Censo|NHTSA|CDC|BLS|USAspending|FEMA)\b/;
 
 function filesUnder(dir: string): string[] {
   const out: string[] = [];
@@ -103,7 +107,11 @@ describe("frontera de publicación", () => {
   it("ningún ranking por municipio queda vacío", () => {
     for (const metric of PUBLIC_METRICS) {
       if (metric.id === "obesity" || metric.id === "inactivity") continue;
-      expect(rankByMetric(publicPlaces, metric.id, metric.scale).ranked.length, metric.id).toBe(78);
+      const ranked = rankByMetric(publicPlaces, metric.id, metric.scale).ranked.length;
+      // FEMA programs reach only some municipios in a given program: the rest stay without data, never 0.
+      if (metricGroup(metric.id) === "Recuperación y desastres")
+        expect(ranked, metric.id).toBeGreaterThan(60);
+      else expect(ranked, metric.id).toBe(78);
     }
   });
 
@@ -116,13 +124,19 @@ describe("frontera de publicación", () => {
 
   it("los archivos públicos son solo los esperados", () => {
     expect(filesUnder("public").sort()).toEqual(["public/favicon.svg"]);
-    expect(filesUnder("data/generated").sort()).toEqual([
+    const generated = filesUnder("data/generated").filter(
+      (f) => !f.startsWith("data/generated/fema-projects/"),
+    );
+    expect(generated.sort()).toEqual([
       "data/generated/bls-laus.json",
       "data/generated/census-municipios.json",
+      "data/generated/fema-pr.json",
       "data/generated/municipios.geometry.json",
       "data/generated/sources.public.json",
       "data/generated/usaspending-pr.json",
     ]);
+    for (const file of filesUnder("data/generated/fema-projects"))
+      expect(file).toMatch(/^data\/generated\/fema-projects\/\d+\.json$/);
   });
 
   it("no hay datos de investigación sin resolver en el repositorio", () => {

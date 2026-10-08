@@ -146,6 +146,85 @@
       "valueExclusions": []
     },
     {
+      "datasetId": "openfema-declaraciones-pr",
+      "title": "Declaraciones de desastre en Puerto Rico (FEMA)",
+      "sourceAgency": "Federal Emergency Management Agency (FEMA), OpenFEMA",
+      "sourceTitle": "Disaster Declarations Summaries v2 (OpenFEMA)",
+      "reportingPeriod": "Todos los desastres con registros de FEMA para Puerto Rico; el sitio permite escoger uno",
+      "geography": "municipio",
+      "attribution": "Fuente: Federal Emergency Management Agency (FEMA), OpenFEMA. This product uses the Federal Emergency Management Agency’s OpenFEMA API, but is not endorsed by FEMA. The Federal Government or FEMA cannot vouch for the data or analyses derived from these data after the data have been retrieved from the Agency's website(s).",
+      "missingValuePolicy": "Las fechas vacías quedan vacías.",
+      "publicStatus": "PUBLIC_READY",
+      "metrics": [],
+      "sourceURL": "https://www.fema.gov/openfema-data-page/disaster-declarations-summaries-v2",
+      "methodology": "Una fila por desastre y área designada: número, identificador (DR/EM), título, fechas del incidente y de la declaración, y si se declararon los programas de Individuos y Hogares, Asistencia Individual, Asistencia Pública y Mitigación para esa área. Que un municipio esté designado no quiere decir que cada residente recibió ayuda.",
+      "verified": true,
+      "retrievedAt": "2026-10-08",
+      "marginOfErrorAvailable": false,
+      "valueExclusions": []
+    },
+    {
+      "datasetId": "openfema-asistencia-publica-pr",
+      "title": "Asistencia Pública de FEMA por municipio",
+      "sourceAgency": "Federal Emergency Management Agency (FEMA), OpenFEMA",
+      "sourceTitle": "Public Assistance Funded Projects Details v2 (OpenFEMA)",
+      "reportingPeriod": "Todos los desastres con registros de FEMA para Puerto Rico; el sitio permite escoger uno",
+      "geography": "municipio",
+      "attribution": "Fuente: Federal Emergency Management Agency (FEMA), OpenFEMA. This product uses the Federal Emergency Management Agency’s OpenFEMA API, but is not endorsed by FEMA. The Federal Government or FEMA cannot vouch for the data or analyses derived from these data after the data have been retrieved from the Agency's website(s).",
+      "missingValuePolicy": "Un monto vacío queda vacío y no suma; nunca se vuelve $0. Los negativos (ajustes) se conservan con su signo.",
+      "publicStatus": "PUBLIC_READY",
+      "metrics": [
+        "femaPaObligated",
+        "femaPaProjects"
+      ],
+      "sourceURL": "https://www.fema.gov/openfema-data-page/public-assistance-funded-projects-details-v2",
+      "methodology": "Obligado federal: suma de federalShareObligated de los proyectos, por municipio del solicitante según FEMA (una fila por número de desastre y hoja de trabajo). Se muestran aparte projectAmount (costo estimado, sin costos administrativos) y totalObligated (parte federal más costos administrativos). Obligado no quiere decir gastado; OpenFEMA no publica lo gastado. El paso del proceso (projectProcessStep) se muestra tal como lo escribe FEMA. No se usa PublicAssistanceProjectsStatus: su API respondía 404 al construir el pipeline. El extracto público guardado en el repositorio no incluye el título libre de los proyectos (applicationTitle) ni identificadores de solicitante.",
+      "verified": true,
+      "retrievedAt": "2026-10-08",
+      "marginOfErrorAvailable": false,
+      "valueExclusions": []
+    },
+    {
+      "datasetId": "openfema-hogares-pr",
+      "title": "Asistencia de FEMA a hogares por municipio (IHP)",
+      "sourceAgency": "Federal Emergency Management Agency (FEMA), OpenFEMA",
+      "sourceTitle": "Housing Assistance Program Data: Owners v2 y Renters v2 (OpenFEMA)",
+      "reportingPeriod": "Todos los desastres con registros de FEMA para Puerto Rico; el sitio permite escoger uno",
+      "geography": "municipio",
+      "attribution": "Fuente: Federal Emergency Management Agency (FEMA), OpenFEMA. This product uses the Federal Emergency Management Agency’s OpenFEMA API, but is not endorsed by FEMA. The Federal Government or FEMA cannot vouch for the data or analyses derived from these data after the data have been retrieved from the Agency's website(s).",
+      "missingValuePolicy": "Un monto vacío queda vacío; nunca se vuelve $0.",
+      "publicStatus": "PUBLIC_READY",
+      "metrics": [
+        "femaIhpApproved"
+      ],
+      "sourceURL": "https://www.fema.gov/openfema-data-page/housing-assistance-program-data-owners-v2",
+      "methodology": "Suma de totalApprovedIhpAmount de las filas agregadas que publica FEMA para dueños e inquilinos. Es el monto aprobado bajo el programa de Individuos y Hogares, no lo pagado. Un registro válido (validRegistrations) no quiere decir aprobado; los solicitantes aprobados son approvedForFemaAssistance. Solo filas agregadas de FEMA: el pipeline no pide ciudad ni código postal, y el sitio solo publica totales por municipio y desastre.",
+      "verified": true,
+      "retrievedAt": "2026-10-08",
+      "marginOfErrorAvailable": false,
+      "valueExclusions": []
+    },
+    {
+      "datasetId": "openfema-mitigacion-pr",
+      "title": "Asistencia de FEMA para la mitigación de riesgos (HMA)",
+      "sourceAgency": "Federal Emergency Management Agency (FEMA), OpenFEMA",
+      "sourceTitle": "Hazard Mitigation Assistance Projects v4 (OpenFEMA)",
+      "reportingPeriod": "Todos los desastres con registros de FEMA para Puerto Rico; el sitio permite escoger uno",
+      "geography": "municipio",
+      "attribution": "Fuente: Federal Emergency Management Agency (FEMA), OpenFEMA. This product uses the Federal Emergency Management Agency’s OpenFEMA API, but is not endorsed by FEMA. The Federal Government or FEMA cannot vouch for the data or analyses derived from these data after the data have been retrieved from the Agency's website(s).",
+      "missingValuePolicy": "Si FEMA no reporta el monto obligado de un proyecto (452 casos), no suma: no quiere decir $0.",
+      "publicStatus": "PUBLIC_READY",
+      "metrics": [
+        "femaHmaObligated"
+      ],
+      "sourceURL": "https://www.fema.gov/openfema-data-page/hazard-mitigation-assistance-projects-v4",
+      "methodology": "Suma de federalShareObligated de los proyectos HMA (HMGP, PDM, FMA) sin costos administrativos. projectAmount (costo de la solicitud) y el estado del proyecto se muestran aparte, con los términos de FEMA. Los proyectos de programas que no dependen de un desastre (PDM, FMA) van aparte del filtro de desastres. No se usan datos por propiedad.",
+      "verified": true,
+      "retrievedAt": "2026-10-08",
+      "marginOfErrorAvailable": false,
+      "valueExclusions": []
+    },
+    {
       "datasetId": "geometria-municipios",
       "title": "Límites de los 78 municipios",
       "sourceAgency": "U.S. Census Bureau, Geography Division",

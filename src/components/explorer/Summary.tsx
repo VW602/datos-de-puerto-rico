@@ -8,7 +8,9 @@ import { deltaWords, rankOf, shortPeriod } from "@/data/pr/present";
 import { PUBLIC_GROUPS, isPublicMetric, publicMetricsInGroup } from "@/data/pr/public";
 import type { Ranking } from "@/data/pr/ranking";
 import { provenanceForMetric } from "@/data/pr/sources";
+import { ALL, FEMA_METRIC_IDS, disasterLabel } from "@/data/pr/fema";
 import { FUNDS_FY } from "@/data/pr/funds";
+import { FemaIsland, FemaMunicipio } from "./FemaDetail";
 import { FundsIsland, FundsMunicipio } from "./FundsDetail";
 import { LausTrend } from "./LausTrend";
 
@@ -17,11 +19,14 @@ const PROFILE: PrMetricId[] = ["population", "income", "medianage", "poverty", "
 
 const MONTHLY: PrMetricId = "unemploymentMonthly";
 const FUNDS: PrMetricId[] = ["fedObligations", "fedOutlays", "fedAwards"];
+const FEMA: PrMetricId[] = FEMA_METRIC_IDS;
 
 function periodOf(id: PrMetricId): string {
   // Monthly data: the exact month, not the registry's range.
   if (id === MONTHLY)
     return `${monthShort(LAUS_LATEST)}${LAUS_LATEST_PRELIMINARY ? " (preliminar)" : ""}`;
+  // FEMA: the records of every disaster unless one is chosen (shown next to the filter).
+  if (FEMA.includes(id)) return "OpenFEMA";
   // Federal funds: the exact federal fiscal year.
   if (FUNDS.includes(id)) return `AF ${FUNDS_FY}`;
   const period = provenanceForMetric(id)?.period;
@@ -63,12 +68,14 @@ export function Summary({
   ranking,
   onClear,
   size = "desktop",
+  disaster = ALL,
 }: {
   metric: PrMetric;
   place: Municipio | null;
   ranking: Ranking;
   onClear: () => void;
   size?: "desktop" | "mobile";
+  disaster?: string;
 }) {
   const island = islandStat(metric.id);
   const period = periodOf(metric.id);
@@ -110,6 +117,7 @@ export function Summary({
             </p>
             {metric.id === MONTHLY && <LausTrend id={null} name="Puerto Rico" />}
             {FUNDS.includes(metric.id) && <FundsIsland />}
+            {FEMA.includes(metric.id) && <FemaIsland disaster={disaster} />}
           </>
         )}
       </section>
@@ -154,6 +162,7 @@ export function Summary({
       </p>
       <p className="mt-2 text-[15px] text-muted">
         {metric.label} · {metric.source}
+        {FEMA.includes(metric.id) ? ` · ${disasterLabel(disaster)}` : ""}
         {island ? " · cifra de toda la isla, no del municipio" : ""}
       </p>
       {metric.id === MONTHLY && LAUS_LATEST_PRELIMINARY && value != null && (
@@ -194,9 +203,12 @@ export function Summary({
 
       {metric.id === MONTHLY && <LausTrend id={place.id} name={place.name} />}
       {FUNDS.includes(metric.id) && <FundsMunicipio id={place.id} />}
+      {FEMA.includes(metric.id) && (
+        <FemaMunicipio id={place.id} name={place.name} disaster={disaster} />
+      )}
 
       <dl
-        className={`grid grid-cols-2 border-t border-divider ${metric.id === MONTHLY || FUNDS.includes(metric.id) ? "mt-5" : ""}`}
+        className={`grid grid-cols-2 border-t border-divider ${metric.id === MONTHLY || FUNDS.includes(metric.id) || FEMA.includes(metric.id) ? "mt-5" : ""}`}
       >
         {others.map((id, index) => {
           const other = prMetricById(id);

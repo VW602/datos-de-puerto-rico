@@ -1,0 +1,23 @@
+{
+ "extract": "PUBLIC-SAFE EXTRACT: registros de una respuesta de la API OpenFEMA con solo los campos de la lista permitida (scripts/fema/extract.ts). No es la respuesta original; su SHA-256 está en el manifiesto como rawSha256.",
+ "fields": [
+  "name",
+  "version",
+  "title",
+  "lastRefresh",
+  "lastDataSetRefresh",
+  "recordCount",
+  "webService"
+ ],
+ "DataSets": [
+  {
+   "name": "HazardMitigationAssistanceProjects",
+   "version": 4,
+   "title": "Hazard Mitigation Assistance Projects",
+   "lastRefresh": "2026-09-08T18:40:24.140Z",
+   "lastDataSetRefresh": "2026-08-31T18:56:48.258Z",
+   "recordCount": 56410,
+   "webService": "https://www.fema.gov/api/open/v4/HazardMitigationAssistanceProjects"
+  }
+ ]
+}

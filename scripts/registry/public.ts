@@ -29,6 +29,7 @@ type Manifest = { snapshots: { datasetId: string; retrievedAt: string; release: 
 type GeoManifest = { source: { retrievedAt: string } };
 type BlsManifest = { retrievedAt: string };
 type UsaManifest = { retrievedAt: string };
+type FemaManifest = { retrievedAt: string };
 
 /** Registry entry fed by the geometry pipeline (scripts/geo). */
 const GEOMETRY_DATASET = "geometria-municipios";
@@ -56,7 +57,7 @@ const UNKNOWN = "UNKNOWN";
 /** Written rights that allow the project to redistribute a source's values. */
 const PUBLISHABLE_RIGHTS = ["VERIFIED_ALLOWED", "ATTRIBUTION_REQUIRED"];
 
-export function buildPublicRegistry(internal: { records: InternalRecord[] }, manifest: Manifest, geo?: GeoManifest, bls?: BlsManifest, usa?: UsaManifest): string {
+export function buildPublicRegistry(internal: { records: InternalRecord[] }, manifest: Manifest, geo?: GeoManifest, bls?: BlsManifest, usa?: UsaManifest, fema?: FemaManifest): string {
   const snapshots = new Map(manifest.snapshots.map((s) => [s.datasetId, s]));
   for (const record of internal.records) {
     const ready =
@@ -81,7 +82,9 @@ export function buildPublicRegistry(internal: { records: InternalRecord[] }, man
             ? bls.retrievedAt
             : record.datasetId === USA_DATASET && usa
               ? usa.retrievedAt.slice(0, 10)
-              : null;
+              : record.datasetId.startsWith("openfema-") && fema
+                ? fema.retrievedAt.slice(0, 10)
+                : null;
       out.marginOfErrorAvailable = Boolean(snapshot);
       out.valueExclusions = record.valueExclusions.map(({ metric, municipioId, reason }) => ({ metric, municipioId, reason }));
       return out;
@@ -107,7 +110,8 @@ if (isMain) {
   const geo = JSON.parse(readFileSync(join(root, "data/raw/geo/tiger-2024/manifest.json"), "utf8"));
   const bls = JSON.parse(readFileSync(join(root, "data/raw/bls/laus/manifest.json"), "utf8"));
   const usa = JSON.parse(readFileSync(join(root, "data/raw/usaspending/manifest.json"), "utf8"));
-  const content = buildPublicRegistry(internal, manifest, geo, bls, usa);
+  const fema = JSON.parse(readFileSync(join(root, "data/source/fema/manifest.json"), "utf8"));
+  const content = buildPublicRegistry(internal, manifest, geo, bls, usa, fema);
   const path = join(root, "data/generated/sources.public.json");
   const current = existsSync(path) ? readFileSync(path, "utf8") : null;
   if (process.argv.includes("--check")) {
