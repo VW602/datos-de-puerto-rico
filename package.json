@@ -34,8 +34,12 @@
     "data:fema:update": "node scripts/fema/update.ts",
     "data:fema:generate": "node scripts/fema/generate.ts",
     "data:fema:check": "node scripts/fema/generate.ts --check",
+    "data:live:update": "node scripts/live/update.ts",
+    "data:nws:update": "node scripts/live/update.ts --only=nws",
+    "data:usgs:update": "node scripts/live/update.ts --only=usgs",
+    "data:live:check": "node scripts/live/check.ts",
     "data:generate": "npm run data:census:generate && npm run data:geo:generate && npm run data:bls:generate && npm run data:usaspending:generate && npm run data:fema:generate && npm run data:registry:generate",
-    "data:check": "node scripts/census/generate.ts --check && node scripts/geo/generate.ts --check && node scripts/bls/generate.ts --check && npm run data:usaspending:check && npm run data:fema:check && node scripts/registry/public.ts --check",
+    "data:check": "node scripts/census/generate.ts --check && node scripts/geo/generate.ts --check && node scripts/bls/generate.ts --check && npm run data:usaspending:check && npm run data:fema:check && npm run data:live:check && node scripts/registry/public.ts --check",
     "check": "npm run typecheck && npm run lint && npm run data:check && npm test && npm run build"
   },
   "dependencies": {

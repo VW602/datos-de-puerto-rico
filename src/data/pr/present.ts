@@ -102,6 +102,8 @@ const AGENCY_ES: [RegExp, string, string][] = [
     "Agencia Federal para el Manejo de Emergencias (FEMA)",
     "la",
   ],
+  [/^National Weather Service/, "Servicio Nacional de Meteorología (NWS)", "el"],
+  [/^U\.S\. Geological Survey/, "Servicio Geológico de EE. UU. (USGS)", "el"],
 ];
 
 /** `from` reads naturally after "Sale de": "la Oficina del Censo…", "los Centros…". */

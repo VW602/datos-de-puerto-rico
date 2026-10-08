@@ -600,6 +600,106 @@
       "notes": "1232 proyectos de Puerto Rico. El repositorio guarda un extracto público de cada respuesta (solo campos permitidos); las respuestas originales se quedan fuera, con su SHA-256 en el manifiesto."
     },
     {
+      "datasetId": "nws-alertas-pr",
+      "title": "Alertas activas del Servicio Nacional de Meteorología (NWS)",
+      "topic": "seguridad",
+      "sourceAgency": "National Weather Service (NWS), NOAA",
+      "sourceTitle": "NWS API: active alerts for Puerto Rico (alerts/active?area=PR)",
+      "sourceURL": "https://www.weather.gov/documentation/services-web-api",
+      "additionalURLs": [
+        {
+          "label": "Endpoint de alertas activas para Puerto Rico",
+          "url": "https://api.weather.gov/alerts/active?area=PR",
+          "linkHealth": "LIVE"
+        },
+        {
+          "label": "Aviso legal y uso de datos del NWS",
+          "url": "https://www.weather.gov/disclaimer",
+          "linkHealth": "LIVE"
+        }
+      ],
+      "sourceType": "API",
+      "sourceStatus": "RESOLVED",
+      "linkHealth": "LIVE",
+      "reportingPeriod": "Alertas en vigor al momento de la última actualización (el sitio muestra la hora y la antigüedad)",
+      "sourcePublishedAt": "UNKNOWN",
+      "originalRetrievalAt": "2026-10-08",
+      "verifiedAt": "2026-10-08",
+      "geography": "municipio",
+      "nativeGeography": "OTHER",
+      "geographyJoin": "Una alerta se asocia a un municipio solo por sus códigos SAME oficiales (072 + código FIPS del municipio). 072000 es todo Puerto Rico. Las alertas de zonas marinas u otras sin código de municipio quedan como zona del NWS. Nunca se deduce el municipio del texto.",
+      "updateFrequency": "El NWS emite y actualiza alertas en cualquier momento. El sitio muestra la copia guardada por npm run data:live:update; a los 15 minutos se considera algo atrasada y a los 60, desactualizada.",
+      "redistributionStatus": "ATTRIBUTION_REQUIRED",
+      "rightsEvidence": "Aviso legal del NWS (weather.gov/disclaimer, leído el 2026-10-07): la información es de dominio público y se puede usar para cualquier fin lícito sin reclamarla como propia, sin sugerir respaldo del NWS/NOAA y sin modificarla y presentarla como material oficial. Documentación de la API (weather.gov/documentation/services-web-api): datos abiertos y gratuitos, con límites razonables; requiere un User-Agent que identifique la aplicación; en caso de error, no reintentar más de una vez por minuto. Ninguna condición impide mostrar las alertas.",
+      "attribution": "Fuente: National Weather Service (NWS), NOAA, api.weather.gov. Información de dominio público; NWS no respalda este sitio. Para avisos oficiales a tiempo, use NOAA Weather Radio, weather.gov y las autoridades locales.",
+      "methodology": "Se piden las alertas activas para Puerto Rico. Se guardan los campos oficiales (evento, severidad, certeza, urgencia, estado, tipo de mensaje, fechas, emisor, área, códigos UGC y SAME, zonas, enlace oficial) y un extracto corto de la descripción y las instrucciones; el texto completo queda en el NWS. La severidad usa los términos del NWS (Extreme, Severe, Moderate, Minor, Unknown).",
+      "fieldMap": {
+        "alertas": "features[].properties: id, event, headline, severity, certainty, urgency, status, messageType, effective, onset, expires, ends, senderName, areaDesc, geocode.UGC, geocode.SAME, affectedZones, @id"
+      },
+      "missingValuePolicy": "Si la copia está desactualizada o el NWS no respondió, el sitio dice que no puede confirmar el estado actual; nunca dice que no hay alertas.",
+      "provenanceStatus": "VERIFIED",
+      "readiness": "READY",
+      "publicationDecision": "KEEP_FOR_PUBLIC_LAUNCH",
+      "publicStatus": "PUBLIC_READY",
+      "valueExclusions": [],
+      "files": [
+        "data/current/nws.json",
+        "scripts/live/source.ts"
+      ],
+      "metrics": [],
+      "notes": "No es un sistema de avisos: para avisos oficiales a tiempo, NOAA Weather Radio, weather.gov y las autoridades locales. Las respuestas exactas se quedan en la copia local (.cache/live/raw)."
+    },
+    {
+      "datasetId": "usgs-sismos-pr",
+      "title": "Sismos recientes en la región de Puerto Rico (USGS)",
+      "topic": "seguridad",
+      "sourceAgency": "U.S. Geological Survey (USGS), Earthquake Hazards Program",
+      "sourceTitle": "USGS real-time GeoJSON feed: all earthquakes, past 7 days (filtered to 17°–20° N, 69°–63.5° W)",
+      "sourceURL": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php",
+      "additionalURLs": [
+        {
+          "label": "Feed de 7 días, todas las magnitudes",
+          "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson",
+          "linkHealth": "LIVE"
+        },
+        {
+          "label": "Derechos y crédito del USGS",
+          "url": "https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits",
+          "linkHealth": "LIVE"
+        }
+      ],
+      "sourceType": "API",
+      "sourceStatus": "RESOLVED",
+      "linkHealth": "LIVE",
+      "reportingPeriod": "Últimos 7 días hasta la última actualización; el sitio destaca las últimas 24 horas",
+      "sourcePublishedAt": "UNKNOWN",
+      "originalRetrievalAt": "2026-10-08",
+      "verifiedAt": "2026-10-08",
+      "geography": "isla",
+      "nativeGeography": "OTHER",
+      "geographyJoin": "Los sismos son puntos (latitud, longitud, profundidad): no se asignan a municipios ni se pintan como valores de municipio. Región: 17°N–20°N, 69°W–63.5°W (Fosa de Puerto Rico, canal de Mona, paso de Anegada y Caribe al sur).",
+      "updateFrequency": "El feed del USGS se actualiza cada minuto; los eventos de Puerto Rico los localiza y revisa la Red Sísmica de Puerto Rico con algo de demora. El sitio considera la copia algo atrasada a los 30 minutos y desactualizada a las 3 horas.",
+      "redistributionStatus": "ATTRIBUTION_REQUIRED",
+      "rightsEvidence": "Página de derechos y crédito del USGS (leída el 2026-10-07): los datos producidos por el USGS son de dominio público de EE. UU.; se pide dar crédito («U.S. Geological Survey»); el identificador del USGS es marca registrada. La documentación del feed pide que las aplicaciones automáticas usen los feeds GeoJSON en tiempo real. Ninguna condición impide mostrar los sismos.",
+      "attribution": "Fuente: U.S. Geological Survey (USGS), Earthquake Hazards Program, feed GeoJSON en tiempo real. Datos de dominio público; USGS no respalda este sitio. Los datos recientes pueden revisarse.",
+      "methodology": "Se usan todos los eventos del feed de 7 días dentro de la región, de cualquier magnitud, sin umbral. Se guardan: ID, magnitud y tipo de magnitud, lugar, hora, actualización, latitud, longitud, profundidad, bandera tsunami, reportes de «lo sentí», significancia, estado, tipo de evento y enlace oficial. La bandera tsunami del USGS (1 para sismos grandes en el océano) no indica que haya habido ni que vaya a haber un tsunami y no es un aviso; los avisos los emite NOAA.",
+      "fieldMap": {
+        "sismos": "features[]: id, properties.mag, magType, place, time, updated, tsunami, felt, sig, status, type, url; geometry.coordinates [longitud, latitud, profundidad]"
+      },
+      "missingValuePolicy": "Un dato que el USGS deja vacío (por ejemplo, magnitud o reportes) queda vacío; nunca se vuelve 0. Si la copia está desactualizada o el USGS no respondió, el sitio dice que no puede confirmar la actividad actual.",
+      "provenanceStatus": "VERIFIED",
+      "readiness": "READY",
+      "publicationDecision": "KEEP_FOR_PUBLIC_LAUNCH",
+      "publicStatus": "PUBLIC_READY",
+      "valueExclusions": [],
+      "files": [
+        "data/current/usgs-earthquakes.json",
+        "scripts/live/source.ts"
+      ],
+      "metrics": [],
+      "notes": "Datos recientes y en revisión: la magnitud y el lugar pueden cambiar. Las respuestas exactas se quedan en la copia local (.cache/live/raw)."
+    },
+    {
       "datasetId": "geometria-municipios",
       "title": "Límites de los 78 municipios",
       "topic": "geografia",

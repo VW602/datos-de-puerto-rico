@@ -14,6 +14,8 @@ Los términos de uso de cada fuente están en [DATA_LICENSES.md](DATA_LICENSES.m
 | NHTSA, FARS | Muertes de tránsito | 2022–2023 | Municipio | 78/78 |
 | CDC, BRFSS | Obesidad e inactividad física | 2023 | Toda la isla | Sí |
 | BLS, LAUS | Desempleo mensual, fuerza laboral, empleo | Mensual (ene 2024 – ago 2026) | Municipio | 78/78 |
+| NWS (NOAA) | Alertas activas para Puerto Rico | La última actualización (el sitio dice la hora y la antigüedad) | Municipio por código SAME; si no, zona del NWS | Sí |
+| USGS | Sismos en la región de Puerto Rico | Últimos 7 días hasta la última actualización | Puntos (no municipios) | Sí |
 | FEMA, OpenFEMA | Declaraciones, Asistencia Pública, asistencia a hogares, mitigación | Todos los desastres con registros para Puerto Rico | Municipio, con estados geográficos | 78/78 |
 | Tesoro, USAspending | Obligaciones, desembolsos y adjudicaciones federales | Año fiscal federal 2026 (y 4 anteriores) | Municipio, con cuatro estados geográficos | 78/78 |
 
@@ -316,6 +318,51 @@ Los detalles técnicos están en [data/README.md](data/README.md).
 - **Limitaciones:** el municipio de Asistencia Pública es el del solicitante según
   FEMA, no necesariamente el sitio exacto de la obra; el sitio lo dice así. Que un municipio esté en una
   declaración no quiere decir que cada residente recibió ayuda.
+
+### Ahora en Puerto Rico: alertas del NWS y sismos del USGS
+
+- **Qué es:** una franja al principio de la página con las alertas activas del
+  Servicio Nacional de Meteorología (NWS) para Puerto Rico y los sismos recientes
+  de la región según el USGS. No es un sistema de avisos: para avisos oficiales a
+  tiempo, NOAA Weather Radio, weather.gov y las autoridades locales.
+- **No dice «en vivo».** El sitio muestra la última copia guardada por
+  `npm run data:live:update`, con su hora en hora de Puerto Rico (AST, UTC−4, sin
+  horario de verano) y su antigüedad. La página nunca llama al NWS ni al USGS, y
+  compilar el sitio no pide datos.
+- **Frescura, por fuente:** NWS al día hasta 15 minutos, algo atrasado hasta 60,
+  desactualizado después (emite avisos de corta duración en cualquier momento).
+  USGS al día hasta 30 minutos, algo atrasado hasta 3 horas, desactualizado después
+  (su feed cambia cada minuto, pero la Red Sísmica de Puerto Rico localiza y revisa
+  con demora). Sin ninguna copia buena: «sin datos».
+- **Ninguno ≠ falla ≠ copia vieja.** «No hay alertas activas del NWS» o «el USGS no
+  registra eventos» solo se dice con una copia al día o algo atrasada. Si la copia
+  está desactualizada o la fuente no respondió, el sitio dice «No se pudo confirmar
+  el estado actual» y muestra lo último guardado con su hora. Si una actualización
+  falla, la última copia buena se conserva y se anota el intento fallido.
+- **Alertas del NWS:** `https://api.weather.gov/alerts/active?area=PR`. Se guardan
+  los campos oficiales y un extracto corto (600 caracteres de descripción, 400 de
+  instrucciones), marcado como extracto, con el enlace a la alerta completa. La
+  severidad usa los términos del NWS (Extreme, Severe, Moderate, Minor, Unknown) con
+  su traducción; el sitio no inventa un puntaje de peligro ni ordena municipios por
+  riesgo. Una alerta se asocia a un municipio **solo** por sus códigos SAME oficiales
+  (072 + FIPS del municipio); 072000 es todo Puerto Rico; las zonas marinas y otras
+  sin código de municipio quedan como «zona del NWS». Nunca se deduce de la prosa.
+- **Sismos del USGS:** el feed oficial de 7 días con todas las magnitudes
+  (`all_week.geojson`, que el USGS pide usar a las aplicaciones automáticas),
+  filtrado a la región **17°N–20°N, 69°W–63.5°W**: la Fosa de Puerto Rico al norte,
+  el canal de Mona al oeste, el paso de Anegada al este y el Caribe al sur. **Sin
+  umbral de magnitud.** Las ventanas de 24 horas y 7 días se miden desde la hora de
+  la copia. Los sismos son puntos (latitud, longitud, profundidad) en un mapa propio;
+  no se convierten en valores de municipio. Un dato vacío (por ejemplo, la magnitud)
+  queda vacío, nunca 0.
+- **Bandera tsunami del USGS:** el USGS la pone en 1 para sismos grandes en el océano;
+  según el USGS, no indica que haya habido ni que vaya a haber un tsunami. El sitio la
+  muestra como bandera, nunca como aviso. Los avisos de tsunami los emite NOAA y
+  aparecerían entre las alertas oficiales.
+- **Copias:** las respuestas exactas se quedan en `.cache/live/raw` (fuera del
+  repositorio). El repositorio guarda `data/current/nws.json` y
+  `data/current/usgs-earthquakes.json`: solo campos permitidos, con el SHA-256 de la
+  respuesta original, la hora de obtención, la hora de la fuente y el último intento.
 
 ---
 

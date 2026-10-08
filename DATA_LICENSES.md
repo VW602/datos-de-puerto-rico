@@ -24,6 +24,8 @@ fuente.
 | Censo, TIGER/Line® 2024 | Los 78 municipios del archivo nacional de condados (`data/raw/geo`) y su versión simplificada | Obra del gobierno federal, sin derechos de autor en EE. UU. (17 U.S.C. §105) | Citar al Censo; mostrar en un lugar visible el aviso de marca registrada de TIGER/Line®; aclarar que los límites son para fines estadísticos |
 | NHTSA, FARS 2022–2023 | Muertes por municipio y la tasa calculada (`src/data/pr/municipios.json`) | Etiqueta de dominio público de EE. UU. en data.gov | Citar a NHTSA (buena práctica) |
 | CDC, BRFSS 2023 | Tres por cientos para toda la isla (`src/data/pr/layers.ts`) | Licencia «Public Domain» en data.cdc.gov | Citar a los CDC |
+| NWS (NOAA) | Alertas activas normalizadas, con extractos cortos (`data/current/nws.json`) | Dominio público (aviso legal del NWS) | No reclamarla como propia; no sugerir respaldo del NWS/NOAA; no modificarla y presentarla como oficial (los extractos se marcan como extractos) |
+| USGS | Sismos de la región, normalizados (`data/current/usgs-earthquakes.json`) | Dominio público de EE. UU. | Dar crédito al U.S. Geological Survey; no usar su identificador |
 | FEMA, OpenFEMA | Un extracto público de las respuestas de la API, solo con los campos que usa el sitio (`data/source/fema`; no es la respuesta original), y los totales y proyectos generados (`data/generated/fema-pr.json`, `data/generated/fema-projects/`) | Términos y condiciones de OpenFEMA | Citar el dataset con su versión y la fecha de obtención; incluir el aviso textual de FEMA; no usar logos de FEMA ni DHS; no reidentificar personas |
 | Tesoro, USAspending | Las respuestas de la API tal cual (`data/raw/usaspending`) y los totales generados (`data/generated/usaspending-pr.json`) | Datos abiertos según la página About de USAspending, sujetos a la limitación de Dun & Bradstreet | Citar USAspending.gov con la fecha de acceso; no diseminar en bloque nombres ni direcciones de entidades (el proyecto no los guarda) |
 | BLS, LAUS | Las respuestas de la API tal cual (`data/raw/bls/laus`) y las series mensuales generadas (`data/generated/bls-laus.json`) | Dominio público, según la página de derechos de autor de BLS; términos de servicio de la API | Citar a BLS; decir la fecha en que se obtuvieron los datos; incluir el aviso textual de BLS; no usar el emblema ni el logo de BLS |
@@ -117,6 +119,19 @@ fuente.
   Puerto Rico y, para hogares, sin ciudad ni código postal.
 - **Cita que usa el sitio:** «Fuente: Federal Emergency Management Agency (FEMA),
   OpenFEMA», con el dataset, la versión, la fecha de obtención y el aviso de arriba.
+
+## NWS y USGS (Ahora en Puerto Rico)
+
+- **NWS:** el [aviso legal](https://www.weather.gov/disclaimer) dice que la
+  información es de dominio público y se puede usar para cualquier fin lícito, sin
+  reclamarla como propia, sin sugerir respaldo del NWS/NOAA y sin modificarla y
+  presentarla como material oficial. La [documentación de la API](https://www.weather.gov/documentation/services-web-api)
+  pide un User-Agent que identifique la aplicación y no reintentar más de una vez por
+  minuto. Leídos el 7 de octubre de 2026.
+- **USGS:** la [página de derechos y crédito](https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits)
+  dice que los datos del USGS son de dominio público y pide dar crédito al U.S.
+  Geological Survey; su identificador es marca registrada. Leída el 7 de octubre de
+  2026.
 
 ## Si propones una fuente nueva
 

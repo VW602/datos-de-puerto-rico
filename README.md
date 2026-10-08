@@ -46,6 +46,14 @@ su fuente oficial, no entra.
   calcula, qué falta, cuándo se descargó la copia oficial, la cita y el enlace a la
   fuente original.
 
+## Ahora en Puerto Rico
+
+Al principio de la página: las alertas activas del NWS para Puerto Rico y los sismos
+recientes de la región según el USGS, con la hora de la última copia y su
+antigüedad. Si la copia está vieja o la fuente no respondió, lo dice en lugar de
+decir que no pasa nada. Para actualizarla: `npm run data:live:update` (necesita red;
+se puede correr de forma periódica sin cambios). No es un sistema de avisos.
+
 ## De dónde salen los datos
 
 | Fuente | Qué aporta |
@@ -97,6 +105,7 @@ Abre <http://localhost:8080>.
 | `npm run data:generate` | Vuelve a generar los datos del Censo, el mapa, el desempleo de BLS y el registro público, sin red |
 | `npm run data:census:update` | Descarga de nuevo la copia oficial del Censo (necesita red) |
 | `npm run data:geo:update` | Descarga de nuevo los límites TIGER/Line 2024 (necesita red) |
+| `npm run data:live:update` | Pide las alertas activas del NWS y los sismos recientes del USGS (necesita red; si una fuente falla, conserva la última copia buena) |
 | `npm run data:fema:update` | Pide de nuevo los datos de recuperación a la API OpenFEMA (necesita red; se puede reanudar) |
 | `npm run data:usaspending:update` | Pide de nuevo los fondos federales a la API oficial de USAspending (necesita red; se puede reanudar) |
 | `npm run data:bls:update` | Pide de nuevo el desempleo mensual a la API oficial de BLS (necesita red) |
@@ -214,7 +223,7 @@ no cubre los datos. Si los reusas, cita la fuente original.
 ## Sin afiliación
 
 Este es un proyecto independiente. No está afiliado al gobierno de Puerto Rico, a la
-Oficina del Censo, a NHTSA, a los CDC, a BLS, al Departamento del Tesoro, a FEMA ni a ninguna otra agencia, y ninguna de ellas
+Oficina del Censo, a NHTSA, a los CDC, a BLS, al Departamento del Tesoro, a FEMA, al NWS, al USGS ni a ninguna otra agencia, y ninguna de ellas
 lo respalda ni lo certifica.
 
 ---

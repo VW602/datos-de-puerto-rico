@@ -33,12 +33,14 @@ const V1_SOURCES = [
   "openfema-asistencia-publica-pr",
   "openfema-hogares-pr",
   "openfema-mitigacion-pr",
+  "nws-alertas-pr",
+  "usgs-sismos-pr",
   "geometria-municipios",
 ];
 
 /** Publishers allowed in this version: federal agencies whose terms are written down in DATA_LICENSES.md. */
 const ALLOWED_AGENCY =
-  /^(U\.S\. Census Bureau|National Highway Traffic Safety Administration|Centers for Disease Control and Prevention|U\.S\. Bureau of Labor Statistics|U\.S\. Department of the Treasury|Federal Emergency Management Agency)/;
+  /^(U\.S\. Census Bureau|National Highway Traffic Safety Administration|Centers for Disease Control and Prevention|U\.S\. Bureau of Labor Statistics|U\.S\. Department of the Treasury|Federal Emergency Management Agency|National Weather Service|U\.S\. Geological Survey)/;
 const ALLOWED_METRIC_SOURCE = /^(Censo|NHTSA|CDC|BLS|USAspending|FEMA)\b/;
 
 function filesUnder(dir: string): string[] {

@@ -27,6 +27,7 @@ import { ISLAND_ONLY_FILL, colorForValue } from "@/data/scale";
 import { AtlasMap } from "./AtlasMap";
 import { DataTable } from "./DataTable";
 import { DisasterFilter } from "./FemaDetail";
+import { NowPanel } from "./NowPanel";
 import { Legend, MunicipioSearch, TapChooser, ZoomControls } from "./MapBits";
 import { Ranking78 } from "./Ranking78";
 import { SourcePanel } from "./SourcePanel";
@@ -216,6 +217,9 @@ export function PuertoRicoApp() {
       </header>
 
       <main>
+        {/* Current data: NWS alerts and USGS earthquakes, from the last saved snapshot */}
+        <NowPanel />
+
         {/* Measure and period */}
         <div className="flex flex-col gap-3 px-4 pt-4 pb-3 md:flex-row md:items-end md:justify-between md:gap-8 md:px-14 md:pt-7 md:pb-5">
           <div className="min-w-0">

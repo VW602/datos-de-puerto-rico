@@ -1,0 +1,32 @@
+{
+ "schemaVersion": 1,
+ "source": {
+  "agency": "National Weather Service (NWS), NOAA",
+  "endpoint": "https://api.weather.gov/alerts/active?area=PR",
+  "docs": "https://www.weather.gov/documentation/services-web-api",
+  "terms": "https://www.weather.gov/disclaimer",
+  "web": "https://www.weather.gov/sju/",
+  "attribution": "Fuente: National Weather Service (NWS), NOAA, api.weather.gov. Información de dominio público; NWS no respalda este sitio. Para avisos oficiales a tiempo, use NOAA Weather Radio, weather.gov y las autoridades locales."
+ },
+ "generated": "GENERADO por scripts/live/update.ts. NO EDITAR A MANO.",
+ "retrievedAt": "2026-10-08T23:54:29.766Z",
+ "sourceUpdatedAt": "2026-10-08T23:53:42.000Z",
+ "raw": {
+  "sha256": "6dba077109525f049cccb22bb3eb7d0879d4a87680820a65ef34368c9a8e8d25",
+  "bytes": 224,
+  "note": "Respuesta exacta de https://api.weather.gov/alerts/active?area=PR; solo en la copia local (.cache/live/raw)."
+ },
+ "lastAttempt": {
+  "at": "2026-10-08T23:54:29.766Z",
+  "ok": true,
+  "error": null
+ },
+ "freshness": {
+  "currentMinutes": 15,
+  "staleMinutes": 60
+ },
+ "contentSha256": "f43c62200c7815091a6fe618461fbcb6ffd38e0f8ff7aaa9ee863ab0f5d47092",
+ "data": {
+  "alerts": []
+ }
+}
