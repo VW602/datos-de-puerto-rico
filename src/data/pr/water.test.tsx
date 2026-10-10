@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { WaterBlock } from "@/components/explorer/WaterPanel";
+import { WaterDetails, WaterProvenance, WaterSection } from "@/components/explorer/WaterPanel";
 import {
   buildData,
   normalizeWater,
@@ -65,8 +65,15 @@ const snap = waterSnapshot({
   ),
 });
 const SOON = new Date(Date.parse(RETRIEVED) + 10 * 60000);
+/** The visible water summary, the opened detail (all stations shown) and the water provenance. */
 const render = (view: WaterView = "RIOS", now = SOON, s = snap) =>
-  renderToStaticMarkup(<WaterBlock now={now} water={s} initialView={view} />);
+  renderToStaticMarkup(
+    <>
+      <WaterSection water={s} now={now} />
+      {s.retrievedAt && <WaterDetails water={s} now={now} initialView={view} initialShowAll />}
+      <WaterProvenance water={s} />
+    </>,
+  );
 const text = (html: string) =>
   html
     .replace(/<title>[\s\S]*?<\/title>/g, " ")
@@ -78,7 +85,7 @@ const text = (html: string) =>
 describe("Agua ahora: what the reader sees", () => {
   it("says these are USGS station measurements, provisional, and not flood warnings", () => {
     const t = text(render());
-    expect(t).toMatch(/Agua ahora: estaciones del USGS/);
+    expect(t).toMatch(/Agua \(USGS\)/);
     expect(t).toMatch(/Estas son mediciones de estaciones del USGS; no son avisos de inundación\./);
     expect(t).toMatch(/Datos provisionales sujetos a revisión por el USGS/);
     // No invented categories (as labels) and no danger language.
@@ -151,7 +158,7 @@ describe("Agua ahora: what the reader sees", () => {
       const markers = map.match(/<g data-station=[\s\S]*?<\/g>/g) ?? [];
       expect(markers).toHaveLength(viewRows(snap, view, SOON).length);
       for (const m of markers) expect(m).toContain(`<${tag}`);
-      if (view === "RIOS") expect(new Set(map.match(/ r="[^"]+"/g))).toEqual(new Set([' r="13"']));
+      if (view === "RIOS") expect(new Set(map.match(/ r="[^"]+"/g))).toEqual(new Set([' r="10"']));
       expect(map).toMatch(/no un municipio/);
     }
   });
@@ -159,7 +166,9 @@ describe("Agua ahora: what the reader sees", () => {
   it("is reachable and readable without color: buttons, table, region, legend", () => {
     const html = render();
     expect(html.match(/aria-pressed="true"/g)).toHaveLength(1);
-    expect(html).toContain('tabindex="0"');
+    // Cards for narrow screens and a table for wide ones, both from the same rows.
+    expect(html).toContain('data-layout="cards"');
+    expect(html).toContain('data-layout="table"');
     expect(html).toMatch(/<caption class="sr-only">/);
     expect(text(html)).toMatch(
       /relleno: todas sus mediciones con dato reciente\. vacío: alguna medición sin dato reciente o sin dato\. con equis: ninguna medición con dato\./,
@@ -181,14 +190,13 @@ describe("Agua ahora: what the reader sees", () => {
     const later = new Date(Date.parse(RETRIEVED) + 26 * 3600_000);
     const t = text(render("RIOS", later));
     expect(t).toMatch(
-      /No se pudieron confirmar las condiciones actuales del agua\. Lo que sigue es lo último/,
+      /No se pudieron confirmar las condiciones actuales del agua\. Según la última copia del USGS/,
     );
   });
 
   it("provenance names the agency, service, site, parameter, unit, times and status", () => {
     const html = render();
     const t = text(html);
-    expect(t).toMatch(/¿De dónde sale este dato\?/);
     expect(t).toMatch(/U\.S\. Geological Survey \(USGS\), Water Data for the Nation/);
     expect(t).toMatch(/USGS Water Data OGC APIs, V1/);
     expect(t).toMatch(/parámetro 00060/);
@@ -286,9 +294,22 @@ describe("stations vs measurement series", () => {
           expect(stationNumbers).toContain(Number(m[1]));
         if (series !== stations) expect(t).not.toMatch(new RegExp(`\\b${series} estaciones`));
       }
-    const now = read("src/components/explorer/NowPanel.tsx");
-    expect(now).toMatch(/mediciones de caudal con dato reciente/);
-    expect(now).not.toMatch(/estaciones con caudal/);
+    for (const file of [
+      "src/components/explorer/NowPanel.tsx",
+      "src/components/explorer/WaterPanel.tsx",
+    ])
+      expect(read(file)).not.toMatch(/estaciones con caudal|estaciones con dato reciente/);
+    // The visible water summary names stations and measurements separately.
+    const at = new Date(Date.parse(published.retrievedAt!) + 600000);
+    const summary = text(renderToStaticMarkup(<WaterSection water={published} now={at} />));
+    const rios = viewSummary(published, "RIOS", at);
+    expect(summary).toContain(
+      `Ríos y canales: ${rios.stationCount} estaciones · ${rios.series.reporting} de ${rios.series.seriesCount} mediciones con dato reciente`,
+    );
+    expect(rios.stationCount).not.toBe(rios.series.seriesCount);
+    expect(summary).toContain(
+      `Ríos y canales: ${stationCount(published, "RIOS")} estaciones · ${seriesCount(published, "RIOS") - 3} de ${seriesCount(published, "RIOS")} mediciones con dato reciente`,
+    );
   });
 
   it("5. the map draws one marker per unique station", () => {
@@ -306,7 +327,9 @@ describe("stations vs measurement series", () => {
     const rows = html.match(/<tr[ >]/g)!.length - 1; // minus the header row
     expect(rows).toBe(seriesCount(snap, "RIOS"));
     expect(text(html)).toMatch(/Cada fila es una medición; las de una misma estación van juntas/);
-    expect(html).toContain("Tabla de mediciones de ríos y canales, agrupadas por estación");
+    expect(html).toMatch(
+      /data-layout="table"[\s\S]*Mediciones de ríos y canales del USGS\. Cada fila es una medición/,
+    );
   });
 
   it("7. stale and no-data states stay per series, also on the map", () => {

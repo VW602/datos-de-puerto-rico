@@ -253,7 +253,7 @@ describe("USGS: sismos", () => {
     const flagged = n.events.find((x) => x.id === "prtesttsunami")!;
     expect(flagged.tsunami).toBe(1);
     expect(Object.keys(flagged)).not.toContain("tsunamiWarning");
-    const panel = read("src/components/explorer/NowPanel.tsx");
+    const panel = read("src/components/explorer/now/QuakesSection.tsx");
     expect(panel).toMatch(/no es un aviso de tsunami/);
     expect(panel).toMatch(/indicador tsunami USGS: 1/);
     // The only "aviso" wording next to the flag is the negation; warnings come from NOAA/NWS alerts.
