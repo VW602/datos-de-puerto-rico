@@ -53,8 +53,10 @@ Antes de publicar, fuera del sitio:
     con una copia al día o algo atrasada. Las horas se muestran en hora de Puerto Rico.
   - `water.ts` y `waterModel.ts`: «Agua ahora». Cargan las copias de agua solo cuando
     hacen falta (Vite las separa en su propio pedazo). Dos frescuras distintas: la de
-    la copia (la misma de arriba) y la de cada estación, por la hora de su propia
-    medición. Sin categorías de riesgo ni porcentajes de llenado.
+    la copia (la misma de arriba) y la de cada medición (serie), por la hora de su
+    propia observación. Estaciones (sitios) y mediciones (series) se cuentan por
+    separado: una estación puede tener varias. Sin categorías de riesgo ni
+    porcentajes de llenado.
   - `places.ts`: arma cada municipio con las medidas del Censo generadas (con su
     margen de error) y los datos de FARS.
   - `public.ts`: la frontera de publicación. Las medidas, los grupos, la medida

@@ -21,7 +21,7 @@ import { RAW_CACHE_DIR } from "../live/source.ts";
 import {
   buildData,
   contentHash,
-  countStates,
+  countSeriesStates,
   normalizeWater,
   sha256,
   type SeriesFile,
@@ -39,7 +39,7 @@ import {
   RIVER_SITE_TYPES,
   SERIES_HOURS,
   STATION_FIELDS,
-  STATION_FRESHNESS,
+  SERIES_FRESHNESS,
   TREND_HOURS,
   WATER,
   WATER_FRESHNESS,
@@ -73,10 +73,10 @@ export function validateWater(
   if (JSON.stringify(s.sourceFreshness) !== JSON.stringify(WATER_FRESHNESS))
     fail("agua: umbrales de frescura de la fuente distintos de los documentados");
   if (
-    s.stationFreshness.currentMinutes !== STATION_FRESHNESS.currentMinutes ||
-    s.stationFreshness.staleMinutes !== STATION_FRESHNESS.staleMinutes
+    s.seriesFreshness.currentMinutes !== SERIES_FRESHNESS.currentMinutes ||
+    s.seriesFreshness.staleMinutes !== SERIES_FRESHNESS.staleMinutes
   )
-    fail("agua: umbrales de frescura de estación distintos de los documentados");
+    fail("agua: umbrales de frescura por serie distintos de los documentados");
   if (
     s.rules.activeDays !== ACTIVE_DAYS ||
     s.rules.trendHours !== TREND_HOURS ||
@@ -211,10 +211,10 @@ export function validateWater(
   if (JSON.stringify(byView) !== JSON.stringify(s.data.siteInventory.byView))
     fail("agua: el inventario por vista no coincide");
   if (
-    JSON.stringify(countStates(obs, new Date(s.retrievedAt!))) !==
-    JSON.stringify(s.stationFreshness.atRetrieval)
+    JSON.stringify(countSeriesStates(obs, new Date(s.retrievedAt!))) !==
+    JSON.stringify(s.seriesFreshness.atRetrieval)
   )
-    fail("agua: conteos de frescura por estación no coinciden");
+    fail("agua: conteos de frescura por serie no coinciden");
   for (const e of s.data.exclusions.listed)
     if (obs.some((o) => e.timeSeriesIds.includes(o.timeSeriesId)))
       fail(`agua ${e.stationId}: serie excluida pero publicada`);
@@ -281,11 +281,12 @@ function main() {
     process.exit(1);
   }
   const f = freshness(s.retrievedAt, new Date(), s.sourceFreshness);
-  const c = s.stationFreshness.atRetrieval;
+  const c = s.seriesFreshness.atRetrieval;
+  const st = s.data.siteInventory.byView;
   const fmt = (v: keyof typeof c) =>
-    `${v} ${c[v].CURRENT + c[v].AGING}/${c[v].CURRENT + c[v].AGING + c[v].STALE + c[v].NO_DATA}`;
+    `${v} ${st[v]} estaciones, ${c[v].CURRENT + c[v].AGING}/${c[v].CURRENT + c[v].AGING + c[v].STALE + c[v].NO_DATA} mediciones`;
   console.log(
-    `Agua válida. Fuente: ${f} (obtenido ${s.retrievedAt ?? "nunca"}). Series con dato reciente al obtener: ${fmt("RIOS")}, ${fmt("LLUVIA")}, ${fmt("EMBALSES")}. Series 24 h: ${s.provenance.series}.`,
+    `Agua válida. Fuente: ${f} (obtenido ${s.retrievedAt ?? "nunca"}). Al obtener, mediciones (series) con dato reciente: ${fmt("RIOS")}; ${fmt("LLUVIA")}; ${fmt("EMBALSES")}. Series 24 h: ${s.provenance.series}.`,
   );
 }
 

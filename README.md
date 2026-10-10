@@ -56,7 +56,8 @@ se puede correr de forma periódica sin cambios). No es un sistema de avisos.
 
 **Agua ahora:** las mediciones más recientes de las estaciones del USGS (caudal y
 altura del medidor en ríos y canales, lluvia, y elevación de embalses), cada una con
-la hora en que se midió, si es provisional y si la estación sigue reportando. Son
+la hora en que se midió, si es provisional y si esa medición sigue al día (una
+estación puede tener varias mediciones, y se cuentan aparte). Son
 mediciones, no avisos de inundación ni de sequía, y no hay porcentaje de llenado de
 embalses. Para actualizarlas: `npm run data:water:update`.
 

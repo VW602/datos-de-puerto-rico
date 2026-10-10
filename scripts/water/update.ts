@@ -176,7 +176,7 @@ async function main() {
     atomicWrite(join(ROOT, WATER_OUTPUT), stableWaterJson(snapshot));
     const c = snapshot.data.exclusions.counts;
     console.log(
-      `agua: ${snapshot.data.siteInventory.stations.length} estaciones, ${snapshot.data.observations.length} series (ríos ${snapshot.data.siteInventory.byView.RIOS}, lluvia ${snapshot.data.siteInventory.byView.LLUVIA}, embalses ${snapshot.data.siteInventory.byView.EMBALSES}); excluidas: ${Object.entries(
+      `agua: ${snapshot.data.siteInventory.stations.length} estaciones, ${snapshot.data.observations.length} series (mediciones); estaciones por vista: ríos ${snapshot.data.siteInventory.byView.RIOS}, lluvia ${snapshot.data.siteInventory.byView.LLUVIA}, embalses ${snapshot.data.siteInventory.byView.EMBALSES}; excluidas: ${Object.entries(
         c,
       )
         .filter(([, v]) => v)

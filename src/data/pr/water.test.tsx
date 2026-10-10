@@ -13,7 +13,17 @@ import {
 } from "../../../scripts/water/normalize.ts";
 import { API_BASE } from "../../../scripts/water/source.ts";
 import { prTime } from "./currentModel";
-import { viewCounts, viewRows, waterStatus, type WaterView } from "./water";
+import {
+  seriesCount,
+  seriesCountsByKind,
+  stationCount,
+  stationMarkerState,
+  viewRows,
+  viewSummary,
+  waterStatus,
+  type WaterSnapshot,
+  type WaterView,
+} from "./water";
 
 const ROOT = fileURLToPath(new URL("../../../", import.meta.url));
 const read = (p: string) => readFileSync(join(ROOT, p), "utf8");
@@ -81,14 +91,14 @@ describe("Agua ahora: what the reader sees", () => {
       );
   });
 
-  it("counts reporting, stale and no-data stations per measure", () => {
-    expect(viewCounts(snap, "RIOS", SOON)).toEqual({
-      DISCHARGE: { reporting: 3, stale: 1, noData: 1, total: 5 },
-      GAGE_HEIGHT: { reporting: 3, stale: 0, noData: 1, total: 4 },
+  it("counts reporting, stale and no-data measurements per measure", () => {
+    expect(seriesCountsByKind(snap, "RIOS", SOON)).toEqual({
+      DISCHARGE: { reporting: 3, stale: 1, noData: 1, seriesCount: 5 },
+      GAGE_HEIGHT: { reporting: 3, stale: 0, noData: 1, seriesCount: 4 },
     });
     const t = text(render());
     expect(t).toMatch(
-      /Caudal: 3 de 5 estaciones con dato reciente · sin dato reciente: 1 · sin dato: 1/,
+      /Caudal: 3 de 5 mediciones con dato reciente · sin dato reciente: 1 · sin dato: 1/,
     );
   });
 
@@ -138,7 +148,7 @@ describe("Agua ahora: what the reader sees", () => {
         html.indexOf('role="img"'),
         html.indexOf("</svg>", html.indexOf('role="img"')),
       );
-      const markers = map.match(/<g>[\s\S]*?<\/g>/g) ?? [];
+      const markers = map.match(/<g data-station=[\s\S]*?<\/g>/g) ?? [];
       expect(markers).toHaveLength(viewRows(snap, view, SOON).length);
       for (const m of markers) expect(m).toContain(`<${tag}`);
       if (view === "RIOS") expect(new Set(map.match(/ r="[^"]+"/g))).toEqual(new Set([' r="13"']));
@@ -152,7 +162,7 @@ describe("Agua ahora: what the reader sees", () => {
     expect(html).toContain('tabindex="0"');
     expect(html).toMatch(/<caption class="sr-only">/);
     expect(text(html)).toMatch(
-      /relleno: dato reciente\. vacío: sin dato reciente\. con equis: sin dato\./,
+      /relleno: todas sus mediciones con dato reciente\. vacío: alguna medición sin dato reciente o sin dato\. con equis: ninguna medición con dato\./,
     );
     expect(html).toMatch(/scope="row"/);
   });
@@ -204,5 +214,116 @@ describe("Agua ahora: what the reader sees", () => {
       expect(s).not.toMatch(/fetch\(|XMLHttpRequest/);
       expect(s).not.toMatch(/from "[^"]*usgs-water[^"]*\.json"/);
     }
+  });
+});
+
+describe("stations vs measurement series", () => {
+  const published = JSON.parse(read("data/current/usgs-water.json")) as WaterSnapshot;
+  const VIEWS: WaterView[] = ["RIOS", "LLUVIA", "EMBALSES"];
+  const markersOf = (html: string) => {
+    const at = html.indexOf('role="img"');
+    const map = html.slice(at, html.indexOf("</svg>", at));
+    return [...map.matchAll(/data-station="([^"]+)"/g)].map((m) => m[1]);
+  };
+
+  it("1. station count uses unique site IDs", () => {
+    for (const s of [snap, published])
+      for (const view of VIEWS) {
+        const ids = new Set(
+          s.data.observations.filter((o) => o.view === view).map((o) => o.stationId),
+        );
+        expect(stationCount(s, view)).toBe(ids.size);
+        expect(stationCount(s, view)).toBe(s.data.siteInventory.byView[view]);
+      }
+  });
+
+  it("2. series count counts measurement series, separately from stations", () => {
+    for (const s of [snap, published])
+      for (const view of VIEWS)
+        expect(seriesCount(s, view)).toBe(
+          s.data.observations.filter((o) => o.view === view).length,
+        );
+    // Rivers: more series than stations (discharge and gage height at the same gages).
+    expect(seriesCount(published, "RIOS")).toBeGreaterThan(stationCount(published, "RIOS"));
+    // Rain is derived the same way even where the two counts happen to match.
+    expect(viewSummary(published, "LLUVIA", SOON).stationCount).toBe(
+      stationCount(published, "LLUVIA"),
+    );
+    expect(viewSummary(published, "LLUVIA", SOON).series.seriesCount).toBe(
+      seriesCount(published, "LLUVIA"),
+    );
+  });
+
+  it("3. one station with discharge and gage height is 1 station and 2 series", () => {
+    const one: WaterSnapshot = {
+      ...snap,
+      data: {
+        ...snap.data,
+        observations: snap.data.observations.filter((o) => o.stationId === "USGS-50136400"),
+      },
+    };
+    expect(stationCount(one, "RIOS")).toBe(1);
+    expect(seriesCount(one, "RIOS")).toBe(2);
+    expect(viewRows(one, "RIOS", SOON)).toHaveLength(1);
+    expect(viewRows(one, "RIOS", SOON)[0]!.measures.map((m) => m.obs.kind)).toEqual([
+      "DISCHARGE",
+      "GAGE_HEIGHT",
+    ]);
+  });
+
+  it("4. reader copy never labels a series count as a station count", () => {
+    for (const s of [snap, published])
+      for (const view of VIEWS) {
+        const t = text(render(view, new Date(Date.parse(s.retrievedAt!) + 10 * 60000), s));
+        const stations = stationCount(s, view);
+        const series = seriesCount(s, view);
+        expect(t).toContain(
+          `${stations} ${stations === 1 ? "estación" : "estaciones"} monitoreadas con ${series} ${series === 1 ? "medición" : "mediciones"} :`, // text() puts a space where </strong> was
+        );
+        // Every "N estaciones" in the copy is a real station count of some view.
+        const stationNumbers = new Set(VIEWS.map((v) => stationCount(s, v)));
+        for (const m of t.matchAll(/(\d+) estaci(?:ones|ón)\b/g))
+          expect(stationNumbers).toContain(Number(m[1]));
+        if (series !== stations) expect(t).not.toMatch(new RegExp(`\\b${series} estaciones`));
+      }
+    const now = read("src/components/explorer/NowPanel.tsx");
+    expect(now).toMatch(/mediciones de caudal con dato reciente/);
+    expect(now).not.toMatch(/estaciones con caudal/);
+  });
+
+  it("5. the map draws one marker per unique station", () => {
+    for (const s of [snap, published])
+      for (const view of VIEWS) {
+        const ids = markersOf(render(view, new Date(Date.parse(s.retrievedAt!) + 10 * 60000), s));
+        expect(ids).toHaveLength(stationCount(s, view));
+        expect(new Set(ids).size).toBe(ids.length);
+      }
+  });
+
+  it("6. the table groups several measurement rows under one station", () => {
+    const html = render();
+    expect(html).toMatch(/<th scope="row" rowSpan="2"|<th scope="row" rowspan="2"/i);
+    const rows = html.match(/<tr[ >]/g)!.length - 1; // minus the header row
+    expect(rows).toBe(seriesCount(snap, "RIOS"));
+    expect(text(html)).toMatch(/Cada fila es una medición; las de una misma estación van juntas/);
+    expect(html).toContain("Tabla de mediciones de ríos y canales, agrupadas por estación");
+  });
+
+  it("7. stale and no-data states stay per series, also on the map", () => {
+    const row = viewRows(snap, "RIOS", SOON).find((r) => r.station.id === "USGS-50148890")!;
+    expect(row.measures.map((m) => [m.obs.kind, m.state])).toEqual([
+      ["DISCHARGE", "NO_DATA"],
+      ["GAGE_HEIGHT", "CURRENT"],
+    ]);
+    // A current gage height does not make the station look fully current.
+    expect(stationMarkerState(row)).toBe("STALE");
+    const fresh = viewRows(snap, "RIOS", SOON).find((r) => r.station.id === "USGS-50136400")!;
+    expect(stationMarkerState(fresh)).toBe("CURRENT");
+    expect(viewSummary(snap, "RIOS", SOON).series).toEqual({
+      reporting: 6,
+      stale: 1,
+      noData: 2,
+      seriesCount: 9,
+    });
   });
 });

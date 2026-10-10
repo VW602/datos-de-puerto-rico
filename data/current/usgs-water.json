@@ -1,5 +1,5 @@
 {
- "schemaVersion": 1,
+ "schemaVersion": 2,
  "source": {
   "agency": "U.S. Geological Survey (USGS), Water Data for the Nation",
   "service": "USGS Water Data OGC APIs, V1 (latest-continuous, continuous, time-series-metadata, monitoring-locations)",
@@ -21,10 +21,10 @@
   "currentMinutes": 60,
   "staleMinutes": 180
  },
- "stationFreshness": {
+ "seriesFreshness": {
   "currentMinutes": 120,
   "staleMinutes": 360,
-  "basis": "Por serie publicada: minutos desde la observación más reciente de esa serie (no desde la obtención). Sin valor publicado: NO_DATA.",
+  "basis": "Por medición (serie), no por estación: minutos desde la observación más reciente de esa serie (no desde la obtención). Una estación puede tener varias series. Sin valor publicado: NO_DATA.",
   "atRetrieval": {
    "RIOS": {
     "CURRENT": 207,

@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { freshness } from "../../src/data/pr/currentModel";
-import { stationPlace, stationState, valueWithUnit } from "../../src/data/pr/waterModel";
+import { stationPlace, seriesState, valueWithUnit } from "../../src/data/pr/waterModel";
 import { validateWater } from "./check.ts";
 import {
   buildData,
@@ -24,7 +24,7 @@ import {
   OBSERVATION_FIELDS,
   PARAMETERS,
   STATION_FIELDS,
-  STATION_FRESHNESS,
+  SERIES_FRESHNESS,
   WATER,
   WATER_FRESHNESS,
   WATER_OUTPUT,
@@ -298,11 +298,11 @@ describe("observations", () => {
   it("a measured zero is zero; a missing value is NO_DATA, never zero", () => {
     const dry = obs(snap, "USGS-50129254", "00060")!;
     expect(dry).toMatchObject({ value: 0, valueText: "0.00", qualifiers: ["DRY"] });
-    expect(stationState(dry, after(dry.observedAt, 10), STATION_FRESHNESS)).toBe("CURRENT");
+    expect(seriesState(dry, after(dry.observedAt, 10), SERIES_FRESHNESS)).toBe("CURRENT");
     expect(valueWithUnit(dry.valueText, dry.unit)).toBe("0.00 ft³/s");
     const missing = obs(snap, "USGS-99999999001", "00045")!;
     expect(missing.value).toBeNull();
-    expect(stationState(missing, after(missing.observedAt, 10), STATION_FRESHNESS)).toBe("NO_DATA");
+    expect(seriesState(missing, after(missing.observedAt, 10), SERIES_FRESHNESS)).toBe("NO_DATA");
     expect(valueWithUnit(missing.valueText, missing.unit)).toBe("sin dato");
     expect(obs(snap, "USGS-50999963", "00045")!.rain24h!.totalText).toBe("0.00");
   });
@@ -323,9 +323,9 @@ describe("observations", () => {
 
   it("station freshness comes from each observation's own time", () => {
     const stale = obs(snap, "USGS-99999999006", "00060")!;
-    expect(stationState(stale, new Date(RETRIEVED), STATION_FRESHNESS)).toBe("STALE");
-    expect(snap.stationFreshness.atRetrieval.RIOS.STALE).toBe(1);
-    expect(snap.stationFreshness.atRetrieval.RIOS.NO_DATA).toBe(2);
+    expect(seriesState(stale, new Date(RETRIEVED), SERIES_FRESHNESS)).toBe("STALE");
+    expect(snap.seriesFreshness.atRetrieval.RIOS.STALE).toBe(1);
+    expect(snap.seriesFreshness.atRetrieval.RIOS.NO_DATA).toBe(2);
   });
 });
 

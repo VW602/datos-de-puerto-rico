@@ -2,26 +2,33 @@
  * Water-conditions rules shared by the site and the update scripts. Pure: no
  * network, no Node APIs.
  *
- * Two different freshness ideas, never mixed:
+ * Two different things are counted, never mixed:
+ *   STATION  a physical USGS monitoring location (one site ID, one map point)
+ *   SERIES   one selected measurement time series at a station ("medición":
+ *            discharge, gage height, rain or reservoir elevation). One station
+ *            can have several, e.g. discharge and gage height: 1 station, 2 series.
+ *
+ * And two different freshness ideas, never mixed:
  *   SOURCE  how old the saved snapshot is (CURRENT, AGING, STALE, UNAVAILABLE;
  *           see currentModel.ts)
- *   STATION how old one station's own latest observation is:
+ *   SERIES  how old one series' own latest observation is:
  *     CURRENT  observed recently
  *     AGING    a few hours old
- *     STALE    the station stopped reporting recently
+ *     STALE    the series stopped reporting recently
  *     NO_DATA  USGS publishes no value for its latest time
- * A station's state comes from its observation time, never from the time the
- * snapshot was retrieved.
+ * Freshness is per series on purpose: a current measurement at a station must
+ * not hide a stale or missing one at the same station. A series' state comes
+ * from its own observation time, never from the time the snapshot was retrieved.
  */
 
-export type StationState = "CURRENT" | "AGING" | "STALE" | "NO_DATA";
-export type StationThresholds = { currentMinutes: number; staleMinutes: number };
+export type SeriesState = "CURRENT" | "AGING" | "STALE" | "NO_DATA";
+export type SeriesThresholds = { currentMinutes: number; staleMinutes: number };
 
-export function stationState(
+export function seriesState(
   obs: { observedAt: string; value: number | null },
   now: Date,
-  t: StationThresholds,
-): StationState {
+  t: SeriesThresholds,
+): SeriesState {
   if (obs.value === null) return "NO_DATA";
   const age = (now.getTime() - Date.parse(obs.observedAt)) / 60000;
   if (!Number.isFinite(age)) return "NO_DATA";
@@ -30,7 +37,7 @@ export function stationState(
   return "STALE";
 }
 
-export const STATION_STATE_ES: Record<StationState, string> = {
+export const SERIES_STATE_ES: Record<SeriesState, string> = {
   CURRENT: "Dato reciente",
   AGING: "Dato de hace unas horas",
   STALE: "Sin dato reciente",

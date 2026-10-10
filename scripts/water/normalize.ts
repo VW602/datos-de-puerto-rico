@@ -17,7 +17,7 @@ import {
   RIVER_SITE_TYPES,
   SERIES_HOURS,
   STATION_FIELDS,
-  STATION_FRESHNESS,
+  SERIES_FRESHNESS,
   TREND_HOURS,
   WATER,
   WATER_FRESHNESS,
@@ -26,7 +26,7 @@ import {
   type ParameterSpec,
   type WaterView,
 } from "./source.ts";
-import { stationState, type StationState } from "../../src/data/pr/waterModel.ts";
+import { seriesState, type SeriesState } from "../../src/data/pr/waterModel.ts";
 
 export { contentHash, sha256 };
 const fail = (message: string): never => {
@@ -546,10 +546,11 @@ export type RequestRecord = {
   bytes: number;
   required: boolean;
 };
-export type ViewCounts = Record<StationState, number>;
+export type ViewCounts = Record<SeriesState, number>;
 export type WaterData = {
   siteInventory: {
     stations: Station[];
+    /** Unique stations (site IDs) per view; not measurement series. */
     byView: Record<WaterView, number>;
   };
   observations: Observation[];
@@ -563,7 +564,8 @@ export type WaterSnapshot = {
   retrievedAt: string | null;
   lastAttempt: Attempt;
   sourceFreshness: { currentMinutes: number; staleMinutes: number };
-  stationFreshness: {
+  /** Per measurement series, not per station: one series per observation. */
+  seriesFreshness: {
     currentMinutes: number;
     staleMinutes: number;
     basis: string;
@@ -603,11 +605,14 @@ const VIEWS: WaterView[] = ["RIOS", "LLUVIA", "EMBALSES"];
  * and gage height counts twice), so a series with no value is never hidden
  * behind another series at the same station.
  */
-export function countStates(observations: Observation[], at: Date): Record<WaterView, ViewCounts> {
+export function countSeriesStates(
+  observations: Observation[],
+  at: Date,
+): Record<WaterView, ViewCounts> {
   const out = Object.fromEntries(
     VIEWS.map((v) => [v, { CURRENT: 0, AGING: 0, STALE: 0, NO_DATA: 0 }]),
   ) as Record<WaterView, ViewCounts>;
-  for (const o of observations) out[o.view][stationState(o, at, STATION_FRESHNESS)] += 1;
+  for (const o of observations) out[o.view][seriesState(o, at, SERIES_FRESHNESS)] += 1;
   return out;
 }
 
@@ -625,13 +630,13 @@ export function waterSnapshot(args: {
     retrievedAt: args.retrievedAt,
     lastAttempt: args.lastAttempt,
     sourceFreshness: { ...WATER_FRESHNESS },
-    stationFreshness: {
-      ...STATION_FRESHNESS,
+    seriesFreshness: {
+      ...SERIES_FRESHNESS,
       basis:
-        "Por serie publicada: minutos desde la observación más reciente de esa serie (no desde la obtención). Sin valor publicado: NO_DATA.",
+        "Por medición (serie), no por estación: minutos desde la observación más reciente de esa serie (no desde la obtención). Una estación puede tener varias series. Sin valor publicado: NO_DATA.",
       atRetrieval: args.retrievedAt
-        ? countStates(args.data.observations, new Date(args.retrievedAt))
-        : countStates([], new Date(0)),
+        ? countSeriesStates(args.data.observations, new Date(args.retrievedAt))
+        : countSeriesStates([], new Date(0)),
     },
     provenance: {
       requests: args.requests,

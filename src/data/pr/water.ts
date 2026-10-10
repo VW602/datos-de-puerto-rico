@@ -15,7 +15,7 @@ import type {
 import type { WaterView } from "../../../scripts/water/source.ts";
 import { canSpeakForNow, freshness, type Freshness } from "./currentModel";
 import { municipioName } from "./current";
-import { stationState, type StationState } from "./waterModel";
+import { seriesState, type SeriesState } from "./waterModel";
 
 export type { HourlySeries, Observation, SeriesFile, Station, WaterSnapshot, WaterView };
 
@@ -42,7 +42,7 @@ export const waterFreshness = (s: WaterSnapshot, now: Date): Freshness =>
 export type StationRow = {
   station: Station;
   municipio: string | null;
-  measures: { obs: Observation; state: StationState }[];
+  measures: { obs: Observation; state: SeriesState }[];
 };
 
 /** Stations of a view, by municipio and then by name; each measure keeps its own state. */
@@ -58,7 +58,7 @@ export function viewRows(s: WaterSnapshot, view: WaterView, now: Date): StationR
       municipio: station.municipio ? municipioName(station.municipio) : null,
       measures: [],
     };
-    row.measures.push({ obs, state: stationState(obs, now, s.stationFreshness) });
+    row.measures.push({ obs, state: seriesState(obs, now, s.seriesFreshness) });
     rows.set(station.id, row);
   }
   return [...rows.values()].sort(
@@ -68,29 +68,68 @@ export function viewRows(s: WaterSnapshot, view: WaterView, now: Date): StationR
   );
 }
 
-export type KindCounts = { reporting: number; stale: number; noData: number; total: number };
+/** Freshness tally of measurement series (not stations). */
+export type SeriesCounts = {
+  reporting: number;
+  stale: number;
+  noData: number;
+  seriesCount: number;
+};
+const emptyCounts = (): SeriesCounts => ({ reporting: 0, stale: 0, noData: 0, seriesCount: 0 });
+function tally(c: SeriesCounts, state: SeriesState) {
+  c.seriesCount += 1;
+  if (state === "CURRENT" || state === "AGING") c.reporting += 1;
+  else if (state === "STALE") c.stale += 1;
+  else c.noData += 1;
+}
+
+/** Unique monitoring locations (site IDs) with at least one series in a view. */
+export function stationCount(s: WaterSnapshot, view: WaterView): number {
+  return new Set(s.data.observations.filter((o) => o.view === view).map((o) => o.stationId)).size;
+}
+
+/** Measurement series in a view (a station with discharge and gage height counts twice). */
+export function seriesCount(s: WaterSnapshot, view: WaterView): number {
+  return s.data.observations.filter((o) => o.view === view).length;
+}
 
 /** Per measure kind in a view: how many series report now, stopped reporting, or have no value. */
-export function viewCounts(
+export function seriesCountsByKind(
   s: WaterSnapshot,
   view: WaterView,
   now: Date,
-): Partial<Record<Observation["kind"], KindCounts>> {
-  const out: Partial<Record<Observation["kind"], KindCounts>> = {};
-  for (const obs of s.data.observations) {
-    if (obs.view !== view) continue;
-    const c = (out[obs.kind] ??= { reporting: 0, stale: 0, noData: 0, total: 0 });
-    const state = stationState(obs, now, s.stationFreshness);
-    c.total += 1;
-    if (state === "CURRENT" || state === "AGING") c.reporting += 1;
-    else if (state === "STALE") c.stale += 1;
-    else c.noData += 1;
-  }
+): Partial<Record<Observation["kind"], SeriesCounts>> {
+  const out: Partial<Record<Observation["kind"], SeriesCounts>> = {};
+  for (const obs of s.data.observations)
+    if (obs.view === view)
+      tally((out[obs.kind] ??= emptyCounts()), seriesState(obs, now, s.seriesFreshness));
   return out;
 }
 
+/** A view at a glance: stations and series counted separately; freshness per series. */
+export type ViewSummary = { stationCount: number; series: SeriesCounts };
+export function viewSummary(s: WaterSnapshot, view: WaterView, now: Date): ViewSummary {
+  const series = emptyCounts();
+  for (const obs of s.data.observations)
+    if (obs.view === view) tally(series, seriesState(obs, now, s.seriesFreshness));
+  return { stationCount: stationCount(s, view), series };
+}
+
 /**
- * What the water block may say. Station values are shown as "now" only from
+ * The state of one station's map point, from all its series in the view:
+ * every series current → CURRENT; no series with a value → NO_DATA; anything
+ * else (some series stale or without value) → STALE. A current series never
+ * hides a stale or missing one at the same station.
+ */
+export function stationMarkerState(row: StationRow): SeriesState {
+  const states = row.measures.map((m) => m.state);
+  if (states.every((x) => x === "CURRENT" || x === "AGING")) return "CURRENT";
+  if (states.every((x) => x === "NO_DATA")) return "NO_DATA";
+  return "STALE";
+}
+
+/**
+ * What the water block may say. Measurements are shown as "now" only from
  * a CURRENT or AGING snapshot; otherwise they are the last saved values, with
  * their times, and the block says so.
  */

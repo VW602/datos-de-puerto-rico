@@ -412,9 +412,16 @@ Los detalles técnicos están en [data/README.md](data/README.md).
   124.11 y 407.19; 124.11 m son 407.19 ft). Caudal y altura cuentan en ríos, canales
   y zanjas; elevación y altura en embalses; lluvia en cualquier tipo de sitio. Las
   exclusiones se cuentan por razón en la copia, y las ambiguas se listan.
+- **Estación ≠ medición.** Una estación es un sitio físico del USGS (un ID de
+  sitio, un punto en el mapa). Una medición es una serie de datos en esa estación
+  (caudal, altura del medidor, lluvia o elevación). Una estación puede tener varias:
+  una con caudal y altura del medidor es 1 estación y 2 mediciones. El sitio cuenta
+  las dos cosas por separado («108 estaciones monitoreadas con 210 mediciones»), el
+  mapa pone un punto por estación y la tabla agrupa las mediciones bajo su estación.
 - **Hora de la medición ≠ hora de obtención.** Cada valor lleva la hora en que la
-  estación lo midió. **Frescura por estación** (por su propia hora): dato reciente
-  hasta 2 horas, de hace unas horas hasta 6, después «sin dato reciente»; sin valor
+  estación lo midió. **Frescura por medición** (por la hora de esa serie, no por
+  estación, para que una medición al día no esconda otra vieja o vacía en la misma
+  estación): dato reciente hasta 2 horas, de hace unas horas hasta 6, después «sin dato reciente»; sin valor
   publicado, «sin dato». **Frescura de la copia** (la misma de alertas y sismos): al
   día hasta 60 minutos, algo atrasada hasta 3 horas, desactualizada después, sin datos
   si nunca se obtuvo.

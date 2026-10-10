@@ -5,7 +5,9 @@ import {
   VIEW_ES,
   hourlyFor,
   loadWaterSeries,
-  viewCounts,
+  seriesCountsByKind,
+  stationMarkerState,
+  viewSummary,
   viewRows,
   waterStatus,
   type HourlySeries,
@@ -19,14 +21,14 @@ import {
   APPROVAL_ES,
   DATUM_ES,
   KIND_ES,
-  STATION_STATE_ES,
+  SERIES_STATE_ES,
   TREND_ES,
   qualifierEs,
   stationPlace,
   unitName,
   unitSymbol,
   valueWithUnit,
-  type StationState,
+  type SeriesState,
 } from "@/data/pr/waterModel";
 
 const VIEWS: WaterView[] = ["RIOS", "LLUVIA", "EMBALSES"];
@@ -35,7 +37,7 @@ const SHAPE_ES: Record<WaterView, string> = {
   LLUVIA: "rombo",
   EMBALSES: "cuadrado",
 };
-const REPORTING = (s: StationState) => s === "CURRENT" || s === "AGING";
+const REPORTING = (s: SeriesState) => s === "CURRENT" || s === "AGING";
 const EXCLUSION_ES: Record<string, string> = {
   INACTIVE: `series sin observaciones en los últimos 30 días (descontinuadas o fuera de servicio)`,
   ALTERNATE_DATUM_OR_UNIT:
@@ -51,19 +53,6 @@ const EXCLUSION_ES: Record<string, string> = {
   FUTURE_OBSERVATION: "observaciones con hora futura",
 };
 
-/** Which measure stands for a station on the map of a view. */
-function mapMeasure(row: StationRow): StationRow["measures"][number] {
-  const order: Observation["kind"][] = [
-    "DISCHARGE",
-    "RESERVOIR_ELEVATION",
-    "PRECIPITATION",
-    "GAGE_HEIGHT",
-  ];
-  return [...row.measures].sort(
-    (a, b) => order.indexOf(a.obs.kind) - order.indexOf(b.obs.kind),
-  )[0]!;
-}
-
 function Marker({
   view,
   state,
@@ -71,7 +60,7 @@ function Marker({
   y,
 }: {
   view: WaterView;
-  state: StationState;
+  state: SeriesState;
   x: number;
   y: number;
 }) {
@@ -107,7 +96,7 @@ function Marker({
   );
 }
 
-function LegendGlyph({ view, state }: { view: WaterView; state: StationState }) {
+function LegendGlyph({ view, state }: { view: WaterView; state: SeriesState }) {
   return (
     <svg viewBox="-20 -20 40 40" className="inline-block h-4 w-4 align-[-3px]" aria-hidden="true">
       <Marker view={view} state={state} x={0} y={0} />
@@ -118,15 +107,16 @@ function LegendGlyph({ view, state }: { view: WaterView; state: StationState }) 
 function WaterMap({ view, rows }: { view: WaterView; rows: StationRow[] }) {
   const [x0, y0] = project(-67.98, 18.56);
   const [x1, y1] = project(-65.18, 17.84);
-  const states = rows.map((row) => mapMeasure(row).state);
-  const reporting = states.filter(REPORTING).length;
+  // One marker per unique station (site ID), whatever its number of series.
+  const states = rows.map(stationMarkerState);
+  const allCurrent = states.filter(REPORTING).length;
   return (
     <figure className="mt-3">
       <svg
         viewBox={`${x0} ${y0} ${x1 - x0} ${y1 - y0}`}
         className="block h-auto w-full rounded-[3px] bg-water"
         role="img"
-        aria-label={`Mapa de puntos: ${rows.length} estaciones de ${VIEW_ES[view].toLowerCase()} del USGS; ${reporting} con dato reciente. Cada punto es una estación, no un municipio. La tabla debajo tiene todos los datos.`}
+        aria-label={`Mapa de puntos: ${rows.length} ${rows.length === 1 ? "estación" : "estaciones"} de ${VIEW_ES[view].toLowerCase()} del USGS, un punto por estación; ${allCurrent} con todas sus mediciones al día. Cada punto es una estación, no un municipio. La tabla debajo tiene cada medición.`}
       >
         {SHAPES.map((shape) => (
           <path
@@ -138,26 +128,26 @@ function WaterMap({ view, rows }: { view: WaterView; rows: StationRow[] }) {
           />
         ))}
         {rows.map((row) => {
-          const m = mapMeasure(row);
           const [x, y] = project(row.station.longitude, row.station.latitude);
           return (
-            <g key={row.station.id}>
-              <Marker view={view} state={m.state} x={x} y={y} />
+            <g key={row.station.id} data-station={row.station.id}>
+              <Marker view={view} state={stationMarkerState(row)} x={x} y={y} />
               <title>{`${row.station.name} · ${row.measures
-                .map((x) => `${KIND_ES[x.obs.kind]}: ${valueWithUnit(x.obs.valueText, x.obs.unit)}`)
-                .join(
-                  " · ",
-                )} · ${prTime(m.obs.observedAt, true)} · ${STATION_STATE_ES[m.state]}`}</title>
+                .map(
+                  (m) =>
+                    `${KIND_ES[m.obs.kind]}: ${valueWithUnit(m.obs.valueText, m.obs.unit)}, ${prTime(m.obs.observedAt, true)}, ${SERIES_STATE_ES[m.state].toLowerCase()}`,
+                )
+                .join(" · ")}`}</title>
             </g>
           );
         })}
       </svg>
       <figcaption className="mt-1 text-[12px] text-muted">
         Cada {SHAPE_ES[view]} es una estación (un punto), no un municipio; donde no hay estación no
-        hay medición, no un cero. <LegendGlyph view={view} state="CURRENT" /> relleno: dato
-        reciente. <LegendGlyph view={view} state="STALE" /> vacío: sin dato reciente.{" "}
-        <LegendGlyph view={view} state="NO_DATA" /> con equis: sin dato. El tamaño no indica el
-        valor.
+        hay medición, no un cero. <LegendGlyph view={view} state="CURRENT" /> relleno: todas sus
+        mediciones con dato reciente. <LegendGlyph view={view} state="STALE" /> vacío: alguna
+        medición sin dato reciente o sin dato. <LegendGlyph view={view} state="NO_DATA" /> con
+        equis: ninguna medición con dato. El tamaño no indica el valor.
       </figcaption>
     </figure>
   );
@@ -223,7 +213,7 @@ function MeasureCells({
   series,
 }: {
   obs: Observation;
-  state: StationState;
+  state: SeriesState;
   now: Date;
   series: SeriesFile | null;
 }) {
@@ -260,7 +250,7 @@ function MeasureCells({
         <span
           className={`block text-[12px] ${REPORTING(state) ? "text-muted" : "font-semibold text-error"}`}
         >
-          {STATION_STATE_ES[state]} ({ageWords(obs.observedAt, now)})
+          {SERIES_STATE_ES[state]} ({ageWords(obs.observedAt, now)})
         </span>
       </td>
       <td className="py-1.5 pr-2 align-top text-[14px]">
@@ -322,13 +312,14 @@ function StationTable({
     <div
       className="mt-2 max-h-[34rem] overflow-auto focus-visible:outline-2 focus-visible:outline-accent"
       role="region"
-      aria-label={`Tabla de estaciones de ${VIEW_ES[view].toLowerCase()} (se desplaza)`}
+      aria-label={`Tabla de mediciones de ${VIEW_ES[view].toLowerCase()}, agrupadas por estación (se desplaza)`}
       tabIndex={0}
     >
       <table className="w-full min-w-[760px] text-[14px]">
         <caption className="sr-only">
-          Estaciones de {VIEW_ES[view].toLowerCase()} del USGS, por municipio. Cada medición tiene
-          su hora y su estado.
+          Mediciones de {VIEW_ES[view].toLowerCase()} del USGS. Cada fila es una medición; las de
+          una misma estación van juntas bajo su nombre. Por municipio. Cada medición tiene su hora y
+          su estado.
         </caption>
         <thead className="sticky top-0 bg-track">
           <tr className="border-b border-divider-2 text-left text-[12px] text-muted">
@@ -419,7 +410,8 @@ export function WaterBlock({
   const s = water && water !== "error" ? water : null;
   const status = s && now ? waterStatus(s, now) : null;
   const rows = s && now ? viewRows(s, view, now) : [];
-  const counts = s && now ? viewCounts(s, view, now) : {};
+  const summary = s && now ? viewSummary(s, view, now) : null;
+  const counts = s && now ? seriesCountsByKind(s, view, now) : {};
   const usableSeries =
     series && s && series.snapshotContentSha256 === s.contentSha256 ? series : null;
   return (
@@ -468,11 +460,27 @@ export function WaterBlock({
                 onClick={() => setView(key)}
                 className={`min-h-11 rounded-full border px-4 text-[14px] ${view === key ? "border-fg bg-fg font-semibold text-surface" : "border-divider bg-surface"}`}
               >
-                {VIEW_ES[key]} ({s.data.siteInventory.byView[key]})
+                {VIEW_ES[key]} · {s.data.siteInventory.byView[key]}{" "}
+                {s.data.siteInventory.byView[key] === 1 ? "estación" : "estaciones"}
               </button>
             ))}
           </div>
-          <ul className="mt-2 text-[15px]">
+          {summary && (
+            <p className="mt-2 text-[15px]">
+              <strong>
+                {summary.stationCount} {summary.stationCount === 1 ? "estación" : "estaciones"}{" "}
+                monitoreadas
+              </strong>{" "}
+              con{" "}
+              <strong>
+                {summary.series.seriesCount}{" "}
+                {summary.series.seriesCount === 1 ? "medición" : "mediciones"}
+              </strong>
+              : {summary.series.reporting} con dato reciente · {summary.series.stale} sin dato
+              reciente · {summary.series.noData} sin dato.
+            </p>
+          )}
+          <ul className="text-[15px]">
             {(
               Object.entries(counts) as [
                 Observation["kind"],
@@ -480,12 +488,17 @@ export function WaterBlock({
               ][]
             ).map(([kind, c]) => (
               <li key={kind}>
-                <span className="font-semibold">{KIND_ES[kind]}:</span> {c.reporting} de {c.total}{" "}
-                {c.total === 1 ? "estación" : "estaciones"} con dato reciente · sin dato reciente:{" "}
-                {c.stale} · sin dato: {c.noData}
+                <span className="font-semibold">{KIND_ES[kind]}:</span> {c.reporting} de{" "}
+                {c.seriesCount} {c.seriesCount === 1 ? "medición" : "mediciones"} con dato reciente
+                · sin dato reciente: {c.stale} · sin dato: {c.noData}
               </li>
             ))}
           </ul>
+          <p className="mt-1 text-[13px] text-muted">
+            Una estación puede tener más de una medición (por ejemplo, caudal y altura del medidor).
+            El estado se da por medición: una medición al día no esconde otra sin dato en la misma
+            estación.
+          </p>
           <p className="mt-1 text-[13px] text-muted">{NOTE[view]}</p>
           <WaterMap view={view} rows={rows} />
           {s.provenance.series === "UNAVAILABLE" && (
@@ -510,9 +523,9 @@ export function WaterBlock({
           <div className="pb-2">
             <p>
               <span lang="en">U.S. Geological Survey</span> (USGS),{" "}
-              <span lang="en">Water Data for the Nation</span>: {s.source.service}. Cada fila dice
-              el sitio (ID del USGS), el código de parámetro, la unidad, la hora de la medición y si
-              el dato es provisional o aprobado.
+              <span lang="en">Water Data for the Nation</span>: {s.source.service}. Cada medición
+              dice su estación (ID del USGS), el código de parámetro, la unidad, la hora de la
+              medición y si el dato es provisional o aprobado.
             </p>
             <p className="mt-1">
               Obtenido: {s.retrievedAt ? prTime(s.retrievedAt) : "nunca"}.

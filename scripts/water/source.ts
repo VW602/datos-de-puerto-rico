@@ -15,7 +15,8 @@
  * cache (.cache/live/raw).
  */
 
-export const WATER_SCHEMA_VERSION = 1;
+/** 2: the per-series freshness block is named `seriesFreshness` (it was `stationFreshness`). */
+export const WATER_SCHEMA_VERSION = 2;
 export const WATER_OUTPUT = "data/current/usgs-water.json";
 /** 24-hour hourly series, loaded by the page only when the reader opens the water view. */
 export const WATER_SERIES_OUTPUT = "data/current/usgs-water-series.json";
@@ -184,12 +185,12 @@ export const ACTIVE_DAYS = 30;
 export const WATER_FRESHNESS = { currentMinutes: 60, staleMinutes: 180 } as const;
 
 /**
- * Station freshness (minutes since the station's own latest observation, not
- * the retrieval): Puerto Rico gages record every 15 minutes and transmit
+ * Series freshness, per measurement series, not per station (minutes since
+ * that series' own latest observation, not the retrieval): Puerto Rico gages record every 15 minutes and transmit
  * about hourly; at retrieval on 2026-10-10 nearly all reporting series were
  * under 1 hour old and a few under 3. CURRENT ≤ 2 h, AGING ≤ 6 h, STALE beyond.
  */
-export const STATION_FRESHNESS = { currentMinutes: 120, staleMinutes: 360 } as const;
+export const SERIES_FRESHNESS = { currentMinutes: 120, staleMinutes: 360 } as const;
 
 /** Hours of hourly series kept for context; trend interval in hours. */
 export const SERIES_HOURS = 24;

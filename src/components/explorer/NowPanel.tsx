@@ -23,7 +23,7 @@ import {
   type Freshness,
 } from "@/data/pr/currentModel";
 import { SHAPES, project } from "@/data/pr/geo";
-import { viewCounts, waterFreshness } from "@/data/pr/water";
+import { seriesCountsByKind, waterFreshness } from "@/data/pr/water";
 import { WaterBlock } from "./WaterPanel";
 import { useWaterSnapshot } from "./useWaterSnapshot";
 
@@ -373,7 +373,7 @@ export function NowPanel() {
   const w = water && water !== "error" ? water : null;
   const waterState = now && w ? waterFreshness(w, now) : null;
   const stale = [nwsState, usgsState, waterState].some((s) => s === "STALE" || s === "UNAVAILABLE");
-  const flow = now && w ? viewCounts(w, "RIOS", now).DISCHARGE : undefined;
+  const flow = now && w ? seriesCountsByKind(w, "RIOS", now).DISCHARGE : undefined;
   const inForce = nwsState && canSpeakForNow(nwsState) ? alertsInForce(NWS_SNAPSHOT, now!) : [];
   const day = quakeWindows(USGS_SNAPSHOT).day;
   return (
@@ -430,8 +430,8 @@ export function NowPanel() {
             {!canSpeakForNow(waterState)
               ? "no se pudieron confirmar las condiciones actuales"
               : flow
-                ? `${flow.reporting} de ${flow.total} estaciones con caudal reciente`
-                : "sin estaciones de caudal"}
+                ? `${flow.reporting} de ${flow.seriesCount} mediciones de caudal con dato reciente`
+                : "sin mediciones de caudal"}
           </>
         )}
         .
