@@ -27,7 +27,7 @@ function Row({
         type="button"
         onClick={() => onSelect(place.id)}
         aria-current={selected ? "true" : undefined}
-        className={`flex min-h-11 w-full items-center justify-between gap-3 text-left text-base tabular hover:bg-track ${
+        className={`flex min-h-11 w-full flex-wrap items-center justify-between gap-x-3 text-left text-base tabular hover:bg-track ${
           selected ? "border-b-2 border-fg font-bold" : "border-b border-divider-2"
         }`}
       >
@@ -35,7 +35,10 @@ function Row({
           <span className={`inline-block w-8 ${selected ? "" : "text-muted"}`}>{rank}</span>
           {place.name}
         </span>
-        <span className="shrink-0">{metric.format(place.values[metric.id]!)}</span>
+        {/* With large text the value moves under the name (right-aligned) instead of overlapping it. */}
+        <span className="ml-auto min-w-0 text-right">
+          {metric.format(place.values[metric.id]!)}
+        </span>
       </button>
     </li>
   );
@@ -130,7 +133,7 @@ export const Ranking78 = memo(function Ranking78({
     selectedIndex >= 0 && (selectedIndex < 5 || selectedIndex >= ranked.length - 5);
 
   return (
-    <section aria-label="Los 78, de mayor a menor">
+    <section aria-label="Los 78, de mayor a menor" className="@container/ranking">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4">
         <h2 className="font-display text-[26px] font-medium md:text-3xl">
           Los 78, de mayor a menor
@@ -185,28 +188,44 @@ export const Ranking78 = memo(function Ranking78({
           </>
         )}
       </svg>
-      {/* Labels are text, not SVG, so they stay readable when the strip shrinks on a phone. */}
-      <div className="mt-1 flex items-start justify-between gap-3 text-[13px] text-muted tabular">
-        <span>
-          {ranked.length > 0 ? metric.format(ranked[ranked.length - 1].values[metric.id]!) : ""}
-        </span>
-        <span className="text-center">
-          <span
-            className="mr-1 inline-block w-4 border-t border-dashed border-fg align-middle"
-            aria-hidden="true"
-          />
-          mediana {metric.format(median)}
-          {selected && (
-            <span className="ml-2 font-bold text-fg">
-              <span aria-hidden="true">◯ </span>
-              {selected.name} {metric.format(selected.values[metric.id]!)}
-            </span>
-          )}
-        </span>
-        <span>{ranked.length > 0 ? metric.format(ranked[0].values[metric.id]!) : ""}</span>
+      {/*
+        Labels are text, not SVG, so they stay readable when the strip shrinks on a phone.
+        They follow the ranking's own width (container query), not the screen's: on one
+        line when there is room; otherwise the lowest and highest values stay at the
+        left and right ends and the median moves to its own centered line. Nothing is
+        clipped and nothing pushes the page sideways (large zoom, long values, a
+        selected municipio).
+      */}
+      <div className="@container mt-1">
+        <div
+          className="flex flex-wrap items-start gap-x-3 gap-y-0.5 text-[13px] text-muted tabular @md:flex-nowrap @md:justify-between"
+          data-scale-labels
+        >
+          <span className="min-w-0">
+            <span className="sr-only">Valor más bajo: </span>
+            {ranked.length > 0 ? metric.format(ranked[ranked.length - 1].values[metric.id]!) : ""}
+          </span>
+          <span className="order-last min-w-0 basis-full text-center [overflow-wrap:anywhere] @md:order-none @md:basis-auto">
+            <span
+              className="mr-1 inline-block w-4 border-t border-dashed border-fg align-middle"
+              aria-hidden="true"
+            />
+            mediana {metric.format(median)}
+            {selected && (
+              <span className="ml-2 font-bold text-fg">
+                <span aria-hidden="true">◯ </span>
+                {selected.name} {metric.format(selected.values[metric.id]!)}
+              </span>
+            )}
+          </span>
+          <span className="ml-auto min-w-0 text-right">
+            <span className="sr-only">Valor más alto: </span>
+            {ranked.length > 0 ? metric.format(ranked[0].values[metric.id]!) : ""}
+          </span>
+        </div>
       </div>
 
-      <div className="mt-4 grid gap-x-10 gap-y-4 md:grid-cols-2">
+      <div className="mt-4 grid gap-x-10 gap-y-4 @md/ranking:grid-cols-2">
         <div>
           <p className="mb-1 text-xs font-bold tracking-[0.08em] text-muted uppercase">Más altos</p>
           <ol className="m-0 list-none p-0">

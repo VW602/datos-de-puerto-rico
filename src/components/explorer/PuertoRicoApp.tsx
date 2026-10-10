@@ -428,7 +428,7 @@ export function PuertoRicoApp() {
         </div>
 
         {/* Summary and ranking */}
-        <div className="grid gap-10 px-4 pt-5 pb-8 md:grid-cols-[minmax(0,500px)_minmax(0,1fr)] md:gap-14 md:px-14 md:pt-9">
+        <div className="grid gap-10 px-4 pt-5 pb-8 md:grid-cols-[minmax(0,500px)_minmax(15rem,1fr)] md:gap-14 md:px-14 md:pt-9">
           <div>
             <div className="mb-5 hidden md:block">
               <MunicipioSearch places={places} onPick={select} />
