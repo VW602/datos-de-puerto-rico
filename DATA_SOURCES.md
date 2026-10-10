@@ -16,6 +16,7 @@ Los términos de uso de cada fuente están en [DATA_LICENSES.md](DATA_LICENSES.m
 | BLS, LAUS | Desempleo mensual, fuerza laboral, empleo | Mensual (ene 2024 – ago 2026) | Municipio | 78/78 |
 | NWS (NOAA) | Alertas activas para Puerto Rico | La última actualización (el sitio dice la hora y la antigüedad) | Municipio por código SAME; si no, zona del NWS | Sí |
 | USGS | Sismos en la región de Puerto Rico | Últimos 7 días hasta la última actualización | Puntos (no municipios) | Sí |
+| USGS (Water Data for the Nation) | Agua ahora: caudal, altura del medidor, lluvia y elevación de embalses en estaciones | Valor más reciente de cada estación y las 24 horas anteriores | Puntos (estaciones); municipio solo como ubicación | Sí |
 | FEMA, OpenFEMA | Declaraciones, Asistencia Pública, asistencia a hogares, mitigación | Todos los desastres con registros para Puerto Rico | Municipio, con estados geográficos | 78/78 |
 | Tesoro, USAspending | Obligaciones, desembolsos y adjudicaciones federales | Año fiscal federal 2026 (y 4 anteriores) | Municipio, con cuatro estados geográficos | 78/78 |
 
@@ -363,6 +364,81 @@ Los detalles técnicos están en [data/README.md](data/README.md).
   repositorio). El repositorio guarda `data/current/nws.json` y
   `data/current/usgs-earthquakes.json`: solo campos permitidos, con el SHA-256 de la
   respuesta original, la hora de obtención, la hora de la fuente y el último intento.
+
+### Ahora en Puerto Rico › Agua ahora: estaciones del USGS
+
+- **Qué es:** las mediciones más recientes de las estaciones del USGS en Puerto Rico:
+  ríos y canales (caudal y altura del medidor), lluvia y embalses o lagos (elevación
+  del agua o altura del medidor). **No son avisos de inundación** ni dicen si hay
+  sequía, cuánta agua hay para tomar, si una represa es segura o si hay que
+  desalojar. Los avisos oficiales son las alertas del NWS.
+- **API:** las APIs modernizadas del USGS, *Water Data OGC APIs*, versión 1
+  (`https://api.waterdata.usgs.gov/ogcapi/v1/collections`; documentación en
+  `https://api.waterdata.usgs.gov/docs/ogcapi/`). El USGS dice que reemplazan a
+  WaterServices (`waterservices.usgs.gov`, incluido el viejo servicio de valores
+  instantáneos), que el USGS degrada desde el 16 de noviembre de 2026 y retira el 22
+  de febrero de 2027. La V1 se anunció el 4 de septiembre de 2026; las solicitudes a
+  la V0 se redirigirán a la V1 a mediados de 2027. La API acepta una clave para
+  límites más altos; sin clave, este proyecto hace unas 6 solicitudes por
+  actualización (más si la API reparte una respuesta en páginas) con un User-Agent que lo identifica, un tiempo límite y como mucho un
+  reintento un minuto después (también ante HTTP 429).
+- **Solicitudes:** requeridas `latest-continuous` (último valor de cada serie con
+  `state_code=72`), `monitoring-locations` (nombre, tipo de sitio y municipio, por ID)
+  y `time-series-metadata` (estadístico y cómputo de cada serie); opcional
+  `continuous` (24 horas). Si falla una requerida, se conserva la última copia buena y
+  se anota el intento; nunca se publica «0 estaciones», «0 lluvia» ni «0 caudal». Si
+  falla la opcional, se publican los valores actuales sin series ni tendencias.
+- **Qué significa cada número** (catálogo oficial de parámetros del USGS):
+  - Caudal, 00060: pies cúbicos por segundo (ft³/s), valor instantáneo (estadístico
+    00011). Se muestra en la unidad publicada, sin convertir.
+  - Altura del medidor, 00065: pies, instantáneo. Es el nivel del agua en el
+    medidor sobre su propio punto de referencia; **no es la profundidad del río ni un
+    nivel de inundación**.
+  - Lluvia, 00045: pulgadas, en incrementos de 15 minutos (cómputo «Decumulated»):
+    cada valor es la lluvia desde el registro anterior, no un contador acumulado. El
+    total de 24 horas (hasta la última observación de cada estación) se da solo si
+    los incrementos cubren toda la ventana sin huecos de más de 30 minutos y sin
+    valores vacíos. No se suman estaciones ni se ordenan entre sí.
+  - Elevación de embalses: sobre PRVD02 (72379 pies, 72380 metros), sobre el nivel
+    medio local del mar (72375, 72376) o sobre NGVD 29 (62614, 62616). Se muestra una
+    sola por embalse: PRVD02 en pies primero. **No hay porcentaje de llenado:** el
+    USGS no publica aquí la capacidad y el sitio no la calcula.
+  - Fuera de alcance: aguas subterráneas, elevación de la superficie de ríos (72365,
+    distinta de la altura del medidor), compuertas y calidad del agua.
+- **Selección de series:** una por sitio y parámetro. Las series sin observaciones
+  en 30 días no se publican (descontinuadas o fuera de servicio). Si quedan dos
+  activas del mismo parámetro, el sitio se excluye con su razón y no se elige una
+  (en octubre de 2026, Lago Guerrero publicó dos series de elevación «en pies» con
+  124.11 y 407.19; 124.11 m son 407.19 ft). Caudal y altura cuentan en ríos, canales
+  y zanjas; elevación y altura en embalses; lluvia en cualquier tipo de sitio. Las
+  exclusiones se cuentan por razón en la copia, y las ambiguas se listan.
+- **Hora de la medición ≠ hora de obtención.** Cada valor lleva la hora en que la
+  estación lo midió. **Frescura por estación** (por su propia hora): dato reciente
+  hasta 2 horas, de hace unas horas hasta 6, después «sin dato reciente»; sin valor
+  publicado, «sin dato». **Frescura de la copia** (la misma de alertas y sismos): al
+  día hasta 60 minutos, algo atrasada hasta 3 horas, desactualizada después, sin datos
+  si nunca se obtuvo.
+- **Cero ≠ sin dato.** Un 0 medido es 0 (un cauce seco con el calificador DRY). Un
+  valor que el USGS no publica (por ejemplo, con la curva de caudal en desarrollo,
+  RATINGDEV) es «sin dato». Un valor negativo se publica tal cual y se marca para
+  revisión; nunca se recorta.
+- **Datos provisionales:** se muestra «Provisional» o «Aprobado» según el USGS, y la
+  advertencia «Datos provisionales sujetos a revisión por el USGS», con enlace a su
+  declaración.
+- **Tendencia:** «subiendo», «bajando» o «sin cambio» solo como la diferencia exacta
+  entre el valor más reciente y el de 3 horas antes en la misma serie, con la
+  precisión publicada. Nada de «mejorando», «empeorando», «normal» o «alto».
+- **Geografía:** las estaciones son puntos en su propio mapa; cada vista usa su forma
+  (círculo, rombo, cuadrado), relleno o vacío según la frescura y una equis sin dato;
+  el tamaño no indica el valor y nunca se comparten escalas entre medidas. Un
+  municipio sin estación no tiene «0». El municipio sale del código de condado de los
+  metadatos del USGS y dice «Estación ubicada en …», nunca las condiciones del
+  municipio.
+- **Copias:** las respuestas exactas se quedan en `.cache/live/raw`. El repositorio
+  guarda `data/current/usgs-water.json` (estaciones, último valor de cada serie,
+  exclusiones, huellas SHA-256 de cada respuesta) y `data/current/usgs-water-series.json`
+  (24 valores por hora de cada serie). La página carga ambos archivos solo cuando
+  hace falta, fuera del paquete inicial.
 
 ---
 

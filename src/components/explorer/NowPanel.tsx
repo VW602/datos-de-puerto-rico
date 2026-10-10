@@ -23,6 +23,9 @@ import {
   type Freshness,
 } from "@/data/pr/currentModel";
 import { SHAPES, project } from "@/data/pr/geo";
+import { viewCounts, waterFreshness } from "@/data/pr/water";
+import { WaterBlock } from "./WaterPanel";
+import { useWaterSnapshot } from "./useWaterSnapshot";
 
 const FRESH_ES: Record<Freshness, string> = {
   CURRENT: "Al día",
@@ -48,7 +51,7 @@ function FreshBadge({
   now,
 }: {
   label: string;
-  snapshot: NwsSnapshot | UsgsSnapshot;
+  snapshot: Pick<NwsSnapshot | UsgsSnapshot, "retrievedAt" | "lastAttempt" | "freshness">;
   now: Date | null;
 }) {
   const state = now ? freshness(snapshot.retrievedAt, now, snapshot.freshness) : null;
@@ -366,7 +369,11 @@ export function NowPanel() {
   const now = useNow();
   const nwsState = now ? freshness(NWS_SNAPSHOT.retrievedAt, now, NWS_SNAPSHOT.freshness) : null;
   const usgsState = now ? freshness(USGS_SNAPSHOT.retrievedAt, now, USGS_SNAPSHOT.freshness) : null;
-  const stale = [nwsState, usgsState].some((s) => s === "STALE" || s === "UNAVAILABLE");
+  const water = useWaterSnapshot();
+  const w = water && water !== "error" ? water : null;
+  const waterState = now && w ? waterFreshness(w, now) : null;
+  const stale = [nwsState, usgsState, waterState].some((s) => s === "STALE" || s === "UNAVAILABLE");
+  const flow = now && w ? viewCounts(w, "RIOS", now).DISCHARGE : undefined;
   const inForce = nwsState && canSpeakForNow(nwsState) ? alertsInForce(NWS_SNAPSHOT, now!) : [];
   const day = quakeWindows(USGS_SNAPSHOT).day;
   return (
@@ -391,9 +398,20 @@ export function NowPanel() {
           información guardada, con su hora.
         </p>
       )}
-      <div className="mt-1 grid grid-cols-1 gap-x-8 md:grid-cols-2">
+      <div className="mt-1 grid grid-cols-1 gap-x-8 md:grid-cols-2 xl:grid-cols-3">
         <FreshBadge label="Alertas NWS, actualizado" snapshot={NWS_SNAPSHOT} now={now} />
         <FreshBadge label="Sismos USGS, actualizado" snapshot={USGS_SNAPSHOT} now={now} />
+        {w ? (
+          <FreshBadge
+            label="Agua USGS, actualizado"
+            snapshot={{ ...w, freshness: w.sourceFreshness }}
+            now={now}
+          />
+        ) : (
+          <p className="text-[13px] text-muted">
+            Agua USGS: {water === "error" ? "no se pudo cargar" : "cargando…"}
+          </p>
+        )}
       </div>
       <p className="mt-1 text-[15px]">
         {nwsState === null
@@ -404,16 +422,29 @@ export function NowPanel() {
               ? "Alertas: ninguna activa del NWS para Puerto Rico."
               : `Alertas: ${inForce.length} ${inForce.length === 1 ? "activa" : "activas"} del NWS (${inForce.map((a) => a.event).join(", ")}).`}{" "}
         · Sismos, 24 horas: {USGS_SNAPSHOT.retrievedAt ? day.length : "sin datos"}
-        {usgsState !== null && !canSpeakForNow(usgsState) ? " (sin confirmar)" : ""}.
+        {usgsState !== null && !canSpeakForNow(usgsState) ? " (sin confirmar)" : ""}
+        {w && waterState && (
+          <>
+            {" "}
+            · Agua:{" "}
+            {!canSpeakForNow(waterState)
+              ? "no se pudieron confirmar las condiciones actuales"
+              : flow
+                ? `${flow.reporting} de ${flow.total} estaciones con caudal reciente`
+                : "sin estaciones de caudal"}
+          </>
+        )}
+        .
       </p>
       <details className="mt-1">
         <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-accent">
-          Ver alertas, sismos y mapa
+          Ver alertas, sismos, agua y mapas
         </summary>
         <div className="grid grid-cols-1 gap-x-10 gap-y-5 pb-2 md:grid-cols-2">
           <AlertsBlock now={now} />
           <QuakesBlock now={now} />
         </div>
+        <WaterBlock now={now} water={water} />
         <p className="mt-2 text-[12px] text-muted">
           Horas en hora de Puerto Rico (AST, UTC−4; sin horario de verano).{" "}
           {NWS_SNAPSHOT.source.attribution}{" "}

@@ -1,0 +1,541 @@
+{
+  "note": "Respuestas reales de la API de agua del USGS (V1) del 2026-10-10T21:20:42.466Z, recortadas a pocos sitios, más registros sintéticos marcados TEST FIXTURE / test-*. Solo para pruebas.",
+  "retrievedAt": "2026-10-10T21:20:42.466Z",
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "ft",
+        "parameter_code": "00065",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50093090",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "2007-11-20T14:45:00+00:00",
+        "end": "2026-10-10T05:45:00+00:00"
+      },
+      "id": "030c1f1009bb48eaaf078b740c32a770",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "ft",
+        "parameter_code": "72379",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50020100",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "2007-10-01T04:00:00+00:00",
+        "end": "2026-10-10T07:45:00+00:00"
+      },
+      "id": "045b6dc1c0364ae1a32cbb1793c034dd",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "ft",
+        "parameter_code": "72379",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-182827067040500",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "2026-10-07T03:00:00+00:00",
+        "end": "2026-10-10T07:30:00+00:00"
+      },
+      "id": "0860676131d44448bfabe2bb275002a6",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "ft^3/s",
+        "parameter_code": "00060",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50038100",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "1989-10-01T04:00:00+00:00",
+        "end": "2025-05-06T03:10:00+00:00"
+      },
+      "id": "122cece8643349a8951044a86348b331",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "ft",
+        "parameter_code": "00065",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50136400",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "2007-10-01T04:00:00+00:00",
+        "end": "2026-10-10T08:30:00+00:00"
+      },
+      "id": "2094f591e4e843edb965022b7aafbcbd",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "m",
+        "parameter_code": "72376",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50020100",
+        "sublocation_identifier": null,
+        "web_description": "OLDPR",
+        "begin": "2007-10-01T04:00:00+00:00",
+        "end": "2026-10-10T07:45:00+00:00"
+      },
+      "id": "522966c63f684a9ab65448f985b869c7",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "ft",
+        "parameter_code": "72379",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-182827067040500",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "2026-10-07T03:00:00+00:00",
+        "end": "2026-10-10T08:30:00+00:00"
+      },
+      "id": "5ce6fd2f53c8430ba64922affb061f64",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "in",
+        "parameter_code": "00045",
+        "statistic_id": null,
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Decumulated",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-182647066201700",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "2016-10-01T04:00:00+00:00",
+        "end": "2019-09-18T14:30:00+00:00"
+      },
+      "id": "5d4e3a981ebb47d9b62716d06d96a4e7",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "ft^3/s",
+        "parameter_code": "00060",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50011000",
+        "sublocation_identifier": null,
+        "web_description": "Historic IDA",
+        "begin": "2006-03-16T13:25:00+00:00",
+        "end": "2010-10-01T03:45:00+00:00"
+      },
+      "id": "68003295efcc45939b87ca31b880e29f",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "ft^3/s",
+        "parameter_code": "00060",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50093090",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "2005-12-06T04:00:00+00:00",
+        "end": "2026-10-10T08:45:00+00:00"
+      },
+      "id": "78ccf8c526b347cfbf1dde839cda03f5",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "ft^3/s",
+        "parameter_code": "00060",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50136400",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "1990-10-01T04:00:00+00:00",
+        "end": "2026-10-10T08:30:00+00:00"
+      },
+      "id": "7b4bbc8df61342129c2d5acb2ee597de",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "ft^3/s",
+        "parameter_code": "00060",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50011000",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "2016-10-02T00:00:00+00:00",
+        "end": "2026-10-10T07:45:00+00:00"
+      },
+      "id": "9610eed614a64dd1b29e42411967454c",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "ft",
+        "parameter_code": "00065",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-182827067040500",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "2022-01-31T18:30:00+00:00",
+        "end": "2026-10-10T07:05:00+00:00"
+      },
+      "id": "98fd98d9cd2f48f782024fe92feb58e4",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "ft",
+        "parameter_code": "00065",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50011000",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "2007-10-01T04:00:00+00:00",
+        "end": "2026-10-10T07:45:00+00:00"
+      },
+      "id": "9a6aed27372040c2b2cc7c1f733ab334",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "in",
+        "parameter_code": "00045",
+        "statistic_id": null,
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Decumulated",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50136400",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "2018-12-18T17:50:00+00:00",
+        "end": "2022-10-26T19:30:00+00:00"
+      },
+      "id": "9b33d2c61d534983b2d1f050a3f11d48",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "m",
+        "parameter_code": "72380",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50020100",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "2007-10-01T04:00:00+00:00",
+        "end": "2026-10-10T07:45:00+00:00"
+      },
+      "id": "9c9b790aff8048dc84214b46f4db2f81",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "ft",
+        "parameter_code": "72375",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50020100",
+        "sublocation_identifier": null,
+        "web_description": "OLDPR",
+        "begin": "2007-10-01T04:00:00+00:00",
+        "end": "2026-10-10T08:45:00+00:00"
+      },
+      "id": "a2d8731a3f834e9fba55e0ab0818ec63",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "in",
+        "parameter_code": "00045",
+        "statistic_id": null,
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Decumulated",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50999964",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "2016-10-01T04:00:00+00:00",
+        "end": "2026-10-10T06:30:00+00:00"
+      },
+      "id": "ba7a4d853e474db48ad552e392098dd9",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "ft^3/s",
+        "parameter_code": "00060",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50148890",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "1998-07-29T07:15:00+00:00",
+        "end": "2026-10-10T08:45:00+00:00"
+      },
+      "id": "bb95b3b48e194132aafc72a800eab33c",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "ft^3/s",
+        "parameter_code": "00060",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50129254",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "2007-10-01T04:00:00+00:00",
+        "end": "2026-10-10T06:00:00+00:00"
+      },
+      "id": "cb7ea631fbf345deab985c8e76bfbae2",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "in",
+        "parameter_code": "00045",
+        "statistic_id": null,
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Decumulated",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50999963",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "2016-10-01T04:00:00+00:00",
+        "end": "2026-10-10T08:30:00+00:00"
+      },
+      "id": "ce775f555f8e4f18919b4bdd6675781f",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "ft",
+        "parameter_code": "00065",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50038100",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "2007-10-01T04:00:00+00:00",
+        "end": "2025-05-12T19:50:00+00:00"
+      },
+      "id": "e36413369e0242a7b7dc3075e04a973c",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "ft",
+        "parameter_code": "00065",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50129254",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "2007-10-01T04:00:00+00:00",
+        "end": "2026-10-10T06:00:00+00:00"
+      },
+      "id": "e83cbbaeb16245689f4105050a49e4ee",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_of_measure": "ft",
+        "parameter_code": "00065",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-50148890",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": "2007-10-01T04:00:00+00:00",
+        "end": "2026-10-10T08:45:00+00:00"
+      },
+      "id": "f64f4111620e402199a8506be7baed07",
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "id": "test-rain-missing",
+      "properties": {
+        "unit_of_measure": "in",
+        "parameter_code": "00045",
+        "statistic_id": null,
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Decumulated",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-99999999001",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": null,
+        "end": null
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "test-rain-negative",
+      "properties": {
+        "unit_of_measure": "in",
+        "parameter_code": "00045",
+        "statistic_id": null,
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Decumulated",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-99999999002",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": null,
+        "end": null
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "test-rain-gap",
+      "properties": {
+        "unit_of_measure": "in",
+        "parameter_code": "00045",
+        "statistic_id": null,
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Decumulated",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-99999999003",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": null,
+        "end": null
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "test-flow-future",
+      "properties": {
+        "unit_of_measure": "ft^3/s",
+        "parameter_code": "00060",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-99999999004",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": null,
+        "end": null
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "test-gage-wrong-unit",
+      "properties": {
+        "unit_of_measure": "m",
+        "parameter_code": "00065",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-99999999005",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": null,
+        "end": null
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "test-flow-stale",
+      "properties": {
+        "unit_of_measure": "ft^3/s",
+        "parameter_code": "00060",
+        "statistic_id": "00011",
+        "computation_period_identifier": "Points",
+        "computation_identifier": "Instantaneous",
+        "primary": "Primary",
+        "monitoring_location_id": "USGS-99999999006",
+        "sublocation_identifier": null,
+        "web_description": null,
+        "begin": null,
+        "end": null
+      }
+    }
+  ]
+}

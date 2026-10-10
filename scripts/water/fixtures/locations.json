@@ -1,0 +1,228 @@
+{
+  "note": "Respuestas reales de la API de agua del USGS (V1) del 2026-10-10T21:20:42.466Z, recortadas a pocos sitios, más registros sintéticos marcados TEST FIXTURE / test-*. Solo para pruebas.",
+  "retrievedAt": "2026-10-10T21:20:42.466Z",
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "monitoring_location_name": "SABANA HOYOS 2 WELL, VEGA ALTA, PR",
+        "site_type_code": "GW",
+        "site_type": "Well",
+        "state_code": "72",
+        "county_code": "143",
+        "county_name": "Vega Alta Municipio"
+      },
+      "id": "USGS-182647066201700",
+      "geometry": { "type": "Point", "coordinates": [-66.338169, 18.444281] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "monitoring_location_name": "LAGO GUERRERO NR ISABELA, PR",
+        "site_type_code": "LK",
+        "site_type": "Lake, Reservoir, Impoundment",
+        "state_code": "72",
+        "county_code": "071",
+        "county_name": "Isabela Municipio"
+      },
+      "id": "USGS-182827067040500",
+      "geometry": { "type": "Point", "coordinates": [-67.068056, 18.474167] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "monitoring_location_name": "CANAL DE DERIVACION AT LAGO DE GUAJATACA, PR",
+        "site_type_code": "ST-CA",
+        "site_type": "Canal",
+        "state_code": "72",
+        "county_code": "115",
+        "county_name": "Quebradillas Municipio"
+      },
+      "id": "USGS-50011000",
+      "geometry": { "type": "Point", "coordinates": [-66.927506, 18.399517] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "monitoring_location_name": "LAGO GARZAS NR ADJUNTAS, PR",
+        "site_type_code": "LK",
+        "site_type": "Lake, Reservoir, Impoundment",
+        "state_code": "72",
+        "county_code": "001",
+        "county_name": "Adjuntas Municipio"
+      },
+      "id": "USGS-50020100",
+      "geometry": { "type": "Point", "coordinates": [-66.742961, 18.133633] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "monitoring_location_name": "RIO GRANDE DE MANATI AT HWY 2 NR MANATI, PR",
+        "site_type_code": "ST",
+        "site_type": "Stream",
+        "state_code": "72",
+        "county_code": "091",
+        "county_name": "Manati Municipio"
+      },
+      "id": "USGS-50038100",
+      "geometry": { "type": "Point", "coordinates": [-66.52647469933, 18.4289720121124] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "monitoring_location_name": "CANAL DE PATILLAS ABV EL LEGADO INTAKE, PR",
+        "site_type_code": "FA-DV",
+        "site_type": "Diversion",
+        "state_code": "72",
+        "county_code": "057",
+        "county_name": "Guayama Municipio"
+      },
+      "id": "USGS-50093090",
+      "geometry": { "type": "Point", "coordinates": [-66.1796111256245, 17.9763550999558] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "monitoring_location_name": "RIO LOCO AT LAS LATAS NR LA JOYA NR GUANICA, PR",
+        "site_type_code": "ST",
+        "site_type": "Stream",
+        "state_code": "72",
+        "county_code": "055",
+        "county_name": "Guanica Municipio"
+      },
+      "id": "USGS-50129254",
+      "geometry": { "type": "Point", "coordinates": [-66.8767, 18.009161] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "monitoring_location_name": "RIO ROSARIO NR HORMIGUEROS, PR",
+        "site_type_code": "ST",
+        "site_type": "Stream",
+        "state_code": "72",
+        "county_code": "067",
+        "county_name": "Hormigueros Municipio"
+      },
+      "id": "USGS-50136400",
+      "geometry": { "type": "Point", "coordinates": [-67.085764, 18.160086] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "monitoring_location_name": "RIO CULEBRINAS AT MARGARITA DAMSITE NR AGUADA, PR",
+        "site_type_code": "ST",
+        "site_type": "Stream",
+        "state_code": "72",
+        "county_code": "003",
+        "county_name": "Aguada Municipio"
+      },
+      "id": "USGS-50148890",
+      "geometry": { "type": "Point", "coordinates": [-67.1512, 18.394503] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "monitoring_location_name": "JAGUEYES ABAJO RAINGAGE, AGUAS BUENAS PR",
+        "site_type_code": "AT",
+        "site_type": "Atmosphere",
+        "state_code": "72",
+        "county_code": "007",
+        "county_name": "Aguas Buenas Municipio"
+      },
+      "id": "USGS-50999963",
+      "geometry": { "type": "Point", "coordinates": [-66.0757216289593, 18.2871751304598] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "monitoring_location_name": "BAIROA ARRIBA RAINGAGE, AGUAS BUENAS PR",
+        "site_type_code": "AT",
+        "site_type": "Atmosphere",
+        "state_code": "72",
+        "county_code": "007",
+        "county_name": "Aguas Buenas Municipio"
+      },
+      "id": "USGS-50999964",
+      "geometry": { "type": "Point", "coordinates": [-66.0954441115603, 18.263842954515] }
+    },
+    {
+      "type": "Feature",
+      "id": "USGS-99999999001",
+      "properties": {
+        "monitoring_location_name": "TEST FIXTURE RAIN GAGE MISSING VALUE",
+        "site_type_code": "AT",
+        "site_type": "Atmosphere",
+        "state_code": "72",
+        "county_code": "113",
+        "county_name": "Ponce Municipio"
+      },
+      "geometry": { "type": "Point", "coordinates": [-66.61, 18.01] }
+    },
+    {
+      "type": "Feature",
+      "id": "USGS-99999999002",
+      "properties": {
+        "monitoring_location_name": "TEST FIXTURE RAIN GAGE NEGATIVE",
+        "site_type_code": "AT",
+        "site_type": "Atmosphere",
+        "state_code": "72",
+        "county_code": "113",
+        "county_name": "Ponce Municipio"
+      },
+      "geometry": { "type": "Point", "coordinates": [-66.61, 18.01] }
+    },
+    {
+      "type": "Feature",
+      "id": "USGS-99999999003",
+      "properties": {
+        "monitoring_location_name": "TEST FIXTURE RAIN GAGE WITH GAP",
+        "site_type_code": "AT",
+        "site_type": "Atmosphere",
+        "state_code": "72",
+        "county_code": "113",
+        "county_name": "Ponce Municipio"
+      },
+      "geometry": { "type": "Point", "coordinates": [-66.61, 18.01] }
+    },
+    {
+      "type": "Feature",
+      "id": "USGS-99999999004",
+      "properties": {
+        "monitoring_location_name": "TEST FIXTURE FUTURE OBSERVATION",
+        "site_type_code": "ST",
+        "site_type": "Stream",
+        "state_code": "72",
+        "county_code": "113",
+        "county_name": "Ponce Municipio"
+      },
+      "geometry": { "type": "Point", "coordinates": [-66.61, 18.01] }
+    },
+    {
+      "type": "Feature",
+      "id": "USGS-99999999005",
+      "properties": {
+        "monitoring_location_name": "TEST FIXTURE GAGE IN METERS",
+        "site_type_code": "ST",
+        "site_type": "Stream",
+        "state_code": "72",
+        "county_code": "113",
+        "county_name": "Ponce Municipio"
+      },
+      "geometry": { "type": "Point", "coordinates": [-66.61, 18.01] }
+    },
+    {
+      "type": "Feature",
+      "id": "USGS-99999999006",
+      "properties": {
+        "monitoring_location_name": "TEST FIXTURE STALE STATION",
+        "site_type_code": "ST",
+        "site_type": "Stream",
+        "state_code": "72",
+        "county_code": "113",
+        "county_name": "Ponce Municipio"
+      },
+      "geometry": { "type": "Point", "coordinates": [-66.61, 18.01] }
+    }
+  ]
+}

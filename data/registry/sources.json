@@ -700,6 +700,70 @@
       "notes": "Datos recientes y en revisión: la magnitud y el lugar pueden cambiar. Las respuestas exactas se quedan en la copia local (.cache/live/raw)."
     },
     {
+      "datasetId": "usgs-agua-pr",
+      "title": "Agua ahora: ríos, lluvia y embalses (estaciones del USGS)",
+      "topic": "geografia",
+      "sourceAgency": "U.S. Geological Survey (USGS), Water Data for the Nation",
+      "sourceTitle": "USGS Water Data OGC APIs, V1: latest-continuous, continuous, time-series-metadata, monitoring-locations (state_code 72)",
+      "sourceURL": "https://api.waterdata.usgs.gov/docs/ogcapi/",
+      "additionalURLs": [
+        {
+          "label": "API (V1)",
+          "url": "https://api.waterdata.usgs.gov/ogcapi/v1/collections",
+          "linkHealth": "LIVE"
+        },
+        {
+          "label": "Declaración del USGS sobre datos provisionales",
+          "url": "https://waterdata.usgs.gov/provisional-data-statement/",
+          "linkHealth": "LIVE"
+        },
+        {
+          "label": "Retiro de WaterServices (aviso del USGS)",
+          "url": "https://waterdata.usgs.gov/blog/wdfn-waterservices-degradation/",
+          "linkHealth": "LIVE"
+        },
+        {
+          "label": "Derechos y crédito del USGS",
+          "url": "https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits",
+          "linkHealth": "LIVE"
+        }
+      ],
+      "sourceType": "API",
+      "sourceStatus": "RESOLVED",
+      "linkHealth": "LIVE",
+      "reportingPeriod": "Valor más reciente de cada serie activa y las 24 horas anteriores, hasta la última actualización",
+      "sourcePublishedAt": "UNKNOWN",
+      "originalRetrievalAt": "2026-10-10",
+      "verifiedAt": "2026-10-10",
+      "geography": "isla",
+      "nativeGeography": "OTHER",
+      "geographyJoin": "Las estaciones son puntos (latitud y longitud del USGS): no se pintan como valores de municipio y un municipio sin estación no tiene «0». El municipio de cada estación sale del código de condado de sus metadatos oficiales del USGS y dice dónde está la estación, no cómo están las condiciones en todo el municipio.",
+      "updateFrequency": "Las estaciones registran cada 15 minutos y transmiten más o menos cada hora. La copia del sitio se considera algo atrasada a los 60 minutos y desactualizada a las 3 horas; cada estación, por su propia hora: dato reciente hasta 2 horas, de hace unas horas hasta 6, después sin dato reciente.",
+      "redistributionStatus": "ATTRIBUTION_REQUIRED",
+      "rightsEvidence": "Página de derechos y crédito del USGS (leída el 2026-10-10): los datos producidos por el USGS son de dominio público de EE. UU.; se pide dar crédito («U.S. Geological Survey»); el identificador del USGS es marca registrada. Todas las series publicadas son de la agencia USGS. La Declaración sobre datos provisionales pide advertir que los datos provisionales pueden revisarse. El USGS dice que las APIs modernizadas reemplazan a WaterServices (en retiro el 22 de febrero de 2027). Ninguna condición impide mostrar las mediciones.",
+      "attribution": "Fuente: U.S. Geological Survey (USGS), Water Data for the Nation, Water Data OGC APIs (V1). Datos de dominio público; USGS no respalda este sitio. Datos provisionales sujetos a revisión por el USGS.",
+      "methodology": "Parámetros: caudal (00060, ft³/s, instantáneo), altura del medidor (00065, ft, instantáneo), lluvia (00045, pulgadas, incrementos «Decumulated» de 15 minutos) y elevación de embalses (72379/72380 PRVD02, 72375/72376 LMSL, 62614/62616 NGVD 29). Una serie por sitio y parámetro: las series sin datos en 30 días no se publican; si quedan dos activas del mismo parámetro, el sitio se excluye con su razón (no se elige una). En embalses se muestra una sola elevación: PRVD02 en pies, luego en metros, luego LMSL, luego NGVD 29. Caudal y altura en ríos, canales y zanjas; elevación y altura en embalses; lluvia en cualquier tipo de sitio. Tendencia: diferencia exacta con el valor de 3 horas antes. Lluvia de 24 horas: suma de los incrementos solo si cubren toda la ventana sin huecos de más de 30 minutos. Sin categorías de riesgo, sin porcentaje de llenado y sin inferencias de inundación o sequía.",
+      "fieldMap": {
+        "observaciones": "latest-continuous: time_series_id, monitoring_location_id, parameter_code, statistic_id, time, value, unit_of_measure, approval_status, qualifier",
+        "series": "time-series-metadata: parameter_code, unit_of_measure, statistic_id, computation_identifier, computation_period_identifier",
+        "estaciones": "monitoring-locations: monitoring_location_name, site_type_code, site_type, state_code, county_code, county_name, geometry",
+        "24 horas": "continuous: time_series_id, time, value"
+      },
+      "missingValuePolicy": "Un 0 medido es 0 (por ejemplo, un cauce seco con el calificador DRY). Un valor que el USGS no publica es «sin dato», nunca 0. Un valor negativo se publica tal cual y se marca para revisión. Si la copia está desactualizada o el USGS no respondió, el sitio dice que no puede confirmar las condiciones actuales.",
+      "provenanceStatus": "VERIFIED",
+      "readiness": "READY",
+      "publicationDecision": "KEEP_FOR_PUBLIC_LAUNCH",
+      "publicStatus": "PUBLIC_READY",
+      "valueExclusions": [],
+      "files": [
+        "data/current/usgs-water.json",
+        "data/current/usgs-water-series.json",
+        "scripts/water/source.ts"
+      ],
+      "metrics": [],
+      "notes": "Mediciones de estaciones, no avisos: para avisos de inundación, las alertas del NWS. Datos provisionales sujetos a revisión. Las respuestas exactas se quedan en la copia local (.cache/live/raw)."
+    },
+    {
       "datasetId": "geometria-municipios",
       "title": "Límites de los 78 municipios",
       "topic": "geografia",

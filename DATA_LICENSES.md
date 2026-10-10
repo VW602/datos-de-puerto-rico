@@ -26,6 +26,7 @@ fuente.
 | CDC, BRFSS 2023 | Tres por cientos para toda la isla (`src/data/pr/layers.ts`) | Licencia «Public Domain» en data.cdc.gov | Citar a los CDC |
 | NWS (NOAA) | Alertas activas normalizadas, con extractos cortos (`data/current/nws.json`) | Dominio público (aviso legal del NWS) | No reclamarla como propia; no sugerir respaldo del NWS/NOAA; no modificarla y presentarla como oficial (los extractos se marcan como extractos) |
 | USGS | Sismos de la región, normalizados (`data/current/usgs-earthquakes.json`) | Dominio público de EE. UU. | Dar crédito al U.S. Geological Survey; no usar su identificador |
+| USGS (Water Data for the Nation) | Mediciones de agua de estaciones, normalizadas (`data/current/usgs-water.json`, `usgs-water-series.json`) | Dominio público de EE. UU. | Dar crédito al U.S. Geological Survey; advertir que los datos provisionales pueden revisarse; no usar su identificador |
 | FEMA, OpenFEMA | Un extracto público de las respuestas de la API, solo con los campos que usa el sitio (`data/source/fema`; no es la respuesta original), y los totales y proyectos generados (`data/generated/fema-pr.json`, `data/generated/fema-projects/`) | Términos y condiciones de OpenFEMA | Citar el dataset con su versión y la fecha de obtención; incluir el aviso textual de FEMA; no usar logos de FEMA ni DHS; no reidentificar personas |
 | Tesoro, USAspending | Las respuestas de la API tal cual (`data/raw/usaspending`) y los totales generados (`data/generated/usaspending-pr.json`) | Datos abiertos según la página About de USAspending, sujetos a la limitación de Dun & Bradstreet | Citar USAspending.gov con la fecha de acceso; no diseminar en bloque nombres ni direcciones de entidades (el proyecto no los guarda) |
 | BLS, LAUS | Las respuestas de la API tal cual (`data/raw/bls/laus`) y las series mensuales generadas (`data/generated/bls-laus.json`) | Dominio público, según la página de derechos de autor de BLS; términos de servicio de la API | Citar a BLS; decir la fecha en que se obtuvieron los datos; incluir el aviso textual de BLS; no usar el emblema ni el logo de BLS |
@@ -132,6 +133,12 @@ fuente.
   dice que los datos del USGS son de dominio público y pide dar crédito al U.S.
   Geological Survey; su identificador es marca registrada. Leída el 7 de octubre de
   2026.
+- **USGS, agua:** la misma página (leída el 10 de octubre de 2026) cubre los datos de
+  agua. La [declaración sobre datos provisionales](https://waterdata.usgs.gov/provisional-data-statement/)
+  dice que los datos provisionales pueden revisarse y no tienen la aprobación final
+  del USGS; el sitio lo advierte junto a las mediciones. Todas las series publicadas
+  son de la agencia USGS. La [página de claves](https://api.waterdata.usgs.gov/docs/ogcapi/keys/)
+  explica que una clave da límites más altos; el proyecto no la necesita.
 
 ## Si propones una fuente nueva
 

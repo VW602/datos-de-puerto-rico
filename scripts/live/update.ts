@@ -51,19 +51,20 @@ export function atomicWrite(path: string, content: string): void {
   renameSync(tmp, path);
 }
 
-type Fetched = { text: string; status: number; etag: string | null; notModified: boolean };
+export type Fetched = { text: string; status: number; etag: string | null; notModified: boolean };
 
-async function fetchOnce(
+export async function fetchOnce(
   url: string,
   accept: string,
   cache: { etag: string | null; text: string | null },
+  timeoutMs = TIMEOUT_MS,
 ): Promise<Fetched> {
   for (let attempt = 1; ; attempt += 1) {
     let problem: string;
     try {
       const headers: Record<string, string> = { "User-Agent": USER_AGENT, Accept: accept };
       if (cache.etag && cache.text) headers["If-None-Match"] = cache.etag;
-      const response = await fetch(url, { headers, signal: AbortSignal.timeout(TIMEOUT_MS) });
+      const response = await fetch(url, { headers, signal: AbortSignal.timeout(timeoutMs) });
       if (response.status === 304 && cache.text)
         return { text: cache.text, status: 304, etag: cache.etag, notModified: true };
       const text = await response.text();

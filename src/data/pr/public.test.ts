@@ -35,6 +35,7 @@ const V1_SOURCES = [
   "openfema-mitigacion-pr",
   "nws-alertas-pr",
   "usgs-sismos-pr",
+  "usgs-agua-pr",
   "geometria-municipios",
 ];
 

@@ -261,6 +261,24 @@
       "valueExclusions": []
     },
     {
+      "datasetId": "usgs-agua-pr",
+      "title": "Agua ahora: ríos, lluvia y embalses (estaciones del USGS)",
+      "sourceAgency": "U.S. Geological Survey (USGS), Water Data for the Nation",
+      "sourceTitle": "USGS Water Data OGC APIs, V1: latest-continuous, continuous, time-series-metadata, monitoring-locations (state_code 72)",
+      "reportingPeriod": "Valor más reciente de cada serie activa y las 24 horas anteriores, hasta la última actualización",
+      "geography": "isla",
+      "attribution": "Fuente: U.S. Geological Survey (USGS), Water Data for the Nation, Water Data OGC APIs (V1). Datos de dominio público; USGS no respalda este sitio. Datos provisionales sujetos a revisión por el USGS.",
+      "missingValuePolicy": "Un 0 medido es 0 (por ejemplo, un cauce seco con el calificador DRY). Un valor que el USGS no publica es «sin dato», nunca 0. Un valor negativo se publica tal cual y se marca para revisión. Si la copia está desactualizada o el USGS no respondió, el sitio dice que no puede confirmar las condiciones actuales.",
+      "publicStatus": "PUBLIC_READY",
+      "metrics": [],
+      "sourceURL": "https://api.waterdata.usgs.gov/docs/ogcapi/",
+      "methodology": "Parámetros: caudal (00060, ft³/s, instantáneo), altura del medidor (00065, ft, instantáneo), lluvia (00045, pulgadas, incrementos «Decumulated» de 15 minutos) y elevación de embalses (72379/72380 PRVD02, 72375/72376 LMSL, 62614/62616 NGVD 29). Una serie por sitio y parámetro: las series sin datos en 30 días no se publican; si quedan dos activas del mismo parámetro, el sitio se excluye con su razón (no se elige una). En embalses se muestra una sola elevación: PRVD02 en pies, luego en metros, luego LMSL, luego NGVD 29. Caudal y altura en ríos, canales y zanjas; elevación y altura en embalses; lluvia en cualquier tipo de sitio. Tendencia: diferencia exacta con el valor de 3 horas antes. Lluvia de 24 horas: suma de los incrementos solo si cubren toda la ventana sin huecos de más de 30 minutos. Sin categorías de riesgo, sin porcentaje de llenado y sin inferencias de inundación o sequía.",
+      "verified": true,
+      "retrievedAt": null,
+      "marginOfErrorAvailable": false,
+      "valueExclusions": []
+    },
+    {
       "datasetId": "geometria-municipios",
       "title": "Límites de los 78 municipios",
       "sourceAgency": "U.S. Census Bureau, Geography Division",

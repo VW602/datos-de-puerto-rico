@@ -54,6 +54,12 @@ antigüedad. Si la copia está vieja o la fuente no respondió, lo dice en lugar
 decir que no pasa nada. Para actualizarla: `npm run data:live:update` (necesita red;
 se puede correr de forma periódica sin cambios). No es un sistema de avisos.
 
+**Agua ahora:** las mediciones más recientes de las estaciones del USGS (caudal y
+altura del medidor en ríos y canales, lluvia, y elevación de embalses), cada una con
+la hora en que se midió, si es provisional y si la estación sigue reportando. Son
+mediciones, no avisos de inundación ni de sequía, y no hay porcentaje de llenado de
+embalses. Para actualizarlas: `npm run data:water:update`.
+
 ## De dónde salen los datos
 
 | Fuente | Qué aporta |
@@ -106,6 +112,7 @@ Abre <http://localhost:8080>.
 | `npm run data:census:update` | Descarga de nuevo la copia oficial del Censo (necesita red) |
 | `npm run data:geo:update` | Descarga de nuevo los límites TIGER/Line 2024 (necesita red) |
 | `npm run data:live:update` | Pide las alertas activas del NWS y los sismos recientes del USGS (necesita red; si una fuente falla, conserva la última copia buena) |
+| `npm run data:water:update` | Pide las mediciones de agua de las estaciones del USGS en Puerto Rico (necesita red; si falla, conserva la última copia buena) |
 | `npm run data:fema:update` | Pide de nuevo los datos de recuperación a la API OpenFEMA (necesita red; se puede reanudar) |
 | `npm run data:usaspending:update` | Pide de nuevo los fondos federales a la API oficial de USAspending (necesita red; se puede reanudar) |
 | `npm run data:bls:update` | Pide de nuevo el desempleo mensual a la API oficial de BLS (necesita red) |

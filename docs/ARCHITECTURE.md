@@ -20,6 +20,8 @@ Antes de publicar, fuera del sitio:
    api.bls.gov     ─► scripts/bls    ─► data/raw/bls/laus → data/generated/bls-laus.json
    api.weather.gov, earthquake.usgs.gov ─► scripts/live ─► .cache/live/raw (local)
                                        → data/current/nws.json, usgs-earthquakes.json
+   api.waterdata.usgs.gov (OGC API V1) ─► scripts/water ─► .cache/live/raw (local)
+                                       → data/current/usgs-water.json, usgs-water-series.json
    www.fema.gov/api/open ─► scripts/fema ─► .cache (reanudable; respuestas exactas, locales) → data/source/fema (extracto público)
                                        → data/generated/fema-pr.json + fema-projects/<desastre>.json
    api.usaspending.gov ─► scripts/usaspending ─► .cache (reanudable) → data/raw/usaspending
@@ -49,6 +51,10 @@ Antes de publicar, fuera del sitio:
     `data/current/`; la frescura (al día, algo atrasada, desactualizada, sin datos)
     se calcula en el navegador con la hora de la copia. «Ninguna alerta» solo se dice
     con una copia al día o algo atrasada. Las horas se muestran en hora de Puerto Rico.
+  - `water.ts` y `waterModel.ts`: «Agua ahora». Cargan las copias de agua solo cuando
+    hacen falta (Vite las separa en su propio pedazo). Dos frescuras distintas: la de
+    la copia (la misma de arriba) y la de cada estación, por la hora de su propia
+    medición. Sin categorías de riesgo ni porcentajes de llenado.
   - `places.ts`: arma cada municipio con las medidas del Censo generadas (con su
     margen de error) y los datos de FARS.
   - `public.ts`: la frontera de publicación. Las medidas, los grupos, la medida
