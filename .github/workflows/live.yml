@@ -1,0 +1,113 @@
+# Current data (NWS alerts, USGS earthquakes, USGS water) for the preview.
+#
+# Every 15 minutes: fetch NWS and USGS earthquakes. USGS water only when the
+# last good water copy is 55 minutes old or more (so about hourly), or when
+# asked. Then check, test and build the Cloudflare Worker with the fresh
+# copies, and deploy it.
+#
+# Nothing is committed. The latest good copies travel between runs in the
+# Actions cache, saved only after a successful deploy.
+#
+# Fails closed: if any update, check, test or build fails, nothing is
+# deployed, the cache is not updated, and the previous deploy stays live
+# (where the site shows each copy's age and says when it is too old).
+name: Live data (preview)
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+    inputs:
+      water:
+        description: "Fetch USGS water now, whatever the age of the last copy"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-preview
+  cancel-in-progress: false
+
+env:
+  # Cache key prefix changes with the code that writes or reads the snapshots,
+  # so a schema change starts again from the committed copies.
+  SNAPSHOT_CODE: ${{ hashFiles('scripts/live/**', 'scripts/water/**', 'src/data/pr/current*.ts', 'src/data/pr/water*.ts') }}
+  WRANGLER_SEND_METRICS: "false"
+
+jobs:
+  update-and-deploy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment:
+      name: preview
+      url: ${{ vars.PREVIEW_URL }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+
+      - name: Restore the last good current-data copies
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: data/current
+          key: live-current-${{ env.SNAPSHOT_CODE }}-${{ github.run_id }}
+          restore-keys: live-current-${{ env.SNAPSHOT_CODE }}-
+
+      - name: Is water due?
+        id: water
+        env:
+          FORCE: ${{ inputs.water == true }}
+        run: |
+          age=$(node -e 'const s=JSON.parse(require("fs").readFileSync("data/current/usgs-water.json","utf8")); console.log(s.retrievedAt ? Math.floor((Date.now()-Date.parse(s.retrievedAt))/60000) : 99999)')
+          echo "Last good water copy: $age minutes old"
+          if [ "$FORCE" = "true" ] || [ "$age" -ge 55 ]; then echo "due=true" >> "$GITHUB_OUTPUT"; else echo "due=false" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Update NWS alerts and USGS earthquakes
+        run: npm run data:live:update
+      - name: Update USGS water
+        if: steps.water.outputs.due == 'true'
+        run: npm run data:water:update
+
+      - run: npm run data:check
+      - run: npm test
+      - run: npm run build:cloudflare
+      - name: Cloudflare output smoke check
+        run: node scripts/release/cloudflare-check.ts
+
+      - name: Deploy the Worker (preview, workers.dev)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx --yes wrangler@4.137.0 deploy
+
+      - name: Check the deployed preview
+        env:
+          PREVIEW_URL: ${{ vars.PREVIEW_URL }}
+        run: |
+          test -n "$PREVIEW_URL"
+          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$PREVIEW_URL")
+          echo "GET $PREVIEW_URL -> $code"
+          test "$code" = "200"
+
+      - name: Save the copies that were just deployed
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: data/current
+          key: live-current-${{ env.SNAPSHOT_CODE }}-${{ github.run_id }}
+
+      - name: Summary
+        run: |
+          node -e '
+            const fs = require("fs");
+            for (const f of ["nws", "usgs-earthquakes", "usgs-water"]) {
+              const s = JSON.parse(fs.readFileSync(`data/current/${f}.json`, "utf8"));
+              console.log(`| ${f} | ${s.retrievedAt} | ${s.lastAttempt?.ok} |`);
+            }' > rows.md
+          { echo "| Copy | retrievedAt | last attempt ok |"; echo "| --- | --- | --- |"; cat rows.md; } >> "$GITHUB_STEP_SUMMARY"

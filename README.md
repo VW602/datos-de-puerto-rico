@@ -137,6 +137,9 @@ Abre <http://localhost:8080>.
 | `npm run data:usaspending:update` | Pide de nuevo los fondos federales a la API oficial de USAspending (necesita red; se puede reanudar) |
 | `npm run data:bls:update` | Pide de nuevo el desempleo mensual a la API oficial de BLS (necesita red) |
 
+Cómo se actualizan los datos actuales y se despliega la vista previa (GitHub Actions y
+Cloudflare): [docs/OPERATIONS.md](docs/OPERATIONS.md).
+
 ### Actualizar los datos del Censo o del mapa
 
 1. Cambia la edición en `scripts/census/releases.ts` o en `scripts/geo/source.ts`.

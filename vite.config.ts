@@ -24,6 +24,14 @@ export default defineConfig(({ command, isPreview }) => ({
     ...(command === "build" || isPreview
       ? [
           nitro({
+            // Pinned, not "latest" (the build machine's date), so every build,
+            // local or CI, targets the same Workers runtime behavior. The
+            // Worker's date is also set directly: Nitro's own date handling
+            // shifts it by a day per pass outside UTC.
+            compatibilityDate: "2026-10-08",
+            cloudflare: {
+              wrangler: { name: "datos-de-puerto-rico", compatibility_date: "2026-10-08" },
+            },
             routeRules: { "/**": { headers: SECURITY_HEADERS } },
             plugins: ["./src/server/security-headers.ts"],
           }),

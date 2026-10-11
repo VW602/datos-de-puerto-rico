@@ -1,0 +1,82 @@
+# Slow-moving data (BLS, FEMA, USAspending). Manual only.
+#
+# Updates the chosen sources, regenerates, checks and tests, then pushes a
+# branch data/slow-<run> for review. It never touches main and never deploys:
+# open a pull request from the branch, review the diff, and merge if it is
+# right. Census and TIGER stay manual (docs/OPERATIONS.md).
+name: Slow data (review branch)
+
+on:
+  workflow_dispatch:
+    inputs:
+      bls:
+        description: "BLS LAUS (monthly unemployment)"
+        type: boolean
+        default: true
+      fema:
+        description: "OpenFEMA (slow: many requests)"
+        type: boolean
+        default: false
+      usaspending:
+        description: "USAspending (slow: many requests)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: slow-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    permissions:
+      contents: write # push the review branch only
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+
+      - name: BLS
+        if: inputs.bls
+        env:
+          BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
+        run: npm run data:bls:update && npm run data:bls:generate -- --allow-changes
+      - name: FEMA
+        if: inputs.fema
+        run: npm run data:fema:update && npm run data:fema:generate -- --allow-changes
+      - name: USAspending
+        if: inputs.usaspending
+        run: npm run data:usaspending:update && npm run data:usaspending:generate -- --allow-changes
+
+      - run: npm run data:registry:generate
+      - run: npm run check
+
+      - name: Push a review branch
+        run: |
+          # Raw API responses stay out of git (they live in the ignored .cache).
+          if git status --porcelain --untracked-files=all | grep -E ' data/raw/fema/|\.cache/'; then
+            echo "Unexpected raw files in the working tree" >&2; exit 1
+          fi
+          if [ -z "$(git status --porcelain --untracked-files=all)" ]; then
+            echo "No changes: the sources have nothing new." | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          branch="data/slow-${GITHUB_RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add -A
+          git commit -m "data: update slow sources (run ${GITHUB_RUN_ID})"
+          git push origin "$branch"
+          {
+            echo "Branch \`$branch\` pushed for review:"
+            echo "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/compare/main...${branch}?expand=1"
+            echo; git show --stat --format= HEAD
+          } >> "$GITHUB_STEP_SUMMARY"

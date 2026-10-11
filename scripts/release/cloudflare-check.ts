@@ -24,6 +24,10 @@ const ALLOWED_NODE = new Set([
   "crypto",
 ]);
 
+/** Pinned in vite.config.ts; a build must never pick up the build machine's date. */
+const COMPATIBILITY_DATE = "2026-10-08";
+const WORKER_NAME = "datos-de-puerto-rico";
+
 const problems: string[] = [];
 const fail = (message: string) => problems.push(message);
 const read = (p: string) => readFileSync(join(OUT, p), "utf8");
@@ -46,12 +50,17 @@ if (nitro.preset !== "cloudflare-module") {
 }
 
 const wrangler = JSON.parse(read("server/wrangler.json")) as {
+  name: string;
+  compatibility_date: string;
   main: string;
   assets?: { directory: string; binding: string };
   compatibility_flags?: string[];
 };
 if (wrangler.main !== "index.mjs" || !existsSync(join(OUT, "server/index.mjs")))
   fail("falta el Worker server/index.mjs");
+if (wrangler.name !== WORKER_NAME) fail(`nombre del Worker ${wrangler.name}, no ${WORKER_NAME}`);
+if (wrangler.compatibility_date !== COMPATIBILITY_DATE)
+  fail(`fecha de compatibilidad ${wrangler.compatibility_date}, no ${COMPATIBILITY_DATE}`);
 if (wrangler.assets?.directory !== "../public") fail("los archivos estáticos no apuntan a public/");
 if (!wrangler.compatibility_flags?.includes("nodejs_compat")) fail("falta nodejs_compat");
 
