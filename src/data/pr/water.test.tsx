@@ -307,8 +307,16 @@ describe("stations vs measurement series", () => {
       `Ríos y canales: ${rios.stationCount} estaciones · ${rios.series.reporting} de ${rios.series.seriesCount} mediciones con dato reciente`,
     );
     expect(rios.stationCount).not.toBe(rios.series.seriesCount);
+    // Independent of seriesState: a series reports when it has a value no older than the stale limit.
+    // (The published snapshot is live data, so no count is written down here.)
+    const reportingRios = published.data.observations.filter(
+      (o) =>
+        o.view === "RIOS" &&
+        o.value !== null &&
+        (at.getTime() - Date.parse(o.observedAt)) / 60000 <= published.seriesFreshness.staleMinutes,
+    ).length;
     expect(summary).toContain(
-      `Ríos y canales: ${stationCount(published, "RIOS")} estaciones · ${seriesCount(published, "RIOS") - 3} de ${seriesCount(published, "RIOS")} mediciones con dato reciente`,
+      `Ríos y canales: ${stationCount(published, "RIOS")} estaciones · ${reportingRios} de ${seriesCount(published, "RIOS")} mediciones con dato reciente`,
     );
   });
 
