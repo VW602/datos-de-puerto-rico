@@ -79,11 +79,18 @@ export function Summary({
 }) {
   const island = islandStat(metric.id);
   const period = periodOf(metric.id);
-  const big = size === "desktop" ? "text-[72px] md:text-[96px]" : "text-[72px]";
+  // The headline value follows the summary's own width (container query units),
+  // between a large floor (2.25rem, which grows with the reader's text size) and
+  // the original 72 / 96 px. The section uses break-words: a word that still does
+  // not fit breaks instead of widening the page, and the full value is always shown.
+  const big =
+    size === "desktop"
+      ? "text-[clamp(2.25rem,20cqi,4.5rem)] md:text-[clamp(2.25rem,20cqi,6rem)]"
+      : "text-[clamp(2.25rem,20cqi,4.5rem)]";
 
   if (!place) {
     return (
-      <section aria-label="Resumen" className="border-t-2 border-fg pt-4">
+      <section aria-label="Resumen" className="@container border-t-2 border-fg pt-4 break-words">
         <p className="text-xs font-bold tracking-[0.09em] text-accent uppercase">
           Puerto Rico · {metric.label}
         </p>
@@ -131,10 +138,10 @@ export function Summary({
   return (
     <section
       aria-label={`Municipio seleccionado: ${place.name}`}
-      className="border-t-2 border-fg pt-4"
+      className="@container border-t-2 border-fg pt-4 break-words"
     >
       <div className="flex items-start justify-between gap-3">
-        <div>
+        <div className="min-w-0">
           <p className="text-xs font-bold tracking-[0.09em] text-accent uppercase">
             Municipio seleccionado
           </p>
@@ -183,14 +190,14 @@ export function Summary({
       )}
 
       {!island && value != null && (
-        <dl className="mt-4 grid grid-cols-2 border-t border-divider">
+        <dl className="mt-4 grid grid-cols-1 border-t border-divider @[18rem]:grid-cols-2">
           <div className="border-b border-divider-2 py-3 pr-3">
             <dt className="text-[13px] text-muted">Lugar entre los 78</dt>
             <dd className="mt-0.5 text-[22px] font-semibold tabular md:text-[26px]">
               {rank ? `${rank.rank} de ${rank.of}` : "—"}
             </dd>
           </div>
-          <div className="border-b border-l border-divider-2 py-3 pl-3.5">
+          <div className="border-b border-divider-2 py-3 @[18rem]:border-l @[18rem]:pl-3.5">
             <dt className="text-[13px] text-muted">
               Frente a la mediana ({metric.format(ranking.median)})
             </dt>
@@ -208,14 +215,14 @@ export function Summary({
       )}
 
       <dl
-        className={`grid grid-cols-2 border-t border-divider ${metric.id === MONTHLY || FUNDS.includes(metric.id) || FEMA.includes(metric.id) ? "mt-5" : ""}`}
+        className={`grid grid-cols-1 border-t border-divider @[18rem]:grid-cols-2 ${metric.id === MONTHLY || FUNDS.includes(metric.id) || FEMA.includes(metric.id) ? "mt-5" : ""}`}
       >
         {others.map((id, index) => {
           const other = prMetricById(id);
           return (
             <div
               key={id}
-              className={`border-b border-divider-2 py-3 ${index % 2 ? "border-l pl-3.5" : "pr-3"}`}
+              className={`border-b border-divider-2 py-3 ${index % 2 ? "@[18rem]:border-l @[18rem]:pl-3.5" : "pr-3"}`}
             >
               <dt className="text-[13px] text-muted">
                 {other.label} · {periodOf(id)}

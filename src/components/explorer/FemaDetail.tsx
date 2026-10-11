@@ -71,12 +71,12 @@ export function DisasterFilter({
 
 function Row({ label, note, value }: { label: string; note?: string; value: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-3 border-b border-divider-2 py-2">
+    <div className="flex flex-wrap items-baseline justify-between gap-x-3 border-b border-divider-2 py-2">
       <dt className="min-w-0">
         {label}
         {note && <span className="block text-[12px] text-muted">{note}</span>}
       </dt>
-      <dd className="shrink-0 text-right font-semibold tabular">{value}</dd>
+      <dd className="ml-auto text-right font-semibold tabular">{value}</dd>
     </div>
   );
 }
@@ -219,7 +219,7 @@ export function FemaIsland({ disaster }: { disaster: string }) {
         const cell = femaIsland(measure, disaster);
         return (
           <div key={measure} className="mt-3">
-            <h4 className="flex justify-between text-[13px] font-semibold">
+            <h4 className="flex flex-wrap justify-between gap-x-3 text-[13px] font-semibold">
               <span>{label}</span>
               <span className="tabular">{show(cell.total, kind)}</span>
             </h4>
@@ -227,13 +227,13 @@ export function FemaIsland({ disaster }: { disaster: string }) {
               {FEMA_GEO_ORDER.map((s) => (
                 <div
                   key={s}
-                  className="flex items-baseline justify-between gap-3 border-b border-divider-2 py-1.5"
+                  className="flex flex-wrap items-baseline justify-between gap-x-3 border-b border-divider-2 py-1.5"
                 >
                   <dt className="min-w-0">
                     {FEMA_GEO_COPY[s].label}
                     <span className="block text-[12px] text-muted">{FEMA_GEO_COPY[s].detail}</span>
                   </dt>
-                  <dd className="shrink-0 text-right tabular">
+                  <dd className="ml-auto text-right tabular">
                     {show(cell[s], kind)}
                     <span className="block text-[12px] text-muted">
                       {share(cell[s], cell.total)}

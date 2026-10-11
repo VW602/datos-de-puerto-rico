@@ -43,12 +43,12 @@ function Ranked({
         {rows.map(([code, amount]) => (
           <li
             key={code}
-            className="flex items-baseline justify-between gap-3 border-b border-divider-2 py-1.5 text-[14px]"
+            className="flex flex-wrap items-baseline justify-between gap-x-3 border-b border-divider-2 py-1.5 text-[14px]"
           >
             <span className="min-w-0">
               {name(code)} <span className="text-[12px] text-muted tabular">{code}</span>
             </span>
-            <span className="shrink-0 text-right font-semibold tabular">
+            <span className="ml-auto text-right font-semibold tabular">
               {money(amount)}
               {amount < 0 && (
                 <span className="block text-[12px] font-normal text-muted">desobligación neta</span>
@@ -75,18 +75,18 @@ export function FundsMunicipio({ id }: { id: string }) {
         Dinero federal · {f.name} · AF {FUNDS_FY}
       </h3>
       <dl className="mt-1 border-t border-divider-2 text-[15px]">
-        <div className="flex items-baseline justify-between gap-3 border-b border-divider-2 py-2.5">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-3 border-b border-divider-2 py-2.5">
           <dt>
             Registrado por USAspending en {f.name}
             <span className="block text-[13px] text-muted">
               Todo lo que tiene a {f.name} como lugar de ejecución.
             </span>
           </dt>
-          <dd className="shrink-0 font-semibold tabular">
+          <dd className="ml-auto text-right font-semibold tabular">
             {f.recorded == null ? "Sin registros" : money(f.recorded)}
           </dd>
         </div>
-        <div className="flex items-baseline justify-between gap-3 border-b border-divider-2 py-2.5">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-3 border-b border-divider-2 py-2.5">
           <dt>
             <strong>Atribuible al municipio</strong> con la información disponible
             <span className="block text-[13px] text-muted">
@@ -94,18 +94,18 @@ export function FundsMunicipio({ id }: { id: string }) {
               que pinta el mapa.
             </span>
           </dt>
-          <dd className="shrink-0 font-semibold tabular">
+          <dd className="ml-auto text-right font-semibold tabular">
             {f.attributable == null ? "Sin registros" : money(f.attributable)}
           </dd>
         </div>
-        <div className="flex items-baseline justify-between gap-3 border-b border-divider-2 py-2.5">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-3 border-b border-divider-2 py-2.5">
           <dt>
             {GEO_STATE_COPY.MUNICIPIO_UNCERTAIN.label}
             <span className="block text-[13px] text-muted">
               {GEO_STATE_COPY.MUNICIPIO_UNCERTAIN.detail}
             </span>
           </dt>
-          <dd className="shrink-0 font-semibold tabular">{money(f.uncertain)}</dd>
+          <dd className="ml-auto text-right font-semibold tabular">{money(f.uncertain)}</dd>
         </div>
       </dl>
 
@@ -113,14 +113,14 @@ export function FundsMunicipio({ id }: { id: string }) {
       <p className="text-[13px] text-muted">
         Adjudicaciones atribuibles a {f.name} con actividad en el AF {FUNDS_FY}, desde su inicio.
       </p>
-      <dl className="mt-1 grid grid-cols-2 border-y border-divider-2">
+      <dl className="mt-1 grid grid-cols-1 border-y border-divider-2 @[18rem]:grid-cols-2">
         <div className="py-2.5 pr-2">
           <dt className="text-[13px] text-muted">Obligado</dt>
           <dd className="text-lg font-semibold tabular">
             {f.award.attributableObligations == null ? "—" : money(f.award.attributableObligations)}
           </dd>
         </div>
-        <div className="border-l border-divider-2 py-2.5 pl-2.5">
+        <div className="border-divider-2 py-2.5 @[18rem]:border-l @[18rem]:pl-2.5">
           <dt className="text-[13px] text-muted">Desembolsado acumulado (reportado)</dt>
           <dd className="text-lg font-semibold tabular">
             {outlays == null ? "Sin desembolsos reportados" : money(outlays)}
@@ -165,13 +165,13 @@ export function FundsIsland() {
         {GEO_STATE_ORDER.map((state) => (
           <div
             key={state}
-            className="flex items-baseline justify-between gap-3 border-b border-divider-2 py-2.5"
+            className="flex flex-wrap items-baseline justify-between gap-x-3 border-b border-divider-2 py-2.5"
           >
             <dt>
               {GEO_STATE_COPY[state].label}
               <span className="block text-[13px] text-muted">{GEO_STATE_COPY[state].detail}</span>
             </dt>
-            <dd className="shrink-0 text-right font-semibold tabular">
+            <dd className="ml-auto text-right font-semibold tabular">
               {money(states[state])}
               <span className="block text-[12px] font-normal text-muted">
                 {share(states[state], total)}
@@ -191,7 +191,8 @@ export function FundsIsland() {
           </h4>
           <table className="mt-1 w-full text-[14px]">
             <thead>
-              <tr className="border-b border-divider-2 text-left text-[12px] text-muted">
+              {/* Headers and award IDs may break when text is very large; amounts break only at spaces. */}
+              <tr className="border-b border-divider-2 text-left text-[12px] text-muted [overflow-wrap:anywhere]">
                 <th className="py-1 font-normal">Adjudicación</th>
                 <th className="py-1 text-right font-normal">Obligado</th>
                 <th className="py-1 text-right font-normal">Desembolsado</th>
@@ -200,7 +201,7 @@ export function FundsIsland() {
             <tbody>
               {cdbg.map((c) => (
                 <tr key={c.awardId} className="border-b border-divider-2">
-                  <td className="py-1.5 tabular">{c.awardId}</td>
+                  <td className="py-1.5 tabular [overflow-wrap:anywhere]">{c.awardId}</td>
                   <td className="py-1.5 text-right tabular">{money(c.obligated)}</td>
                   <td className="py-1.5 text-right tabular">
                     {c.outlays == null ? "Sin reportar" : money(c.outlays)}

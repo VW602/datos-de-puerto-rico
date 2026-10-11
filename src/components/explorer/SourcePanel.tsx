@@ -225,11 +225,13 @@ export function SourcePanel({
     ],
   ];
   return (
+    // Long machine identifiers (datasets, fields, series IDs) stay complete and
+    // selectable; they may break across lines instead of widening the page.
     <section
       aria-label="¿De dónde sale este dato?"
-      className="grid gap-x-14 gap-y-6 md:grid-cols-2"
+      className="grid gap-x-14 gap-y-6 [overflow-wrap:anywhere] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]"
     >
-      <div>
+      <div className="min-w-0">
         <Heading className="font-display text-[26px] leading-tight font-medium md:text-3xl">
           ¿De dónde sale este dato?
         </Heading>
@@ -278,7 +280,7 @@ export function SourcePanel({
           </a>
         )}
       </div>
-      <div>
+      <div className="min-w-0">
         <dl className="grid grid-cols-[minmax(0,9.5rem)_minmax(0,1fr)] border-t-2 border-fg text-[15px] leading-snug">
           {rows.map(([term, value]) => (
             <div key={term} className="contents">
