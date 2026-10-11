@@ -24,6 +24,7 @@ import {
 import { rankByMetric } from "@/data/pr/ranking";
 import { publicSourceById } from "@/data/pr/sources";
 import { ISLAND_ONLY_FILL, colorForValue } from "@/data/scale";
+import { SITE_NAME } from "@/lib/site";
 import { AtlasMap } from "./AtlasMap";
 import { DataTable } from "./DataTable";
 import { DisasterFilter } from "./FemaDetail";
@@ -190,9 +191,7 @@ export function PuertoRicoApp() {
     <div className="min-h-dvh bg-bg text-fg">
       <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 border-b border-fg px-4 py-1.5 md:px-14 md:py-3">
         <div className="flex items-baseline gap-3">
-          <span className="font-display text-[21px] font-semibold md:text-[26px]">
-            Datos de Puerto Rico
-          </span>
+          <h1 className="font-display text-[21px] font-semibold md:text-[26px]">{SITE_NAME}</h1>
           <span className="hidden text-sm text-muted lg:inline">78 municipios, con su fuente</span>
         </div>
         <nav aria-label="Temas" className="hidden flex-wrap gap-0.5 md:flex">
@@ -226,9 +225,9 @@ export function PuertoRicoApp() {
             <p className="text-xs font-bold tracking-[0.09em] text-accent uppercase md:text-[13px]">
               {groupLabel(group)} · {metric.source}
             </p>
-            <h1 className="mt-1.5 hidden font-display text-[54px] leading-none font-medium md:block">
+            <h2 className="mt-1.5 hidden font-display text-[54px] leading-none font-medium md:block">
               {metric.label}
-            </h1>
+            </h2>
             <label className="mt-1.5 block md:hidden">
               <span className="sr-only">Medida</span>
               <select
@@ -575,8 +574,9 @@ export function PuertoRicoApp() {
       <footer className="border-t border-fg px-4 pt-4 pb-6 text-[13px] leading-normal text-muted md:px-14">
         <p>
           Fuentes: Oficina del Censo de EE. UU. (ACS y TIGER/Line), NHTSA (FARS), CDC (BRFSS), BLS
-          (LAUS) y USAspending.gov (Departamento del Tesoro). Cada medida dice su fuente y su
-          periodo.
+          (LAUS), USAspending.gov (Departamento del Tesoro), OpenFEMA, el Servicio Nacional de
+          Meteorología (NWS) y el Servicio Geológico de EE. UU. (USGS). Cada medida dice su fuente y
+          su periodo.
         </p>
         {MAP_ATTRIBUTION && <p className="mt-1">{MAP_ATTRIBUTION}</p>}
         <p className="mt-1">

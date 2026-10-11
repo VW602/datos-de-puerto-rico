@@ -22,7 +22,7 @@
   "error": null
  },
  "freshness": {
-  "currentMinutes": 15,
+  "currentMinutes": 30,
   "staleMinutes": 60
  },
  "contentSha256": "f43c62200c7815091a6fe618461fbcb6ffd38e0f8ff7aaa9ee863ab0f5d47092",

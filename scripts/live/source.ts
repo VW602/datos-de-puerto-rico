@@ -16,7 +16,7 @@ export const RAW_CACHE_DIR = ".cache/live/raw";
 
 /** NWS asks for a User-Agent that identifies the application, ideally with contact information. */
 export const USER_AGENT =
-  "(puerto-rico-datos, open-source civic data project, https://github.com/VW602)";
+  "(puerto-rico-datos, open-source civic data project, https://datos.tn242.com/)";
 
 export const NWS = {
   agency: "National Weather Service (NWS), NOAA",
@@ -52,13 +52,14 @@ export const REGION = { minLat: 17.0, maxLat: 20.0, minLon: -69.0, maxLon: -63.5
 /**
  * Freshness, per source, in minutes since the last successful retrieval.
  * NWS issues short-fused warnings at any time (its API caches 5 seconds),
- * so a snapshot older than 15 minutes is aging and older than 60 minutes
- * cannot stand for "now". USGS updates its feed every minute, but Puerto
+ * so a snapshot older than 30 minutes is aging and older than 60 minutes
+ * cannot stand for "now"; 30 rather than 15 leaves room for a scheduled
+ * update that starts late. USGS updates its feed every minute, but Puerto
  * Rico events are located and reviewed by the Puerto Rico Seismic Network
  * with some delay, so 30 minutes is current and more than 3 hours is stale.
  */
 export const FRESHNESS = {
-  nws: { currentMinutes: 15, staleMinutes: 60 },
+  nws: { currentMinutes: 30, staleMinutes: 60 },
   usgs: { currentMinutes: 30, staleMinutes: 180 },
 } as const;
 

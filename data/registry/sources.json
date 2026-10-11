@@ -628,7 +628,7 @@
       "geography": "municipio",
       "nativeGeography": "OTHER",
       "geographyJoin": "Una alerta se asocia a un municipio solo por sus códigos SAME oficiales (072 + código FIPS del municipio). 072000 es todo Puerto Rico. Las alertas de zonas marinas u otras sin código de municipio quedan como zona del NWS. Nunca se deduce el municipio del texto.",
-      "updateFrequency": "El NWS emite y actualiza alertas en cualquier momento. El sitio muestra la copia guardada por npm run data:live:update; a los 15 minutos se considera algo atrasada y a los 60, desactualizada.",
+      "updateFrequency": "El NWS emite y actualiza alertas en cualquier momento. El sitio muestra la copia guardada por npm run data:live:update; después de 30 minutos se considera algo atrasada y después de 60, desactualizada.",
       "redistributionStatus": "ATTRIBUTION_REQUIRED",
       "rightsEvidence": "Aviso legal del NWS (weather.gov/disclaimer, leído el 2026-10-07): la información es de dominio público y se puede usar para cualquier fin lícito sin reclamarla como propia, sin sugerir respaldo del NWS/NOAA y sin modificarla y presentarla como material oficial. Documentación de la API (weather.gov/documentation/services-web-api): datos abiertos y gratuitos, con límites razonables; requiere un User-Agent que identifique la aplicación; en caso de error, no reintentar más de una vez por minuto. Ninguna condición impide mostrar las alertas.",
       "attribution": "Fuente: National Weather Service (NWS), NOAA, api.weather.gov. Información de dominio público; NWS no respalda este sitio. Para avisos oficiales a tiempo, use NOAA Weather Radio, weather.gov y las autoridades locales.",

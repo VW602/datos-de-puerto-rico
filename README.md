@@ -1,6 +1,6 @@
-# Datos de Puerto Rico · 78 municipios
+# Datos de Puerto Rico
 
-_Nombre provisional._
+Dirección pública prevista: <https://datos.tn242.com> (todavía no está publicado).
 
 Un mapa de datos públicos de los 78 municipios de Puerto Rico. Cada cifra dice de
 dónde sale, qué periodo cubre y qué le falta.
@@ -60,6 +60,25 @@ la hora en que se midió, si es provisional y si esa medición sigue al día (un
 estación puede tener varias mediciones, y se cuentan aparte). Son
 mediciones, no avisos de inundación ni de sequía, y no hay porcentaje de llenado de
 embalses. Para actualizarlas: `npm run data:water:update`.
+
+## Datos actuales
+
+Las alertas, los sismos y el agua no se piden al abrir la página. Un programa de
+actualización los pide a la fuente oficial, los revisa y guarda una **copia**
+(`data/current/`) con la hora en que se obtuvo. El sitio muestra esa copia y dice
+qué tan vieja es:
+
+| Estado | Qué quiere decir |
+| --- | --- |
+| **Al día** (`CURRENT`) | La copia es reciente: alertas del NWS hasta 30 minutos; sismos del USGS hasta 30 minutos; agua hasta 60 minutos. |
+| **Algo atrasado** (`AGING`) | Todavía sirve para hablar de «ahora», pero ya pasó un rato: alertas hasta 60 minutos; sismos y agua hasta 3 horas. |
+| **Desactualizado** (`STALE`) | Demasiado vieja para hablar de «ahora». El sitio dice «No se pudo confirmar…» y muestra lo último guardado con su hora. |
+| **Sin datos** (`UNAVAILABLE`) | No hay ninguna copia buena guardada. |
+
+Si una actualización falla, **se conserva la última copia buena** y se anota el
+intento fallido; nunca se reemplaza por una copia vacía ni se da por hecho que «no
+pasa nada». Cada medición de agua tiene además su propia frescura, según la hora en
+que la estación la midió.
 
 ## De dónde salen los datos
 
@@ -215,6 +234,21 @@ la fuente oficial y el enlace a esa fuente. Sin fuente no se cambia un número.
 El sitio muestra datos; no hace campaña. No califica municipios, gobiernos ni
 personas, y no saca conclusiones por quien lo usa. Si algo suena a opinión, es un
 error y se puede reportar.
+
+## Privacidad
+
+- No hay cuentas ni formularios.
+- No hay analíticas ni rastreadores, y no se usan cookies de rastreo.
+- El sitio no recoge ni envía datos de quien lo usa. La página no llama a ningún
+  servicio externo: todo sale de archivos del sitio.
+- Hoy el sitio no guarda nada en tu navegador: ni cookies ni `localStorage`. Si
+  algún día guarda algo, será solo el estado de la pantalla (por ejemplo, la medida
+  escogida), en `localStorage`, y se quedará en tu dispositivo.
+
+## Seguridad
+
+Para reportar un problema de seguridad, sigue [SECURITY.md](SECURITY.md). No lo
+reportes en un issue público.
 
 ## Licencia
 

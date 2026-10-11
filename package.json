@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Datos públicos de los 78 municipios de Puerto Rico, con la fuente de cada cifra.",
+  "homepage": "https://datos.tn242.com/",
   "license": "MIT",
   "type": "module",
   "engines": {
@@ -14,6 +15,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
+    "build:cloudflare": "NITRO_PRESET=cloudflare_module vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
@@ -43,7 +45,8 @@
     "data:water:check": "node scripts/water/check.ts",
     "data:generate": "npm run data:census:generate && npm run data:geo:generate && npm run data:bls:generate && npm run data:usaspending:generate && npm run data:fema:generate && npm run data:registry:generate",
     "data:check": "node scripts/census/generate.ts --check && node scripts/geo/generate.ts --check && node scripts/bls/generate.ts --check && npm run data:usaspending:check && npm run data:fema:check && npm run data:live:check && npm run data:water:check && node scripts/registry/public.ts --check",
-    "check": "npm run typecheck && npm run lint && npm run data:check && npm test && npm run build"
+    "check": "npm run typecheck && npm run lint && npm run data:check && npm test && npm run build",
+    "check:cloudflare": "npm run build:cloudflare && node scripts/release/cloudflare-check.ts"
   },
   "dependencies": {
     "@fontsource-variable/newsreader": "^5.3.0",

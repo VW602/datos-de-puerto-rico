@@ -29,7 +29,7 @@ const ALLOWED_HOST = "www2.census.gov";
 /** Streams the whole official file, hashes every byte, and keeps the header plus PR municipio lines verbatim. */
 async function extract(url: string, geoColumn: (header: string[]) => number) {
   if (new URL(url).host !== ALLOWED_HOST) throw new Error(`Host no permitido: ${url}`);
-  const response = await fetch(url, { headers: { "User-Agent": "puerto-rico-datos/0.1 (census pipeline)" } });
+  const response = await fetch(url, { headers: { "User-Agent": "puerto-rico-datos/0.1 (https://datos.tn242.com/; census pipeline)" } });
   if (!response.ok || !response.body) throw new Error(`${url} respondió ${response.status}`);
   const hash = (await import("node:crypto")).createHash("sha256");
   let bytes = 0;

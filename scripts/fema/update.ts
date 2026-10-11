@@ -56,7 +56,7 @@ import {
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const USER_AGENT =
-  "puerto-rico-datos/0.1 (open-source civic data project; OpenFEMA pipeline; one request at a time)";
+  "puerto-rico-datos/0.1 (open-source civic data project; https://datos.tn242.com/; OpenFEMA pipeline; one request at a time)";
 
 const PAUSE_MS = 1500;
 const PAUSE_JITTER_MS = 500;

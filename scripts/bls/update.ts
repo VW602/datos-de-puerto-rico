@@ -31,7 +31,7 @@ import {
 } from "./source.ts";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
-const USER_AGENT = "puerto-rico-datos/0.1 (open-source civic data project; BLS LAUS pipeline)";
+const USER_AGENT = "puerto-rico-datos/0.1 (open-source civic data project; https://datos.tn242.com/; BLS LAUS pipeline)";
 
 async function main() {
   const census = JSON.parse(

@@ -173,7 +173,9 @@ describe("ninguna alerta ≠ fuente caída ≠ copia vieja", () => {
   it("copia vieja con 0 alertas ≠ respuesta actual con 0 alertas", () => {
     const s = asNws(nwsFrom(fixture("nws-empty.json")));
     expect(alertsStatus(s, minutesAfter(RETRIEVED, 10)).kind).toBe("NONE");
-    expect(freshness(RETRIEVED, minutesAfter(RETRIEVED, 30), FRESHNESS.nws)).toBe("AGING");
+    expect(freshness(RETRIEVED, minutesAfter(RETRIEVED, 30), FRESHNESS.nws)).toBe("CURRENT");
+    expect(freshness(RETRIEVED, minutesAfter(RETRIEVED, 31), FRESHNESS.nws)).toBe("AGING");
+    expect(freshness(RETRIEVED, minutesAfter(RETRIEVED, 60), FRESHNESS.nws)).toBe("AGING");
     expect(freshness(RETRIEVED, minutesAfter(RETRIEVED, 61), FRESHNESS.nws)).toBe("STALE");
     expect(alertsStatus(s, minutesAfter(RETRIEVED, 61)).kind).toBe("UNCONFIRMED");
   });

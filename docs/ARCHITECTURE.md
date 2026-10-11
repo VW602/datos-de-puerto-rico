@@ -89,20 +89,35 @@ genera las páginas (SSR) para la plataforma que se escoja con `NITRO_PRESET`.
 | Node propio (VPS, Docker, Render, Fly) | Predeterminado | `npm run build` y `node .output/server/index.mjs` |
 | Vercel | Compila con `NITRO_PRESET=vercel`; sin probar | Función serverless + archivos estáticos |
 | Netlify | Compila con `NITRO_PRESET=netlify`; sin probar | Netlify Functions |
-| Cloudflare Workers | Compila con `NITRO_PRESET=cloudflare_module`; sin probar | Worker |
+| Cloudflare Workers (plataforma prevista) | `npm run build:cloudflare` compila; probado en local con workerd (miniflare), sin desplegar. `npm run check:cloudflare` revisa la salida | Worker + archivos estáticos |
 | GitHub Pages (solo estático) | Falta configurar | El sitio podría ser 100% estático con el prerender de TanStack Start |
 
-### Dominio previsto: `datos.tn242.com` (no configurado)
+Encabezados de seguridad en todas las respuestas (`src/lib/security-headers.ts`):
+`X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`,
+`Permissions-Policy: camera=(), microphone=(), geolocation=()` y
+`Content-Security-Policy: frame-ancestors 'none'`. Las páginas los reciben de un
+*hook* de Nitro (`src/server/security-headers.ts`), también las de error y la 404; los
+archivos estáticos, de una regla de ruta que en Cloudflare se convierte en `_headers`.
+Sin HSTS hasta que el dominio tenga HTTPS real, y sin CSP de scripts por ahora (la
+hidratación usa scripts en línea).
 
-Nada de esto está hecho. Cuando se decida la plataforma:
+### Dominio
 
-1. Escoger la plataforma y probar un despliegue de vista previa con su
-   `NITRO_PRESET`.
+- **Previsto (INTENDED):** `datos.tn242.com`. Es la dirección que usan el enlace
+  canónico, `og:url` y el `User-Agent` de los programas de actualización.
+- **Publicado (LIVE):** ninguno todavía. El sitio no está desplegado y el DNS no está
+  configurado.
+
+Pasos pendientes:
+
+1. Probar un despliegue de vista previa en Cloudflare con la salida de
+   `npm run build:cloudflare`.
 2. En el proveedor de DNS del dominio, crear un registro `CNAME` para `datos` que
    apunte al destino que indique la plataforma.
 3. Añadir `datos.tn242.com` como dominio propio en la plataforma y esperar el
    certificado HTTPS.
-4. Comprobar que `og:image` y los enlaces del sitio funcionan con el dominio final.
+4. Crear la imagen para compartir (`og:image`, todavía no existe) y comprobar que
+   los enlaces del sitio funcionan con el dominio final.
 
 ## Hacia dónde crecer: datos
 

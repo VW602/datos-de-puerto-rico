@@ -71,7 +71,7 @@ export function extractPuertoRico(archive: Buffer) {
 async function main() {
   if (new URL(TIGER.url).host !== "www2.census.gov") throw new Error(`Host no permitido: ${TIGER.url}`);
   console.log(`Descargando ${TIGER.url} …`);
-  const response = await fetch(TIGER.url, { headers: { "User-Agent": "puerto-rico-datos/0.1 (geometry pipeline)" } });
+  const response = await fetch(TIGER.url, { headers: { "User-Agent": "puerto-rico-datos/0.1 (https://datos.tn242.com/; geometry pipeline)" } });
   if (!response.ok) throw new Error(`${TIGER.url} respondió ${response.status}`);
   const archive = Buffer.from(await response.arrayBuffer());
   const { extract, members, features, vertices, crs } = extractPuertoRico(archive);

@@ -330,7 +330,7 @@ Los detalles técnicos están en [data/README.md](data/README.md).
   `npm run data:live:update`, con su hora en hora de Puerto Rico (AST, UTC−4, sin
   horario de verano) y su antigüedad. La página nunca llama al NWS ni al USGS, y
   compilar el sitio no pide datos.
-- **Frescura, por fuente:** NWS al día hasta 15 minutos, algo atrasado hasta 60,
+- **Frescura, por fuente:** NWS al día hasta 30 minutos, algo atrasado hasta 60,
   desactualizado después (emite avisos de corta duración en cualquier momento).
   USGS al día hasta 30 minutos, algo atrasado hasta 3 horas, desactualizado después
   (su feed cambia cada minuto, pero la Red Sísmica de Puerto Rico localiza y revisa
