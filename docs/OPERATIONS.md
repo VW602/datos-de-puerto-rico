@@ -9,8 +9,15 @@ en `workers.dev`.
 | Flujo | Cuándo | Qué hace | Despliega |
 | --- | --- | --- | --- |
 | `CI` (`ci.yml`) | Cada pull request y cada push a `main` | `npm ci`, `npm run check`, `npm run build:cloudflare` y la revisión de la salida de Cloudflare | No |
-| `Live data (preview)` (`live.yml`) | Cada 15 minutos y a mano | Alertas del NWS y sismos del USGS en cada corrida; agua del USGS solo cuando la última copia buena tiene 55 minutos o más (más o menos cada hora). Luego `data:check`, pruebas, compilación de Cloudflare y despliegue | Sí, a la vista previa |
+| `Live data (preview)` (`live.yml`) | Cada hora (minuto 7) y a mano | Alertas del NWS, sismos del USGS y agua del USGS en cada corrida (el agua se pide cuando la última copia buena tiene 45 minutos o más, o a mano con la opción `water`). Luego `data:check`, pruebas, compilación de Cloudflare y despliegue | Sí, a la vista previa |
 | `Slow data (review branch)` (`slow.yml`) | Solo a mano | BLS, FEMA y/o USAspending; regenera, comprueba y sube una rama `data/slow-<corrida>` para revisar | No |
+
+**Cadencia.** Vista previa privada: alertas del NWS, sismos del USGS y agua del USGS,
+cada hora. Después del lanzamiento público: NWS y sismos del USGS cada 15 minutos; agua
+del USGS cada hora. Los límites de antigüedad del sitio no cambian con la cadencia
+(`scripts/live/source.ts`, `scripts/water/source.ts`): con una corrida por hora, la copia
+del NWS (algo atrasada a los 30 minutos, «No se pudo confirmar…» a los 60) pasa una parte
+de cada hora sin poder confirmarse.
 
 **Datos actuales sin commits.** El flujo `live` no hace commits. Las últimas copias
 buenas (`data/current/`) pasan de una corrida a otra en la caché de Actions, que solo

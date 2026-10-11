@@ -1,9 +1,10 @@
 # Current data (NWS alerts, USGS earthquakes, USGS water) for the preview.
 #
-# Every 15 minutes: fetch NWS and USGS earthquakes. USGS water only when the
-# last good water copy is 55 minutes old or more (so about hourly), or when
-# asked. Then check, test and build the Cloudflare Worker with the fresh
-# copies, and deploy it.
+# Private preview: every hour, fetch NWS and USGS earthquakes, and USGS water
+# when the last good water copy is 45 minutes old or more (so on every hourly
+# run) or when asked. Then check, test and build the Cloudflare Worker with the
+# fresh copies, and deploy it. After launch the plan is NWS and USGS
+# earthquakes every 15 minutes and water hourly (docs/OPERATIONS.md).
 #
 # Nothing is committed. The latest good copies travel between runs in the
 # Actions cache, saved only after a successful deploy.
@@ -15,7 +16,7 @@ name: Live data (preview)
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "7 * * * *"
   workflow_dispatch:
     inputs:
       water:
@@ -67,7 +68,7 @@ jobs:
         run: |
           age=$(node -e 'const s=JSON.parse(require("fs").readFileSync("data/current/usgs-water.json","utf8")); console.log(s.retrievedAt ? Math.floor((Date.now()-Date.parse(s.retrievedAt))/60000) : 99999)')
           echo "Last good water copy: $age minutes old"
-          if [ "$FORCE" = "true" ] || [ "$age" -ge 55 ]; then echo "due=true" >> "$GITHUB_OUTPUT"; else echo "due=false" >> "$GITHUB_OUTPUT"; fi
+          if [ "$FORCE" = "true" ] || [ "$age" -ge 45 ]; then echo "due=true" >> "$GITHUB_OUTPUT"; else echo "due=false" >> "$GITHUB_OUTPUT"; fi
 
       - name: Update NWS alerts and USGS earthquakes
         run: npm run data:live:update
