@@ -86,6 +86,31 @@ jobs:
       - name: Cloudflare output smoke check
         run: node scripts/release/cloudflare-check.ts
 
+      - name: Check the shape of the Cloudflare credentials (values are never printed)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          node --input-type=module <<'EOF'
+          const token = process.env.CLOUDFLARE_API_TOKEN ?? "";
+          const account = process.env.CLOUDFLARE_ACCOUNT_ID ?? "";
+          const checks = [
+            ["token is present", token.length > 0],
+            ["token has no whitespace or line break", !/\s/.test(token)],
+            ["token has only letters, digits, _ and -", /^[A-Za-z0-9_-]*$/.test(token)],
+            ["token does not start with Bearer", !/^bearer/i.test(token)],
+            ["token is 30 to 200 characters", token.length >= 30 && token.length <= 200],
+            ["account id is present", account.length > 0],
+            ["account id is 32 hex characters", /^[0-9a-f]{32}$/.test(account)],
+          ];
+          for (const [name, ok] of checks) console.log(`${ok ? "ok  " : "FAIL"} ${name}`);
+          console.log(`token length: ${token.length}; account id length: ${account.length}`);
+          if (checks.some(([, ok]) => !ok)) {
+            console.error("A Cloudflare credential is malformed. Save it again in the preview environment, with nothing around it.");
+            process.exit(1);
+          }
+          EOF
+
       - name: Deploy the Worker (preview, workers.dev)
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
