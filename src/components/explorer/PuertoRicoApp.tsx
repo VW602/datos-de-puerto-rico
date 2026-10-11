@@ -313,9 +313,10 @@ export function PuertoRicoApp() {
             <div className="absolute right-5 bottom-5 max-w-md shadow-float">{chooser}</div>
           )}
           {/* The legend sits below the map, so it never covers land at any zoom. */}
-          <div className="flex items-center gap-4 border-t border-divider bg-surface px-14 py-3">
-            <p className="shrink-0 text-[13px] font-bold">{metric.label}</p>
-            <div className="min-w-0 flex-1">
+          {/* With a long metric name, large text or zoom, the legend moves under the name. */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-divider bg-surface px-14 py-3">
+            <p className="min-w-0 text-[13px] font-bold">{metric.label}</p>
+            <div className="min-w-0 flex-1 basis-72">
               <Legend
                 metric={metric}
                 min={ranking.min}

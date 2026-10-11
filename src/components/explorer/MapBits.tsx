@@ -82,16 +82,32 @@ export function Legend({
       </div>
     );
   }
+  // The legend follows its own width (container query), not the screen's: with
+  // room, lowest value · ramp · highest value on one line; when narrow (a long
+  // metric name beside it, large text, zoom), the two values stay at the ends of
+  // one line and the ramp takes its own full line below. Values may wrap at
+  // spaces; nothing is clipped and nothing widens the page.
   return (
-    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-muted">
-      <div className={`flex min-w-0 items-center gap-2 tabular ${compact ? "w-full" : "flex-1"}`}>
-        <span className="shrink-0">{metric.formatTick(min)}</span>
+    <div
+      className="@container flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-muted"
+      data-map-legend
+    >
+      <div
+        className={`flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 tabular ${compact ? "w-full" : "flex-1 basis-full @[22rem]:basis-auto"}`}
+      >
+        <span className="min-w-0">
+          <span className="sr-only">Valor más bajo: </span>
+          {metric.formatTick(min)}
+        </span>
         <span
-          className="block h-3 min-w-24 flex-1 rounded-[2px] md:max-w-64"
+          className="order-last block h-3 basis-full rounded-[2px] @[22rem]:order-none @[22rem]:min-w-24 @[22rem]:flex-1 @[22rem]:basis-auto md:max-w-64"
           style={{ background: RAMP_GRADIENT }}
           aria-hidden="true"
         />
-        <span className="shrink-0">{metric.formatTick(max)}</span>
+        <span className="ml-auto min-w-0 text-right @[22rem]:ml-0">
+          <span className="sr-only">Valor más alto: </span>
+          {metric.formatTick(max)}
+        </span>
       </div>
       {metric.signed && zeroCount > 0 && (
         <span className="flex items-center gap-1.5">
