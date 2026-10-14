@@ -10,6 +10,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { LIVE_KV } from "../../src/lib/live-kv.ts";
 import { SECURITY_HEADERS } from "../../src/lib/security-headers.ts";
 
 const OUT = fileURLToPath(new URL("../../.output/", import.meta.url));
@@ -55,6 +56,8 @@ const wrangler = JSON.parse(read("server/wrangler.json")) as {
   main: string;
   assets?: { directory: string; binding: string };
   compatibility_flags?: string[];
+  kv_namespaces?: { binding: string; id: string; preview_id?: string }[];
+  triggers?: { crons?: string[] } | null;
 };
 if (wrangler.main !== "index.mjs" || !existsSync(join(OUT, "server/index.mjs")))
   fail("falta el Worker server/index.mjs");
@@ -63,6 +66,17 @@ if (wrangler.compatibility_date !== COMPATIBILITY_DATE)
   fail(`fecha de compatibilidad ${wrangler.compatibility_date}, no ${COMPATIBILITY_DATE}`);
 if (wrangler.assets?.directory !== "../public") fail("los archivos estáticos no apuntan a public/");
 if (!wrangler.compatibility_flags?.includes("nodejs_compat")) fail("falta nodejs_compat");
+// Live data: read-only KV binding, production and preview namespaces.
+const kv = wrangler.kv_namespaces?.find((n) => n.binding === LIVE_KV.binding);
+if (!kv) fail(`falta el KV ${LIVE_KV.binding}`);
+else {
+  if (kv.id !== LIVE_KV.id) fail(`${LIVE_KV.binding} no apunta a datos-live (${kv.id})`);
+  if (kv.preview_id !== LIVE_KV.previewId)
+    fail(`${LIVE_KV.binding} sin el namespace de vista previa`);
+}
+// No Cron Triggers: the site never refreshes data by itself.
+if ((wrangler.triggers?.crons ?? []).length > 0)
+  fail(`Cron Triggers en el Worker: ${wrangler.triggers!.crons!.join(", ")}`);
 
 for (const p of ["public/favicon.svg", "public/robots.txt"])
   if (!existsSync(join(OUT, p))) fail(`falta ${p}`);

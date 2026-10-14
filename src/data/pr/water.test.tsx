@@ -219,8 +219,13 @@ describe("Agua ahora: what the reader sees", () => {
     walk(join(ROOT, "src"));
     for (const f of files) {
       const s = readFileSync(f, "utf8");
-      expect(s).not.toMatch(/fetch\(|XMLHttpRequest/);
-      expect(s).not.toMatch(/from "[^"]*usgs-water[^"]*\.json"/);
+      // Only the same-origin /live/ reader may fetch (checked in scripts/live/live.test.ts).
+      if (!f.endsWith(join("src", "data", "pr", "liveData.ts")))
+        expect(s, f).not.toMatch(/fetch\(/);
+      expect(s, f).not.toMatch(/XMLHttpRequest|api\.waterdata\.usgs\.gov\/ogcapi/);
+      // The page loads water lazily; only the server-side /live/ route holds the built-in copy.
+      if (!f.endsWith(join("src", "server", "live-route.ts")))
+        expect(s, f).not.toMatch(/from "[^"]*usgs-water[^"]*\.json"/);
     }
   });
 });

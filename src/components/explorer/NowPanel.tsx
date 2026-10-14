@@ -5,6 +5,13 @@ import {
   type NwsSnapshot,
   type UsgsSnapshot,
 } from "@/data/pr/current";
+import {
+  LIVE_ROUTES,
+  readLiveRoute,
+  isNewer,
+  isNwsSnapshot,
+  isUsgsSnapshot,
+} from "@/data/pr/liveData";
 import type { WaterSnapshot } from "@/data/pr/water";
 import { AlertsSection } from "./now/AlertsSection";
 import { Provenance } from "./now/Provenance";
@@ -22,6 +29,29 @@ function useNow(): Date | null {
     return () => clearInterval(timer);
   }, []);
   return now;
+}
+
+/**
+ * A live snapshot: the copy built into the site first (no blank state, same
+ * server and first render), then the same-origin /live/ route if it returns a
+ * valid snapshot retrieved later. Never goes back to older data.
+ */
+function useLiveSnapshot<T extends { retrievedAt: string | null }>(
+  builtIn: T,
+  path: (typeof LIVE_ROUTES)[keyof typeof LIVE_ROUTES],
+  check: (v: unknown) => v is T,
+): T {
+  const [snapshot, setSnapshot] = useState(builtIn);
+  useEffect(() => {
+    let live = true;
+    readLiveRoute(path, check).then((fresh) => {
+      if (live && fresh && isNewer(fresh.retrievedAt, builtIn.retrievedAt)) setSnapshot(fresh);
+    });
+    return () => {
+      live = false;
+    };
+  }, [builtIn, path, check]);
+  return snapshot;
 }
 
 /**
@@ -95,9 +125,11 @@ export function NowView({
   );
 }
 
-/** "Ahora en Puerto Rico" with the saved snapshots and the viewer's clock. */
+/** "Ahora en Puerto Rico" with the newest valid snapshots and the viewer's clock. */
 export function NowPanel() {
   const now = useNow();
+  const nws = useLiveSnapshot(NWS_SNAPSHOT, LIVE_ROUTES.nws, isNwsSnapshot);
+  const usgs = useLiveSnapshot(USGS_SNAPSHOT, LIVE_ROUTES.earthquakes, isUsgsSnapshot);
   const water = useWaterSnapshot();
-  return <NowView now={now} nws={NWS_SNAPSHOT} usgs={USGS_SNAPSHOT} water={water} />;
+  return <NowView now={now} nws={nws} usgs={usgs} water={water} />;
 }

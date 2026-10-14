@@ -15,15 +15,26 @@ import type {
 import type { WaterView } from "../../../scripts/water/source.ts";
 import { canSpeakForNow, freshness, type Freshness } from "./currentModel";
 import { municipioName } from "./current";
+import { LIVE_ROUTES, readLiveRoute, isWaterSeries, isWaterSnapshot } from "./liveData";
 import { seriesState, type SeriesState } from "./waterModel";
 
 export type { HourlySeries, Observation, SeriesFile, Station, WaterSnapshot, WaterView };
 
-export const loadWater = (): Promise<WaterSnapshot> =>
+/**
+ * Water snapshot for the page: the same-origin /live/ route (newest valid
+ * copy), or the copy built into the site if that fails. Loaded after render.
+ */
+export const loadWater = async (): Promise<WaterSnapshot> =>
+  (await readLiveRoute(LIVE_ROUTES.water, isWaterSnapshot)) ??
   import("../../../data/current/usgs-water.json").then(
     (m) => m.default as unknown as WaterSnapshot,
   );
-export const loadWaterSeries = (): Promise<SeriesFile> =>
+/**
+ * The 24-hour series, requested only when the water details open. The page
+ * uses it only if it belongs to the snapshot shown (snapshotContentSha256).
+ */
+export const loadWaterSeries = async (): Promise<SeriesFile> =>
+  (await readLiveRoute(LIVE_ROUTES.waterSeries, isWaterSeries)) ??
   import("../../../data/current/usgs-water-series.json").then(
     (m) => m.default as unknown as SeriesFile,
   );

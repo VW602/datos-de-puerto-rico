@@ -357,9 +357,16 @@ describe("el sitio no llama a NWS ni al USGS", () => {
       }
     };
     walk(join(ROOT, "src"));
+    // The one network call in site code: the same-origin /live/ reader (src/data/pr/liveData.ts).
+    const liveReader = join(ROOT, "src/data/pr/liveData.ts");
     for (const f of files) {
       const text = readFileSync(f, "utf8");
-      expect(text, f).not.toMatch(/fetch\(|XMLHttpRequest|EventSource|WebSocket/);
+      if (f === liveReader) {
+        expect(text.match(/fetch\(/g)).toEqual(["fetch("]);
+        expect(text).toMatch(/fetch\(path, \{/);
+        expect(text).toMatch(/path: \(typeof LIVE_ROUTES\)\[keyof typeof LIVE_ROUTES\]/);
+        expect(text).not.toMatch(/XMLHttpRequest|EventSource|WebSocket|https?:\/\/(?!api\.)/);
+      } else expect(text, f).not.toMatch(/fetch\(|XMLHttpRequest|EventSource|WebSocket/);
       expect(text, f).not.toMatch(/api\.weather\.gov\/alerts\/active|summary\/all_week\.geojson/);
     }
     expect(existsSync(join(ROOT, "data/raw/fema"))).toBe(false);

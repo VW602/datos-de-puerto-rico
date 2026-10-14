@@ -115,7 +115,12 @@ describe("fondos federales en el sitio", () => {
       }
     };
     walk(join(ROOT, "src"));
-    for (const file of files)
-      expect(readFileSync(file, "utf8"), file).not.toMatch(/api\.usaspending\.gov|fetch\(/);
+    for (const file of files) {
+      const text = readFileSync(file, "utf8");
+      expect(text, file).not.toMatch(/api\.usaspending\.gov/);
+      // Only the same-origin /live/ reader may fetch (checked in scripts/live/live.test.ts).
+      if (!file.endsWith(join("src", "data", "pr", "liveData.ts")))
+        expect(text, file).not.toMatch(/fetch\(/);
+    }
   });
 });

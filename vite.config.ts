@@ -3,6 +3,7 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { nitro } from "nitro/vite";
+import { LIVE_KV } from "./src/lib/live-kv";
 import { SECURITY_HEADERS } from "./src/lib/security-headers";
 
 // TanStack Start renders the page on the server; Nitro builds that server.
@@ -30,10 +31,19 @@ export default defineConfig(({ command, isPreview }) => ({
             // shifts it by a day per pass outside UTC.
             compatibilityDate: "2026-10-08",
             cloudflare: {
-              wrangler: { name: "datos-de-puerto-rico", compatibility_date: "2026-10-08" },
+              wrangler: {
+                name: "datos-de-puerto-rico",
+                compatibility_date: "2026-10-08",
+                // Read-only live data; this Worker has no cron triggers and never refreshes data.
+                kv_namespaces: [
+                  { binding: LIVE_KV.binding, id: LIVE_KV.id, preview_id: LIVE_KV.previewId },
+                ],
+              },
             },
             routeRules: { "/**": { headers: SECURITY_HEADERS } },
             plugins: ["./src/server/security-headers.ts"],
+            // GET/HEAD-only /live/* routes: KV when newer and valid, else the built-in copy.
+            handlers: [{ route: "/live/**", handler: "./src/server/live-route.ts" }],
           }),
         ]
       : []),
