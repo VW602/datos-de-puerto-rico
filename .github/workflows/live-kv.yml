@@ -1,0 +1,65 @@
+# Live data → KV: refreshes NWS alerts, USGS earthquakes and (on request)
+# USGS water, validates them with the existing pipeline, and publishes them to
+# Workers KV, where the site's /live/* routes read them.
+#
+# Data only. No npm install, no build and no deploy: the Worker version does
+# not change. Manual-only while the repository is private (no schedule).
+#
+# Fails closed: a source that fails to update or validate, or a KV read or
+# write error, writes nothing for that source (the good data in KV stays) and
+# fails the run. Only newer values replace what KV holds.
+name: Live data → KV
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "KV namespace to publish to"
+        type: choice
+        options: [preview, production]
+        default: preview
+      refresh_water:
+        description: "Also refresh USGS water (about 15 s more)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-kv-${{ inputs.target }}
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: live-data
+    steps:
+      - name: Record the start of this run
+        run: echo "RUN_STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)" >> "$GITHUB_ENV"
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "22"
+
+      # The updaters keep last known good locally and exit 1 on failure; the
+      # publisher then refuses any snapshot not retrieved in this run.
+      - name: Update NWS alerts and USGS earthquakes
+        continue-on-error: true
+        run: node scripts/live/update.ts
+      - name: Update USGS water
+        if: inputs.refresh_water
+        continue-on-error: true
+        run: node scripts/water/update.ts
+
+      - name: Validate and publish to KV
+        env:
+          CLOUDFLARE_KV_API_TOKEN: ${{ secrets.CLOUDFLARE_KV_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          TARGET: ${{ inputs.target }}
+          SOURCES: ${{ inputs.refresh_water && 'nws,earthquakes,water' || 'nws,earthquakes' }}
+        run: node scripts/live/publish.ts --target="$TARGET" --sources="$SOURCES"
