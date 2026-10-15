@@ -1,0 +1,39 @@
+# Watchdog: once a day, reads https://datos.tn242.com/live/status.json and
+# fails if any live source is older than its stale limit, so GitHub sends a
+# failure email. Read-only: no checkout, no secrets, no refresh, no KV, no
+# deploy.
+name: Watchdog
+
+on:
+  schedule:
+    - cron: "17 13 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  freshness:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check that live data is not stale
+        run: |
+          node --input-type=module <<'JS'
+          const url = "https://datos.tn242.com/live/status.json";
+          const res = await fetch(url, { headers: { "user-agent": "datos-watchdog (https://datos.tn242.com/)" } });
+          if (!res.ok) {
+            console.error(`${url} -> HTTP ${res.status}`);
+            process.exit(1);
+          }
+          const { sources } = await res.json();
+          let stale = false;
+          for (const [name, s] of Object.entries(sources)) {
+            const age = (Date.now() - Date.parse(s.retrievedAt)) / 60000;
+            const limit = s.freshness?.staleMinutes;
+            const ok = Number.isFinite(age) && Number.isFinite(limit) && age <= limit;
+            console.log(`${ok ? "ok  " : "STALE"} ${name}: ${Math.round(age)} min old (limit ${limit}; from ${s.servedFrom})`);
+            if (!ok) stale = true;
+          }
+          if (stale) process.exit(1);
+          JS

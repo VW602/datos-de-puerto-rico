@@ -111,6 +111,14 @@ describe("workflows: only Live data → KV runs unattended with write access", (
     expect(workflows["live-kv.yml"]).not.toMatch(/wrangler|build:cloudflare|npm ci/);
   });
 
+  it("the watchdog only reads status.json: no checkout, secrets, refresh, KV or deploy", () => {
+    const w = workflows["watchdog.yml"];
+    expect(w).toMatch(/^\s*schedule:\n\s*- cron: "17 13 \* \* \*"/m);
+    expect(w).toContain("https://datos.tn242.com/live/status.json");
+    expect(w).not.toMatch(/uses:|secrets\.|wrangler|npm|scripts\/live|KV_API|environment:/);
+    expect(w).toMatch(/staleMinutes/);
+  });
+
   it("no pull_request_target, default permissions read-only", () => {
     for (const [name, text] of Object.entries(workflows)) {
       expect(text, name).not.toMatch(/pull_request_target/);

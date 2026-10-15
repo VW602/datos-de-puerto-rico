@@ -29,7 +29,9 @@ Cloudflare Cron (Worker datos-scheduler)
 
 **Falla cerrado.** Si una fuente no se actualiza o no valida, o KV falla, no se
 escribe nada para esa fuente: el dato bueno sigue en KV y el sitio dice qué tan viejo
-es. GitHub avisa por correo cuando el flujo falla.
+es. GitHub avisa por correo cuando el flujo falla. Además, un vigilante diario
+(`watchdog.yml`) lee `/live/status.json` y falla si alguna fuente pasa su límite de
+«desactualizado».
 
 Para refrescar a mano: Actions → «Live data → KV» → Run workflow (`target`:
 `production`).
@@ -42,6 +44,7 @@ Para refrescar a mano: Actions → «Live data → KV» → Run workflow (`targe
 | `Live data → KV` (`live-kv.yml`) | Por `datos-scheduler` y a mano | Datos actuales → KV, sin desplegar | No |
 | `Deploy application` (`deploy.yml`) | A mano | Compila y despliega el Worker del sitio | Sí (entorno `preview`) |
 | `Slow data (review branch)` (`slow.yml`) | A mano | BLS, FEMA y/o USAspending → rama `data/slow-<corrida>` para revisar | Sí (entorno `slow-data`) |
+| `Watchdog` (`watchdog.yml`) | Una vez al día (13:17 UTC) y a mano | Lee `/live/status.json`; falla si hay datos desactualizados | No |
 
 Lo que despliega o sube ramas necesita aprobación, así que el token del reloj (que
 puede disparar flujos) no puede desplegar por su cuenta.
