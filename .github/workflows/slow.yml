@@ -33,6 +33,8 @@ jobs:
   update:
     runs-on: ubuntu-24.04
     timeout-minutes: 120
+    # Requires the maintainer's approval: it can push review branches.
+    environment: slow-data
     permissions:
       contents: write # push the review branch only
     steps:

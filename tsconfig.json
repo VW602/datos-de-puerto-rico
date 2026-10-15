@@ -17,5 +17,5 @@
     },
     "allowImportingTsExtensions": true
   },
-  "include": ["src", "data", "scripts", "vite.config.ts", "vitest.config.ts"]
+  "include": ["src", "data", "scripts", "infra", "vite.config.ts", "vitest.config.ts"]
 }

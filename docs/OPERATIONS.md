@@ -1,37 +1,50 @@
 # Operación
 
-Cómo se mantiene el sitio al día y cómo se despliega. Nada de esto publica el
-sitio en `datos.tn242.com`: hoy solo existe una vista previa privada (pre-lanzamiento)
-en `workers.dev`.
+Cómo se mantienen al día los datos actuales y cómo se despliega el sitio
+(`https://datos.tn242.com/`). Costo mensual requerido: $0 (planes gratuitos de
+Cloudflare y GitHub).
+
+## Datos actuales: el reloj, el trabajo y el almacén
+
+```
+Cloudflare Cron (Worker datos-scheduler)
+  → GitHub workflow_dispatch de «Live data → KV»
+  → actualizar, normalizar y validar con los scripts del repositorio
+  → Workers KV (datos-live)
+  → rutas /live/*.json del sitio
+```
+
+- **El reloj** es el Worker `datos-scheduler` (`infra/datos-scheduler/`). Solo pide a
+  GitHub que corra «Live data → KV»: cada 15 minutos (alertas del NWS y sismos del
+  USGS) y en el minuto 7 de cada hora (lo mismo más el agua del USGS). No tiene rutas,
+  `workers.dev` está apagado y no lee ni escribe datos. El cron de GitHub no se usa:
+  en una prueba de unas 45 horas, un cron de cada hora corrió solo 7 veces.
+- **El trabajo** es el flujo «Live data → KV» (`live-kv.yml`). Sin `npm ci`, sin
+  compilar y sin desplegar. Publica una fuente solo si la copia se obtuvo en esa
+  corrida, pasa los validadores de siempre y las comprobaciones de lectura del sitio,
+  y es más nueva que la que guarda KV. El agua (copia y series) va en un solo valor.
+- **El almacén** es Workers KV (`live:nws`, `live:earthquakes`, `live:water`, y
+  `status:<fuente>` con el último intento). El sitio sirve el valor de KV si es
+  válido y más nuevo que la copia incluida en el sitio; si no, la copia incluida.
+
+**Falla cerrado.** Si una fuente no se actualiza o no valida, o KV falla, no se
+escribe nada para esa fuente: el dato bueno sigue en KV y el sitio dice qué tan viejo
+es. GitHub avisa por correo cuando el flujo falla.
+
+Para refrescar a mano: Actions → «Live data → KV» → Run workflow (`target`:
+`production`).
 
 ## Flujos de GitHub Actions
 
-| Flujo | Cuándo | Qué hace | Despliega |
+| Flujo | Cuándo | Qué hace | Aprobación |
 | --- | --- | --- | --- |
-| `CI` (`ci.yml`) | Cada pull request y cada push a `main` | `npm ci`, `npm run check`, `npm run build:cloudflare` y la revisión de la salida de Cloudflare | No |
-| `Live data (preview)` (`live.yml`) | Cada hora (minuto 7) y a mano | Alertas del NWS, sismos del USGS y agua del USGS en cada corrida (el agua se pide cuando la última copia buena tiene 45 minutos o más, o a mano con la opción `water`). Luego `data:check`, pruebas, compilación de Cloudflare y despliegue | Sí, a la vista previa |
-| `Slow data (review branch)` (`slow.yml`) | Solo a mano | BLS, FEMA y/o USAspending; regenera, comprueba y sube una rama `data/slow-<corrida>` para revisar | No |
+| `CI` (`ci.yml`) | Cada pull request y push a `main` | `npm run check`, compilación de Cloudflare y su revisión | No |
+| `Live data → KV` (`live-kv.yml`) | Por `datos-scheduler` y a mano | Datos actuales → KV, sin desplegar | No |
+| `Deploy application` (`deploy.yml`) | A mano | Compila y despliega el Worker del sitio | Sí (entorno `preview`) |
+| `Slow data (review branch)` (`slow.yml`) | A mano | BLS, FEMA y/o USAspending → rama `data/slow-<corrida>` para revisar | Sí (entorno `slow-data`) |
 
-**Cadencia.** Vista previa privada: alertas del NWS, sismos del USGS y agua del USGS,
-cada hora. Después del lanzamiento público: NWS y sismos del USGS cada 15 minutos; agua
-del USGS cada hora. Los límites de antigüedad del sitio no cambian con la cadencia
-(`scripts/live/source.ts`, `scripts/water/source.ts`): con una corrida por hora, la copia
-del NWS (algo atrasada a los 30 minutos, «No se pudo confirmar…» a los 60) pasa una parte
-de cada hora sin poder confirmarse.
-
-**Datos actuales sin commits.** El flujo `live` no hace commits. Las últimas copias
-buenas (`data/current/`) pasan de una corrida a otra en la caché de Actions, que solo
-se guarda después de un despliegue exitoso. Si cambia el código que escribe o lee
-esas copias, la caché empieza de nuevo desde las copias del repositorio.
-
-**Falla cerrado.** Si una actualización, una comprobación, una prueba o la
-compilación fallan, no se despliega nada, la caché no cambia y sigue en línea el
-despliegue anterior; el sitio dice qué tan vieja es cada copia y, pasado el límite,
-«No se pudo confirmar…». GitHub avisa por correo cuando falla un flujo programado.
-
-**Datos lentos con revisión.** El flujo `slow` nunca toca `main` ni despliega. Para
-publicar: abrir un pull request desde la rama `data/slow-<corrida>`, revisar el
-cambio y unirlo.
+Lo que despliega o sube ramas necesita aprobación, así que el token del reloj (que
+puede disparar flujos) no puede desplegar por su cuenta.
 
 ## Censo y TIGER/Line (a mano, una vez al año)
 
@@ -49,24 +62,25 @@ edición al año.
 
 ## Cloudflare
 
-- Worker `datos-de-puerto-rico`, desplegado con `wrangler deploy` (versión fija en
-  `live.yml`) desde la salida de `npm run build:cloudflare`.
-- Fecha de compatibilidad fija: `2026-10-08` (en `vite.config.ts`); la revisa
-  `npm run check:cloudflare`.
-- Vista previa: `https://datos-de-puerto-rico.<subdominio>.workers.dev` (variable
-  `PREVIEW_URL`). El dominio `datos.tn242.com` **no** apunta todavía al Worker.
-- Sin analíticas ni scripts de terceros. Sin HSTS hasta tener HTTPS en el dominio
-  final.
+- Worker `datos-de-puerto-rico` en `datos.tn242.com`, desplegado por «Deploy
+  application» desde la salida de `npm run build:cloudflare`. Fecha de
+  compatibilidad fija `2026-10-08`; la revisa `npm run check:cloudflare`, que también
+  exige el KV `LIVE_DATA` y ningún Cron Trigger en este Worker.
+- Worker `datos-scheduler`: dos Cron Triggers, sin rutas ni `workers.dev`.
+- Sin analíticas: una regla de configuración de la zona apaga RUM para
+  `datos.tn242.com`.
 
-## Secretos y variables
+## Secretos (solo nombres)
 
-Solo nombres; los valores nunca van al repositorio.
+| Nombre | Dónde | Para qué |
+| --- | --- | --- |
+| `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Entorno `preview` | Desplegar el Worker del sitio (*Workers Scripts: Edit*) |
+| `CLOUDFLARE_KV_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Entorno `live-data` | Escribir en KV (*Workers KV Storage: Edit*) |
+| `GITHUB_DISPATCH_TOKEN` | Secreto del Worker `datos-scheduler` | Disparar «Live data → KV» (token de GitHub de grano fino, solo este repositorio, *Actions: Read and write*) |
+| `BLS_API_KEY` (opcional) | Repositorio | Clave gratuita de BLS para la API v2 |
 
-| Nombre | Tipo | Dónde | Para qué |
-| --- | --- | --- | --- |
-| `CLOUDFLARE_API_TOKEN` | Secreto | Entorno `preview` | Desplegar el Worker. Token de API de Cloudflare limitado a la cuenta, con solo el permiso *Workers Scripts: Edit* |
-| `CLOUDFLARE_ACCOUNT_ID` | Secreto | Entorno `preview` | Cuenta de Cloudflare del despliegue |
-| `PREVIEW_URL` | Variable | Entorno `preview` | Dirección de la vista previa, para comprobarla después de desplegar |
-| `BLS_API_KEY` | Secreto (opcional) | Repositorio | Clave gratuita de BLS para la API v2 |
-
-El entorno `preview` solo acepta despliegues desde `main`.
+Los entornos solo aceptan corridas desde `main`. Rotación del token del reloj: crear
+uno nuevo, en `infra/datos-scheduler/` correr
+`npx wrangler secret put GITHUB_DISPATCH_TOKEN --config ./wrangler.jsonc`, confirmar la
+siguiente corrida y revocar el anterior. El `--config` es necesario: sin él, Wrangler
+encuentra la configuración generada del sitio en `.wrangler/` de la raíz.
