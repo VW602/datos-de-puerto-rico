@@ -34,6 +34,10 @@ export default defineConfig(({ command, isPreview }) => ({
               wrangler: {
                 name: "datos-de-puerto-rico",
                 compatibility_date: "2026-10-08",
+                // Served only at datos.tn242.com: no *.workers.dev address and no
+                // per-version preview URLs.
+                workers_dev: false,
+                preview_urls: false,
                 // Read-only live data; this Worker has no cron triggers and never refreshes data.
                 kv_namespaces: [
                   { binding: LIVE_KV.binding, id: LIVE_KV.id, preview_id: LIVE_KV.previewId },

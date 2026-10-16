@@ -11,7 +11,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { LIVE_KV } from "../../src/lib/live-kv.ts";
-import { SECURITY_HEADERS } from "../../src/lib/security-headers.ts";
+import { HSTS, SECURITY_HEADERS } from "../../src/lib/security-headers.ts";
 
 const OUT = fileURLToPath(new URL("../../.output/", import.meta.url));
 /** Modules the Workers runtime provides under nodejs_compat and the bundle may import. */
@@ -58,6 +58,8 @@ const wrangler = JSON.parse(read("server/wrangler.json")) as {
   compatibility_flags?: string[];
   kv_namespaces?: { binding: string; id: string; preview_id?: string }[];
   triggers?: { crons?: string[] } | null;
+  workers_dev?: boolean;
+  preview_urls?: boolean;
 };
 if (wrangler.main !== "index.mjs" || !existsSync(join(OUT, "server/index.mjs")))
   fail("falta el Worker server/index.mjs");
@@ -74,6 +76,9 @@ else {
   if (kv.preview_id !== LIVE_KV.previewId)
     fail(`${LIVE_KV.binding} sin el namespace de vista previa`);
 }
+// Only the custom domain serves the site: no workers.dev address, no preview URLs.
+if (wrangler.workers_dev !== false) fail("workers_dev no está apagado");
+if (wrangler.preview_urls !== false) fail("preview_urls no está apagado");
 // No Cron Triggers: the site never refreshes data by itself.
 if ((wrangler.triggers?.crons ?? []).length > 0)
   fail(`Cron Triggers en el Worker: ${wrangler.triggers!.crons!.join(", ")}`);
@@ -91,7 +96,9 @@ const all = headers.slice(headers.indexOf("\n/*\n"));
 for (const [name, value] of Object.entries(SECURITY_HEADERS))
   if (!headers.includes("\n/*\n") || !all.includes(`  ${name}: ${value}`))
     fail(`_headers no aplica ${name} a todo el sitio`);
-if (/strict-transport-security/i.test(headers)) fail("HSTS antes de tener HTTPS real");
+// HSTS, first step: this host only, short, never preload (see src/lib/security-headers.ts).
+if (/includeSubDomains|preload/i.test(headers)) fail("HSTS con includeSubDomains o preload");
+if (!all.includes(`  Strict-Transport-Security: ${HSTS}`)) fail("falta HSTS en _headers");
 
 for (const file of files("server").filter((f) => /\.m?js$/.test(f))) {
   for (const m of read(file).matchAll(/(?:from|import\(|require\()\s*["']node:([a-z_/]+)["']/g))

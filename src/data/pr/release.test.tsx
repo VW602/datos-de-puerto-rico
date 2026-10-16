@@ -66,8 +66,17 @@ describe("public name, URL and metadata", () => {
     expect(SITE_DESCRIPTION.split(",").length).toBeLessThan(6);
   });
 
-  it("no share image is invented: og:image stays absent until a real one exists", () => {
-    expect(meta("og:image")).toBeUndefined();
+  it("the share image is real: the municipio outlines and the name, no figures, 1200×630", () => {
+    expect(meta("og:image")).toBe("https://datos.tn242.com/og.png");
+    expect(meta("og:image:width")).toBe("1200");
+    expect(meta("og:image:height")).toBe("630");
+    expect(meta("og:image:type")).toBe("image/png");
+    expect(meta("og:image:alt")).toMatch(/78 municipios.*sin cifras/);
+    expect(meta("twitter:card")).toBe("summary_large_image");
+    const png = readFileSync(join(ROOT, "public/og.png"));
+    expect(png.subarray(1, 4).toString()).toBe("PNG");
+    expect([png.readUInt32BE(16), png.readUInt32BE(20)]).toEqual([1200, 630]);
+    expect(png.length).toBeLessThan(100_000);
   });
 
   it("the header shows the public name as the page's only h1", () => {
@@ -264,14 +273,16 @@ describe("heading order and responsive duplicates", () => {
 });
 
 describe("security headers", () => {
-  it("the agreed v1 set, with no HSTS and no script CSP", () => {
+  it("the agreed set: a short, host-only HSTS and no script CSP", () => {
     expect(SECURITY_HEADERS).toEqual({
       "X-Content-Type-Options": "nosniff",
       "Referrer-Policy": "strict-origin-when-cross-origin",
       "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
       "Content-Security-Policy": "frame-ancestors 'none'",
+      "Strict-Transport-Security": "max-age=86400",
     });
-    expect(Object.keys(SECURITY_HEADERS).join()).not.toMatch(/Strict-Transport-Security/i);
+    // First step only: this host, no subdomains, never on the preload list.
+    expect(SECURITY_HEADERS["Strict-Transport-Security"]).not.toMatch(/includeSubDomains|preload/i);
   });
 
   it("are applied as a route rule (static files) and a runtime hook (all rendered pages)", () => {
