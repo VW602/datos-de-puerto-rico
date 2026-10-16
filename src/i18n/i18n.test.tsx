@@ -3,7 +3,7 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { LanguageSwitch } from "@/components/explorer/LanguageSwitch";
 import { NowView } from "@/components/explorer/NowPanel";
 import { QuakeDetails } from "@/components/explorer/now/QuakesSection";
@@ -347,9 +347,12 @@ describe("the English page", () => {
     expect(spanishLeftIn(notFound)).toBeNull();
     expect(en(<NotFoundPage />)).toMatch(/<a href="\/en\/"[^>]*>Back to the home page<\/a>/);
     expect(visibleText(es(<NotFoundPage />))).toContain("Página no encontrada");
+    // As readers see it in production: the message, never the stack.
+    vi.stubEnv("DEV", false);
     const error = en(
       <AppErrorComponent error={new Error("x")} reset={() => {}} info={undefined} />,
     );
+    vi.unstubAllEnvs();
     expect(visibleText(error)).toContain("Something went wrong");
     expect(spanishLeftIn(visibleText(error))).toBeNull();
   });
