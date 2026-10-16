@@ -10,6 +10,8 @@ export const SITE_MESSAGES = defineMessages({
     title: "Datos de Puerto Rico",
     description:
       "Los 78 municipios de Puerto Rico en cifras públicas oficiales: Censo, empleo, fondos federales y FEMA, más alertas, sismos y agua del NWS y el USGS. Cada dato dice de dónde sale.",
+    shareImageAlt:
+      "Mapa de los 78 municipios de Puerto Rico bajo el nombre Datos de Puerto Rico, sin cifras.",
     notFound: {
       eyebrow: "Error 404",
       title: "Página no encontrada",
@@ -27,6 +29,8 @@ export const SITE_MESSAGES = defineMessages({
     title: "Datos de Puerto Rico (English)",
     description:
       "Puerto Rico's 78 municipios in official public figures: Census, jobs, federal funds and FEMA, plus NWS alerts and USGS earthquake and water data. Every figure says where it comes from.",
+    shareImageAlt:
+      "Map of Puerto Rico's 78 municipios under the name Datos de Puerto Rico, with no figures.",
     notFound: {
       eyebrow: "Error 404",
       title: "Page not found",

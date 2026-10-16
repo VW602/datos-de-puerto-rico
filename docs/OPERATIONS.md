@@ -69,7 +69,20 @@ edición al año.
   application» desde la salida de `npm run build:cloudflare`. Fecha de
   compatibilidad fija `2026-10-08`; la revisa `npm run check:cloudflare`, que también
   exige el KV `LIVE_DATA` y ningún Cron Trigger en este Worker.
+- El Worker del sitio solo responde en `datos.tn242.com`: `workers_dev` y
+  `preview_urls` están apagados en `vite.config.ts` (y `check:cloudflare` lo exige).
 - Worker `datos-scheduler`: dos Cron Triggers, sin rutas ni `workers.dev`.
+- Las rutas `/live/*` se guardan 60 segundos en la caché de Cloudflare (Cache API).
+  Cloudflare le pone a lo que sale de esa caché el «Browser Cache TTL» de la zona
+  (4 horas por omisión); el Worker vuelve a poner `max-age=60` en cada respuesta, para
+  que el navegador no guarde datos actuales por horas.
+- HSTS: `max-age=86400`, solo este dominio (sin `includeSubDomains`) y sin `preload`.
+  Lo envía el Worker, así que `tn242.com` y `www` no cambian. Para subirlo: una
+  semana (`604800`), luego seis meses (`15552000`), cada paso tras confirmar que todo
+  sigue en HTTPS.
+- La imagen para compartir (`public/og.png`, 1200×630) son los contornos de los 78
+  municipios de `data/generated/municipios.geometry.json` y el nombre del sitio, sin
+  cifras; sirve igual en español y en inglés.
 - Sin analíticas: una regla de configuración de la zona apaga RUM para
   `datos.tn242.com`.
 

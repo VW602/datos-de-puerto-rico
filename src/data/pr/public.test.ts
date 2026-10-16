@@ -126,7 +126,11 @@ describe("frontera de publicación", () => {
   });
 
   it("los archivos públicos son solo los esperados", () => {
-    expect(filesUnder("public").sort()).toEqual(["public/favicon.svg", "public/robots.txt"]);
+    expect(filesUnder("public").sort()).toEqual([
+      "public/favicon.svg",
+      "public/og.png",
+      "public/robots.txt",
+    ]);
     const generated = filesUnder("data/generated").filter(
       (f) => !f.startsWith("data/generated/fema-projects/"),
     );

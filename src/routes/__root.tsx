@@ -11,9 +11,8 @@ import { NotFoundPage } from "@/lib/not-found";
 import { SITE_NAME } from "@/lib/site";
 import appCss from "../styles.css?url";
 
-// No og:image yet: a share image is pending release work, not invented here.
-// Each language's page adds its own title, description, canonical and
-// alternates (src/lib/app-page.tsx); these are shared by every page.
+// Each language's page adds its own title, description, canonical, alternates
+// and share image (src/lib/locale-url.ts); these are shared by every page.
 export const Route = createRootRoute({
   head: () => ({
     meta: [

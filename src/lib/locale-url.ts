@@ -51,6 +51,13 @@ export function localeHref(target: Locale, state: AppSearch): string {
   return `${LOCALE_INFO[target].base}${query ? `?${query}` : ""}`;
 }
 
+/**
+ * The share image (public/og.png): the 78 municipio outlines from the project's
+ * TIGER/Line geometry and the product name, with no figures, so it is true in
+ * both languages and never goes out of date.
+ */
+export const SHARE_IMAGE = { url: `${SITE_ORIGIN}/og.png`, width: 1200, height: 630 };
+
 /** Absolute URL of a language's page: the canonical address of that page. */
 export const localeUrl = (locale: Locale) => `${SITE_ORIGIN}${LOCALE_INFO[locale].base}`;
 
@@ -70,6 +77,13 @@ export function pageHead(locale: Locale) {
       { property: "og:url", content: localeUrl(locale) },
       { property: "og:locale", content: LOCALE_INFO[locale].ogLocale },
       { property: "og:locale:alternate", content: LOCALE_INFO[other].ogLocale },
+      { property: "og:image", content: SHARE_IMAGE.url },
+      { property: "og:image:type", content: "image/png" },
+      { property: "og:image:width", content: String(SHARE_IMAGE.width) },
+      { property: "og:image:height", content: String(SHARE_IMAGE.height) },
+      { property: "og:image:alt", content: text.shareImageAlt },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image:alt", content: text.shareImageAlt },
     ],
     links: [
       { rel: "canonical", href: localeUrl(locale) },

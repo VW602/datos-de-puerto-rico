@@ -459,6 +459,9 @@ describe("addresses, SEO and the language switch", () => {
       expect(meta("og:url")).toMatchObject({ content: canonical[0].href });
       expect(meta("og:locale")).toMatchObject({ content: LOCALE_INFO[locale].ogLocale });
       expect(meta("description")).toMatchObject({ content: SITE_MESSAGES[locale].description });
+      // One share image for both languages (it carries no words to translate), alt text in each.
+      expect(meta("og:image")).toMatchObject({ content: "https://datos.tn242.com/og.png" });
+      expect(meta("og:image:alt")).toMatchObject({ content: SITE_MESSAGES[locale].shareImageAlt });
     }
     expect(SITE_MESSAGES.en.title).toContain("Datos de Puerto Rico");
     expect(SITE_MESSAGES.en.description.length).toBeLessThanOrEqual(200);
