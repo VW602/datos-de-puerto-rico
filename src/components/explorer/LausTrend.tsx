@@ -1,20 +1,23 @@
 import { comparisons, lausBlock, monthShort, trend, type Comparison } from "@/data/pr/laus";
+import { useLocale } from "@/i18n/context";
+import { integer } from "@/i18n/format";
+import { LAUS_MESSAGES } from "@/i18n/messages/laus";
 
-const people = new Intl.NumberFormat("en-US");
 const pct = (value: number) => `${value.toFixed(1)}%`;
 
 function Preliminar() {
   return (
     <span className="ml-1.5 inline-block rounded-[2px] border border-warning px-1 align-middle text-[11px] font-bold tracking-[0.06em] text-warning uppercase">
-      Preliminar
+      {LAUS_MESSAGES[useLocale()].preliminary}
     </span>
   );
 }
 
 function Delta({ from, to }: { from: Comparison | null; to: Comparison }) {
+  const t = LAUS_MESSAGES[useLocale()];
   if (!from || from.value == null || to.value == null) return <span className="text-muted">—</span>;
   const d = Math.round((to.value - from.value) * 10) / 10;
-  const text = d === 0 ? "igual" : `${d > 0 ? "+" : "−"}${Math.abs(d).toFixed(1)} pts`;
+  const text = d === 0 ? t.same : `${d > 0 ? "+" : "−"}${Math.abs(d).toFixed(1)} ${t.points}`;
   return <span className="tabular">{text}</span>;
 }
 
@@ -25,6 +28,10 @@ function Delta({ from, to }: { from: Comparison | null; to: Comparison }) {
  * subtraction of the published rates.
  */
 export function LausTrend({ id, name }: { id: string | null; name: string }) {
+  const locale = useLocale();
+  const t = LAUS_MESSAGES[locale];
+  const people = (value: number) => integer(value, locale);
+  const month = (key: string) => monthShort(key, locale);
   const cmp = comparisons(id, "rate");
   const block = lausBlock(id);
   if (!cmp || !block) return null;
@@ -51,32 +58,30 @@ export function LausTrend({ id, name }: { id: string | null; name: string }) {
   const unemployed = comparisons(id, "unemployment")!.latest;
 
   return (
-    <section aria-label={`Desempleo mensual de ${name}`} className="mt-5">
+    <section aria-label={t.label(name)} className="mt-5">
       <h3 className="text-xs font-bold tracking-[0.08em] text-muted uppercase">
-        Mes a mes · {name}
+        {t.heading(name)}
       </h3>
       <dl className="mt-1 grid grid-cols-3 border-y border-divider-2 text-center">
         <div className="py-2.5">
           <dt className="text-[13px] text-muted">
-            {monthShort(latest.key)}
+            {month(latest.key)}
             {latest.preliminary && <Preliminar />}
           </dt>
           <dd className="mt-0.5 text-xl font-semibold tabular">
-            {latest.value == null ? "Dato no publicado" : pct(latest.value)}
+            {latest.value == null ? t.notPublished : pct(latest.value)}
           </dd>
         </div>
         <div className="border-l border-divider-2 py-2.5">
           <dt className="text-[13px] text-muted">
-            Frente a {previous ? monthShort(previous.key) : "—"}
+            {t.versus(previous ? month(previous.key) : "—")}
           </dt>
           <dd className="mt-0.5 text-xl font-semibold">
             <Delta from={previous} to={latest} />
           </dd>
         </div>
         <div className="border-l border-divider-2 py-2.5">
-          <dt className="text-[13px] text-muted">
-            Frente a {yearAgo ? monthShort(yearAgo.key) : "—"}
-          </dt>
+          <dt className="text-[13px] text-muted">{t.versus(yearAgo ? month(yearAgo.key) : "—")}</dt>
           <dd className="mt-0.5 text-xl font-semibold">
             <Delta from={yearAgo} to={latest} />
           </dd>
@@ -88,7 +93,7 @@ export function LausTrend({ id, name }: { id: string | null; name: string }) {
           viewBox={`0 0 ${W} ${H}`}
           className="block h-auto w-full"
           role="img"
-          aria-label={`Tasa de desempleo de ${name}, últimos ${points.length} meses. Línea discontinua: Puerto Rico.`}
+          aria-label={t.chartLabel(name, points.length)}
         >
           {id && (
             <path
@@ -116,39 +121,39 @@ export function LausTrend({ id, name }: { id: string | null; name: string }) {
           )}
         </svg>
         <figcaption className="mt-1 flex justify-between text-[12px] text-muted tabular">
-          <span>{points.length ? monthShort(points[0].key) : ""}</span>
+          <span>{points.length ? month(points[0].key) : ""}</span>
           <span>
             {pct(lo)}–{pct(hi)}
-            {id ? " · discontinua: Puerto Rico" : ""}
+            {id ? t.dashed : ""}
           </span>
-          <span>{points.length ? monthShort(points[points.length - 1].key) : ""}</span>
+          <span>{points.length ? month(points[points.length - 1].key) : ""}</span>
         </figcaption>
       </figure>
 
       <dl className="mt-3 grid grid-cols-3 border-t border-divider-2 text-[15px]">
         <div className="py-2.5 pr-2">
-          <dt className="text-[13px] text-muted">Fuerza laboral</dt>
+          <dt className="text-[13px] text-muted">{t.laborForce}</dt>
           <dd className="font-semibold tabular">
-            {counts.value == null ? "—" : people.format(counts.value)}
+            {counts.value == null ? "—" : people(counts.value)}
           </dd>
         </div>
         <div className="border-l border-divider-2 py-2.5 pl-2.5">
-          <dt className="text-[13px] text-muted">Personas empleadas</dt>
+          <dt className="text-[13px] text-muted">{t.employed}</dt>
           <dd className="font-semibold tabular">
-            {employed.value == null ? "—" : people.format(employed.value)}
+            {employed.value == null ? "—" : people(employed.value)}
           </dd>
         </div>
         <div className="border-l border-divider-2 py-2.5 pl-2.5">
-          <dt className="text-[13px] text-muted">Personas desempleadas</dt>
+          <dt className="text-[13px] text-muted">{t.unemployed}</dt>
           <dd className="font-semibold tabular">
-            {unemployed.value == null ? "—" : people.format(unemployed.value)}
+            {unemployed.value == null ? "—" : people(unemployed.value)}
           </dd>
         </div>
       </dl>
       <p className="mt-2 text-[13px] text-muted">
-        {monthShort(latest.key)}
-        {latest.preliminary ? ", preliminar: BLS lo revisará el mes próximo" : ""}. Sin ajuste
-        estacional. Las diferencias las calcula este sitio restando las tasas publicadas.
+        {month(latest.key)}
+        {latest.preliminary ? t.preliminaryNote : ""}
+        {t.note}
       </p>
     </section>
   );

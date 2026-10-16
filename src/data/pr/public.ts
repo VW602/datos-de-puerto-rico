@@ -1,4 +1,5 @@
-import { METRIC_GROUPS, PR_METRICS, metricGroup, type MetricGroup, type PrMetric, type PrMetricId } from "./metrics";
+import type { Locale } from "@/i18n/locale";
+import { METRIC_GROUPS, METRICS_BY_LOCALE, PR_METRICS, metricGroup, type MetricGroup, type PrMetric, type PrMetricId } from "./metrics";
 import type { Municipio } from "./places";
 import { PUBLIC_SOURCES, publicSourceForMetric, type PublicStatus, type ValueExclusion } from "./sources";
 
@@ -19,15 +20,20 @@ export function isPublicMetric(id: PrMetricId): boolean {
   return publicStatusForMetric(id) !== "PUBLIC_EXCLUDED";
 }
 
-export const PUBLIC_METRICS: PrMetric[] = PR_METRICS.filter((metric) => isPublicMetric(metric.id));
+/** The public measures, worded for one interface language. Same ids and order in both. */
+export function publicMetrics(locale: Locale = "es"): PrMetric[] {
+  return METRICS_BY_LOCALE[locale].filter((metric) => isPublicMetric(metric.id));
+}
+
+export const PUBLIC_METRICS: PrMetric[] = publicMetrics("es");
 
 /** Groups that have at least one public metric, in their usual order. */
 export const PUBLIC_GROUPS: MetricGroup[] = METRIC_GROUPS.filter((group) =>
   PUBLIC_METRICS.some((metric) => metricGroup(metric.id) === group),
 );
 
-export function publicMetricsInGroup(group: MetricGroup): PrMetric[] {
-  return PUBLIC_METRICS.filter((metric) => metricGroup(metric.id) === group);
+export function publicMetricsInGroup(group: MetricGroup, locale: Locale = "es"): PrMetric[] {
+  return publicMetrics(locale).filter((metric) => metricGroup(metric.id) === group);
 }
 
 /** Metric shown on first load. Falls back to the first public metric. */

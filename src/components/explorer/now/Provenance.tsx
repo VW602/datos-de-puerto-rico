@@ -1,16 +1,28 @@
 import type { NwsSnapshot, UsgsSnapshot } from "@/data/pr/current";
 import { prTime } from "@/data/pr/currentModel";
 import type { WaterSnapshot } from "@/data/pr/water";
+import { useLocale } from "@/i18n/context";
+import { NOW_MESSAGES } from "@/i18n/messages/now";
+import { snapshotAttribution } from "@/i18n/messages/snapshots";
 import { WaterProvenance } from "../WaterPanel";
 import { Disclosure } from "./Disclosure";
 
 function Copy({ at, attempt }: { at: string | null; attempt: { at: string; ok: boolean } }) {
+  const locale = useLocale();
+  const t = NOW_MESSAGES[locale].provenance;
   return (
     <>
-      Última copia: {at ? prTime(at) : "nunca obtenida"}.
-      {!attempt.ok && ` Último intento fallido: ${prTime(attempt.at)}.`}
+      {t.lastCopy}
+      {at ? prTime(at, false, locale) : t.neverRetrieved}.
+      {!attempt.ok && t.lastAttemptFailed(prTime(attempt.at, false, locale))}
     </>
   );
+}
+
+/** A snapshot's stored attribution, in the reader's language when a reviewed translation exists. */
+export function Attribution({ text }: { text: string }) {
+  const shown = snapshotAttribution(text, useLocale());
+  return <span lang={shown.lang === "es" ? "es-PR" : "en"}>{shown.text}</span>;
 }
 
 /**
@@ -26,29 +38,29 @@ export function Provenance({
   usgs: UsgsSnapshot;
   water: WaterSnapshot | null;
 }) {
+  const t = NOW_MESSAGES[useLocale()].provenance;
   return (
-    <Disclosure label="¿De dónde salen estos datos?" className="mt-1 text-[13px]">
+    <Disclosure label={t.open} className="mt-1 text-[13px]">
       <div className="max-w-[72ch] pb-2">
+        <p>{t.intro}</p>
+        <h4 className="mt-2 font-semibold">{t.alertsHeading}</h4>
         <p>
-          Horas en hora de Puerto Rico (AST, UTC−4; sin horario de verano). El sitio muestra copias
-          guardadas; nunca llama a las fuentes desde tu navegador.
-        </p>
-        <h4 className="mt-2 font-semibold">Alertas: Servicio Nacional de Meteorología (NWS)</h4>
-        <p>
-          <Copy at={nws.retrievedAt} attempt={nws.lastAttempt} /> {nws.source.attribution}{" "}
+          <Copy at={nws.retrievedAt} attempt={nws.lastAttempt} />{" "}
+          <Attribution text={nws.source.attribution} />{" "}
           <a href={nws.source.docs} target="_blank" rel="noreferrer">
-            API del NWS ↗
+            {t.nwsApi}
           </a>
         </p>
-        <h4 className="mt-2 font-semibold">Sismos: Servicio Geológico de EE. UU. (USGS)</h4>
+        <h4 className="mt-2 font-semibold">{t.quakesHeading}</h4>
         <p>
-          <Copy at={usgs.retrievedAt} attempt={usgs.lastAttempt} /> {usgs.source.attribution}{" "}
+          <Copy at={usgs.retrievedAt} attempt={usgs.lastAttempt} />{" "}
+          <Attribution text={usgs.source.attribution} />{" "}
           <a href={usgs.source.docs} target="_blank" rel="noreferrer">
-            Feed del USGS ↗
+            {t.usgsFeed}
           </a>
         </p>
-        <h4 className="mt-2 font-semibold">Agua: estaciones del USGS</h4>
-        {water ? <WaterProvenance water={water} /> : <p>Cargando…</p>}
+        <h4 className="mt-2 font-semibold">{t.waterHeading}</h4>
+        {water ? <WaterProvenance water={water} /> : <p>{t.loading}</p>}
       </div>
     </Disclosure>
   );

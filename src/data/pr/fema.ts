@@ -11,6 +11,9 @@
  *   - and USAspending (funds.ts). None of these is added to another.
  */
 import fema from "../../../data/generated/fema-pr.json";
+import { dayLabel as formatDay } from "../../i18n/format.ts";
+import type { Locale } from "../../i18n/locale.ts";
+import { FEMA_MESSAGES } from "../../i18n/messages/fema.ts";
 
 export type FemaGeoState =
   | "MUNICIPIO_ATTRIBUTABLE"
@@ -25,26 +28,12 @@ export const FEMA_GEO_ORDER: FemaGeoState[] = [
   "PUERTO_RICO_STATEWIDE",
   "NO_MUNICIPIO_GEOGRAPHY",
 ];
-export const FEMA_GEO_COPY: Record<FemaGeoState, { label: string; detail: string }> = {
-  MUNICIPIO_ATTRIBUTABLE: {
-    label: "En un municipio",
-    detail: "FEMA indica el municipio del proyecto (mitigación) o de los hogares (IHP).",
-  },
-  APPLICANT_MUNICIPIO: {
-    label: "Solicitante ubicado en un municipio",
-    detail:
-      "Asistencia Pública: FEMA registra el municipio de quien solicita, no necesariamente el lugar de la obra.",
-  },
-  MUNICIPIO_UNCERTAIN: {
-    label: "Varios municipios, sin certeza",
-    detail: "FEMA indica varios municipios para un mismo proyecto.",
-  },
-  PUERTO_RICO_STATEWIDE: {
-    label: "Todo Puerto Rico",
-    detail: "FEMA lo registra como «Statewide». No se le asigna a ningún municipio.",
-  },
-  NO_MUNICIPIO_GEOGRAPHY: { label: "Sin municipio", detail: "FEMA no indica municipio." },
-};
+export function femaGeoCopy(
+  locale: Locale = "es",
+): Record<FemaGeoState, { label: string; detail: string }> {
+  return FEMA_MESSAGES[locale].geo;
+}
+export const FEMA_GEO_COPY = femaGeoCopy("es");
 
 export type FemaMeasure =
   | "paObligated"
@@ -125,21 +114,19 @@ export const FEMA_NULLS = data.nulls;
 export const ALL = "all";
 const index = (m: FemaMeasure) => data.measures.indexOf(m);
 
-const MONTHS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
-export function dayLabel(iso: string | null): string {
-  if (!iso) return "—";
-  const [y, m, d] = iso.slice(0, 10).split("-").map(Number);
-  return `${d} ${MONTHS[m - 1]} ${y}`;
+export function dayLabel(iso: string | null, locale: Locale = "es"): string {
+  return formatDay(iso, locale);
 }
 
 /** "DR-4339-PR · HURRICANE MARIA (2017)" — FEMA's own identifier and title. */
-export function disasterLabel(key: string): string {
-  if (key === ALL) return "Todos los desastres";
+export function disasterLabel(key: string, locale: Locale = "es"): string {
+  const words = FEMA_MESSAGES[locale].disaster;
+  if (key === ALL) return words.all;
   const d = data.disasters.find((x) => x.key === key);
   if (!d) return key;
-  if (key === "none") return "Mitigación fuera de un desastre (PDM, FMA)";
-  if (!d.declaredInPuertoRico) return `Desastre ${d.number} (declarado fuera de Puerto Rico)`;
-  return `${d.declaration} · ${d.title ?? "Sin título"} (${d.declarationDate?.slice(0, 4) ?? "—"})`;
+  if (key === "none") return words.nonDisaster;
+  if (!d.declaredInPuertoRico) return words.outside(d.number);
+  return `${d.declaration} · ${d.title ?? words.untitled} (${d.declarationDate?.slice(0, 4) ?? "—"})`;
 }
 
 export function femaDisaster(key: string): FemaDisaster | null {

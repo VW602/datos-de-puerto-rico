@@ -5,6 +5,11 @@
  * missing stays null.
  */
 import laus from "../../../data/generated/bls-laus.json";
+import {
+  monthLabel as formatMonthLabel,
+  monthShort as formatMonthShort,
+} from "../../i18n/format.ts";
+import type { Locale } from "../../i18n/locale.ts";
 
 export type LausMeasure = "rate" | "laborForce" | "employment" | "unemployment";
 
@@ -34,45 +39,14 @@ export const LAUS_MONTHS = data.months;
 export const LAUS_LATEST = data.latest;
 const LATEST_INDEX = data.months.indexOf(data.latest);
 
-const MONTHS_ES = [
-  "enero",
-  "febrero",
-  "marzo",
-  "abril",
-  "mayo",
-  "junio",
-  "julio",
-  "agosto",
-  "septiembre",
-  "octubre",
-  "noviembre",
-  "diciembre",
-];
-const MONTHS_SHORT = [
-  "ene",
-  "feb",
-  "mar",
-  "abr",
-  "may",
-  "jun",
-  "jul",
-  "ago",
-  "sep",
-  "oct",
-  "nov",
-  "dic",
-];
-
-/** "2026-08" → "agosto de 2026". */
-export function monthLabel(key: string): string {
-  const [year, month] = key.split("-").map(Number);
-  return `${MONTHS_ES[month - 1]} de ${year}`;
+/** "2026-08" → "agosto de 2026" / "August 2026". */
+export function monthLabel(key: string, locale: Locale = "es"): string {
+  return formatMonthLabel(key, locale);
 }
 
-/** "2026-08" → "ago 2026". */
-export function monthShort(key: string): string {
-  const [year, month] = key.split("-").map(Number);
-  return `${MONTHS_SHORT[month - 1]} ${year}`;
+/** "2026-08" → "ago 2026" / "Aug 2026". */
+export function monthShort(key: string, locale: Locale = "es"): string {
+  return formatMonthShort(key, locale);
 }
 
 export function isPreliminary(key: string): boolean {

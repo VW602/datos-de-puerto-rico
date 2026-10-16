@@ -78,6 +78,24 @@ Antes de publicar, fuera del sitio:
   `publicStatus` `PUBLIC_READY` y derechos de redistribución escritos.
 - **Sin base de datos, sin cuentas, sin cookies propias.**
 
+## Idiomas
+
+El sitio está en español en `/` (por omisión) y en inglés en `/en/`. La dirección
+decide el idioma; no hay cookie, ni almacenamiento, ni detección por navegador o
+lugar. Los dos idiomas usan los mismos datos y las mismas rutas `/live/*`: solo
+cambia el texto.
+
+- Todo el texto de la interfaz está en `src/i18n/messages/`, un archivo por tema, con
+  el español y el inglés lado a lado. TypeScript exige las mismas claves en los dos.
+- El inglés del registro de fuentes está en `src/i18n/messages/registry.ts`, con una
+  huella del español que traduce: si el registro cambia, una prueba falla hasta que se
+  revise el inglés.
+- El selector ES | EN lleva la vista (medida, municipio, desastre y pestaña) a la otra
+  dirección en la consulta; la página la toma una vez y vuelve a la dirección limpia.
+- Para añadir texto: escribirlo en el catálogo del tema, en los dos idiomas, y usarlo
+  desde el componente. `src/i18n/i18n.test.tsx` falla si queda español en la página
+  en inglés o si una cadena en inglés es copia de la española.
+
 ## Despliegue
 
 El sitio no consulta ningún servicio al abrir la página: todo sale de archivos del

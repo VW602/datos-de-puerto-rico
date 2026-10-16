@@ -3,6 +3,8 @@ import type { PrMetric } from "@/data/pr/metrics";
 import type { Municipio } from "@/data/pr/places";
 import type { Ranking } from "@/data/pr/ranking";
 import { SIGNED_PATTERNS, normalize, valueClass } from "@/data/scale";
+import { useLocale } from "@/i18n/context";
+import { EXPLORER_MESSAGES } from "@/i18n/messages/explorer";
 
 const W = 760;
 const X0 = 16;
@@ -64,6 +66,9 @@ export const Ranking78 = memo(function Ranking78({
   missingCount: number;
   onSelect: (id: string) => void;
 }) {
+  const all = EXPLORER_MESSAGES[useLocale()];
+  const t = all.ranking;
+  const legend = all.legend;
   const { ranked, min, max, median } = ranking;
   // Signed metrics: $0 and net negative values sit in their own zone at the
   // left, apart from the positive axis, never squeezed onto its lowest point.
@@ -133,18 +138,21 @@ export const Ranking78 = memo(function Ranking78({
     selectedIndex >= 0 && (selectedIndex < 5 || selectedIndex >= ranked.length - 5);
 
   return (
-    <section aria-label="Los 78, de mayor a menor" className="@container/ranking">
+    <section aria-label={t.heading} className="@container/ranking">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4">
-        <h2 className="font-display text-[26px] font-medium md:text-3xl">
-          Los 78, de mayor a menor
-        </h2>
-        <span className="text-sm text-muted">Ordenar no es calificar</span>
+        <h2 className="font-display text-[26px] font-medium md:text-3xl">{t.heading}</h2>
+        <span className="text-sm text-muted">{t.notAScore}</span>
       </div>
       <svg
         viewBox={`0 0 ${W} 52`}
         className="mt-3 block h-auto w-full"
         role="img"
-        aria-label={`Los ${ranked.length} valores de ${metric.label} en una línea. Mediana ${metric.format(median)}.${selected ? ` ${selected.name}, lugar ${selectedIndex + 1}.` : ""}`}
+        aria-label={t.stripLabel(
+          ranked.length,
+          metric.label,
+          metric.format(median),
+          selected ? t.stripSelected(selected.name, selectedIndex + 1) : "",
+        )}
       >
         <line x1={X0} x2={X1} y1={26} y2={26} stroke="var(--color-divider)" strokeWidth={1.5} />
         <line
@@ -202,7 +210,7 @@ export const Ranking78 = memo(function Ranking78({
           data-scale-labels
         >
           <span className="min-w-0">
-            <span className="sr-only">Valor más bajo: </span>
+            <span className="sr-only">{legend.lowest}</span>
             {ranked.length > 0 ? metric.format(ranked[ranked.length - 1].values[metric.id]!) : ""}
           </span>
           <span className="order-last min-w-0 basis-full text-center [overflow-wrap:anywhere] @md:order-none @md:basis-auto">
@@ -210,7 +218,7 @@ export const Ranking78 = memo(function Ranking78({
               className="mr-1 inline-block w-4 border-t border-dashed border-fg align-middle"
               aria-hidden="true"
             />
-            mediana {metric.format(median)}
+            {t.median} {metric.format(median)}
             {selected && (
               <span className="ml-2 font-bold text-fg">
                 <span aria-hidden="true">◯ </span>
@@ -219,7 +227,7 @@ export const Ranking78 = memo(function Ranking78({
             )}
           </span>
           <span className="ml-auto min-w-0 text-right">
-            <span className="sr-only">Valor más alto: </span>
+            <span className="sr-only">{legend.highest}</span>
             {ranked.length > 0 ? metric.format(ranked[0].values[metric.id]!) : ""}
           </span>
         </div>
@@ -227,7 +235,9 @@ export const Ranking78 = memo(function Ranking78({
 
       <div className="mt-4 grid gap-x-10 gap-y-4 @md/ranking:grid-cols-2">
         <div>
-          <p className="mb-1 text-xs font-bold tracking-[0.08em] text-muted uppercase">Más altos</p>
+          <p className="mb-1 text-xs font-bold tracking-[0.08em] text-muted uppercase">
+            {t.highest}
+          </p>
           <ol className="m-0 list-none p-0">
             {top.map((place, index) => (
               <Row
@@ -242,7 +252,9 @@ export const Ranking78 = memo(function Ranking78({
           </ol>
         </div>
         <div>
-          <p className="mb-1 text-xs font-bold tracking-[0.08em] text-muted uppercase">Más bajos</p>
+          <p className="mb-1 text-xs font-bold tracking-[0.08em] text-muted uppercase">
+            {t.lowest}
+          </p>
           <ol className="m-0 list-none p-0">
             {bottom.map((place, index) => (
               <Row
@@ -268,11 +280,7 @@ export const Ranking78 = memo(function Ranking78({
           />
         </ol>
       )}
-      {missingCount > 0 && (
-        <p className="mt-3 text-sm text-muted">
-          {missingCount} sin dato publicado: no entran al orden.
-        </p>
-      )}
+      {missingCount > 0 && <p className="mt-3 text-sm text-muted">{t.missing(missingCount)}</p>}
     </section>
   );
 });

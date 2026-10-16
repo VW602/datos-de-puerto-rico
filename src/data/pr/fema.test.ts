@@ -21,6 +21,7 @@ import { agencyDisplay } from "./present";
 import { isPublicMetric, toPublicPlaces } from "./public";
 import { rankByMetric } from "./ranking";
 import { publicSourceForMetric } from "./sources";
+import { FEMA_MESSAGES } from "@/i18n/messages/fema";
 
 const ROOT = fileURLToPath(new URL("../../../", import.meta.url));
 const places = toPublicPlaces(applyLayers(municipios));
@@ -151,7 +152,9 @@ describe("recuperación y desastres en el sitio", () => {
         /fedObligations\s*\+|femaPaObligated\s*\+|Dinero FEMA|Fondos FEMA/,
       );
     }
-    expect(read("src/components/explorer/FemaDetail.tsx")).toMatch(/El sitio no las suma/);
+    expect(read("src/components/explorer/FemaDetail.tsx")).toMatch(/\{t\.notAdded\}/);
+    expect(FEMA_MESSAGES.es.island.notAdded).toMatch(/El sitio no las suma/);
+    expect(FEMA_MESSAGES.en.island.notAdded).toMatch(/does not add them together/);
   });
 
   it("Asistencia Pública se describe por el municipio del solicitante, nunca como dinero del lugar", () => {
@@ -160,26 +163,48 @@ describe("recuperación y desastres en el sitio", () => {
       expect(m.label, id).toMatch(/municipio del solicitante/);
       expect(m.hint, id).toMatch(/necesariamente el (de la obra|lugar de la obra)/i);
     }
-    const detail = read("src/components/explorer/FemaDetail.tsx");
-    expect(detail).toMatch(/solicitantes ubicados en/);
-    expect(detail).not.toMatch(/proyectos con este municipio|Fondos de proyectos en/);
-    expect(read("src/components/explorer/SourcePanel.tsx")).toMatch(/ubicación de quien solicita/);
+    for (const id of ["femaPaObligated", "femaPaProjects"] as const) {
+      const m = prMetricById(id, "en");
+      expect(m.label, id).toMatch(/by applicant's municipio/);
+      expect(m.hint, id).toMatch(/not necessarily where the work is/i);
+    }
+    const es = FEMA_MESSAGES.es;
+    const en = FEMA_MESSAGES.en;
+    expect(es.municipio.paHeading("Ponce")).toMatch(/solicitantes ubicados en Ponce/);
+    expect(en.municipio.paHeading("Ponce")).toMatch(/applicants located in Ponce/);
+    for (const text of [JSON.stringify(es), JSON.stringify(en)])
+      expect(text).not.toMatch(
+        /proyectos con este municipio|Fondos de proyectos en|projects in this municipio/,
+      );
+    expect(es.places.publicAssistance).toMatch(/ubicación de quien solicita/);
+    expect(en.places.publicAssistance).toMatch(/where the applicant is located/);
+    expect(read("src/components/explorer/SourcePanel.tsx")).toMatch(/t\.places\.publicAssistance/);
   });
 
   it("las etiquetas de hogares dicen lo que dice FEMA: un registro válido no es una aprobación", () => {
     const detail = read("src/components/explorer/FemaDetail.tsx");
+    // Each label sits next to the FEMA field it describes, in both languages.
+    expect(detail).toMatch(/label=\{t\.ihpValid\}\s+note=\{t\.ihpValidNote\}/);
+    expect(detail).toMatch(/label=\{t\.ihpApplicants\}\s+note="approvedForFemaAssistance"/);
+    expect(detail).toMatch(/label=\{t\.ihpApproved\}\s+note=\{t\.ihpApprovedNote\}/);
+    const es = FEMA_MESSAGES.es.municipio;
+    const en = FEMA_MESSAGES.en.municipio;
     // validRegistrations is labelled as valid, with an explicit "not approved".
-    expect(detail).toMatch(/label="Registros válidos"/);
-    expect(detail).toMatch(
-      /validRegistrations: registros que FEMA acepta como válidos; no quiere decir aprobados/,
+    expect(es.ihpValid).toBe("Registros válidos");
+    expect(es.ihpValidNote).toBe(
+      "validRegistrations: registros que FEMA acepta como válidos; no quiere decir aprobados",
     );
-    expect(detail).not.toMatch(/label="[^"]*aprobad[^"]*"\s+note="validRegistrations/);
+    expect(en.ihpValid).toBe("Valid registrations");
+    expect(en.ihpValidNote).toMatch(/^validRegistrations: .*this does not mean approved$/);
+    for (const label of [es.ihpValid, en.ihpValid]) expect(label).not.toMatch(/aprobad|approved/i);
     // approvedForFemaAssistance and totalApprovedIhpAmount are the approved fields.
-    expect(detail).toMatch(
-      /label="Solicitantes aprobados para IHP"\s+note="approvedForFemaAssistance"/,
-    );
-    expect(detail).toMatch(/label="Monto aprobado bajo IHP"\s+note="totalApprovedIhpAmount/);
+    expect(es.ihpApplicants).toBe("Solicitantes aprobados para IHP");
+    expect(es.ihpApproved).toBe("Monto aprobado bajo IHP");
+    expect(es.ihpApprovedNote).toMatch(/^totalApprovedIhpAmount/);
+    expect(en.ihpApproved).toBe("Amount approved under IHP");
+    expect(en.ihpApprovedNote).toMatch(/^totalApprovedIhpAmount.*approved does not mean paid$/);
     expect(prMetricById("femaIhpApproved").hint).toMatch(/Aprobado no quiere decir pagado/);
+    expect(prMetricById("femaIhpApproved", "en").hint).toMatch(/Approved does not mean paid/);
   });
 
   it("CDBG-DR no aparece como dinero de FEMA", () => {

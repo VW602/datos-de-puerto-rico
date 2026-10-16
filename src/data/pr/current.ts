@@ -6,6 +6,8 @@
  */
 import nws from "../../../data/current/nws.json";
 import usgs from "../../../data/current/usgs-earthquakes.json";
+import type { Locale } from "../../i18n/locale.ts";
+import { NOW_MESSAGES } from "../../i18n/messages/now.ts";
 import { municipios } from "./places";
 import {
   alertInForce,
@@ -95,21 +97,14 @@ export function alertsInForce(snapshot: NwsSnapshot, at: Date): Alert[] {
 }
 
 /** NWS severity, translated, with the NWS term kept next to it. Text, never color alone. */
-export const SEVERITY_ES: Record<Severity, string> = {
-  Extreme: "Extrema",
-  Severe: "Severa",
-  Moderate: "Moderada",
-  Minor: "Menor",
-  Unknown: "Desconocida",
-};
+export const SEVERITY_ES: Record<Severity, string> = NOW_MESSAGES.es.alerts.severity;
 
 /** Where an alert applies, from official NWS geography only. */
-export function alertArea(alert: Alert): string {
+export function alertArea(alert: Alert, locale: Locale = "es"): string {
+  const words = NOW_MESSAGES[locale].alerts;
   if (alert.geography === "MUNICIPIOS") return alert.municipios.map(municipioName).join(", ");
-  if (alert.geography === "PUERTO_RICO") return "Todo Puerto Rico";
-  return alert.areaDesc
-    ? `Zona del NWS: ${alert.areaDesc}`
-    : `Zona del NWS: ${alert.ugc.join(", ")}`;
+  if (alert.geography === "PUERTO_RICO") return words.allPuertoRico;
+  return words.nwsZone(alert.areaDesc ?? alert.ugc.join(", "));
 }
 
 export type QuakeSummary = {
@@ -133,11 +128,7 @@ export function quakeWindows(snapshot: UsgsSnapshot): { day: Earthquake[]; week:
 }
 
 /** USGS place text for an event type that is not an earthquake (e.g. "quarry blast"). */
-export const EVENT_TYPE_ES: Record<string, string> = {
-  earthquake: "sismo",
-  "quarry blast": "voladura de cantera",
-  explosion: "explosión",
-};
+export const EVENT_TYPE_ES: Record<string, string> = NOW_MESSAGES.es.quakes.eventTypes;
 
 /**
  * What the alerts block may say. "NONE" (no active alerts) only from a

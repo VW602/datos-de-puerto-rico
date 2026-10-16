@@ -2,8 +2,11 @@
  * Small, pure presentation helpers shared by the map, the summary, the
  * ranking and the table. Kept out of components so their wording is tested.
  */
+import type { Locale } from "@/i18n/locale";
+import { EXPLORER_MESSAGES } from "@/i18n/messages/explorer";
+import { AGENCY_ES } from "@/i18n/messages/sources";
 import type { PrMetric } from "./metrics";
-import { MISSING_COPY, missingReason } from "./missing";
+import { missingCopy, missingReason } from "./missing";
 import type { Municipio } from "./places";
 import type { Ranking } from "./ranking";
 
@@ -19,18 +22,20 @@ export function shortPeriod(period: string): string {
 const isPercent = (metric: PrMetric) => metric.format(1).endsWith("%");
 
 /** Signed difference from the median, always with the number. Percent measures use percentage points. */
-export function deltaText(metric: PrMetric, delta: number): string {
+export function deltaText(metric: PrMetric, delta: number, locale: Locale = "es"): string {
+  const pts = EXPLORER_MESSAGES[locale].delta.points;
   const rounded = Math.round(delta * 10) / 10;
-  if (Math.abs(rounded) < 0.05 && isPercent(metric)) return "0.0 pts";
+  if (Math.abs(rounded) < 0.05 && isPercent(metric)) return `0.0 ${pts}`;
   const sign = delta > 0 ? "+" : delta < 0 ? "−" : "";
   const abs = Math.abs(delta);
-  return isPercent(metric) ? `${sign}${abs.toFixed(1)} pts` : `${sign}${metric.format(abs)}`;
+  return isPercent(metric) ? `${sign}${abs.toFixed(1)} ${pts}` : `${sign}${metric.format(abs)}`;
 }
 
 /** Plain-language reading of the median comparison. Descriptive, never "better/worse". */
-export function deltaWords(metric: PrMetric, delta: number): string {
-  if (Math.abs(delta) < 1e-9) return "igual a la mediana";
-  return `${deltaText(metric, delta)} frente a la mediana`;
+export function deltaWords(metric: PrMetric, delta: number, locale: Locale = "es"): string {
+  const words = EXPLORER_MESSAGES[locale].delta;
+  if (Math.abs(delta) < 1e-9) return words.equal;
+  return words.versus(deltaText(metric, delta, locale));
 }
 
 export type RankInfo = { rank: number; of: number } | null;
@@ -45,13 +50,25 @@ export function describePlace(
   metric: PrMetric,
   place: Municipio | undefined,
   ranking: Ranking,
+  locale: Locale = "es",
 ): string {
   if (!place) return "";
+  const words = EXPLORER_MESSAGES[locale].delta;
   const value = place.values[metric.id];
   if (value == null)
-    return `${place.name}, ${metric.label}: ${MISSING_COPY[missingReason(metric.id, place.id)].short}`;
+    return words.place(
+      place.name,
+      metric.label,
+      missingCopy(locale)[missingReason(metric.id, place.id)].short,
+      "",
+    );
   const rank = rankOf(ranking, place.id);
-  return `${place.name}, ${metric.label}: ${metric.format(value)}${rank ? `, lugar ${rank.rank} de ${rank.of}` : ""}`;
+  return words.place(
+    place.name,
+    metric.label,
+    metric.format(value),
+    rank ? words.rank(rank.rank, rank.of) : "",
+  );
 }
 
 /** Accent-insensitive search key: "Cataño" and "catano" match. */
@@ -75,47 +92,26 @@ export function searchPlaces<T extends { name: string }>(
 }
 
 /**
- * Spanish description for an official agency name. Presentation only: the
- * official name (as the source publishes it) is always shown alongside, and
- * provenance records are never rewritten.
+ * How to name an official agency for people. Spanish adds a Spanish
+ * description (the official name, as the source publishes it, is always shown
+ * alongside); English uses the official name. Provenance records are never
+ * rewritten. `from` reads naturally after "Sale de" / "It comes from":
+ * "la Oficina del Censo…", "the U.S. Census Bureau".
  */
-const AGENCY_ES: [RegExp, string, string][] = [
-  [/^U\.S\. Census Bureau/, "Oficina del Censo de EE. UU.", "la"],
-  [
-    /^National Highway Traffic Safety Administration/,
-    "Administración Nacional de Seguridad del Tráfico en las Carreteras (NHTSA)",
-    "la",
-  ],
-  [
-    /^Centers for Disease Control and Prevention/,
-    "Centros para el Control y la Prevención de Enfermedades (CDC)",
-    "los",
-  ],
-  [
-    /^U\.S\. Bureau of Labor Statistics/,
-    "Oficina de Estadísticas Laborales de EE. UU. (BLS)",
-    "la",
-  ],
-  [/^U\.S\. Department of the Treasury/, "Departamento del Tesoro de EE. UU. (USAspending)", "el"],
-  [
-    /^Federal Emergency Management Agency/,
-    "Agencia Federal para el Manejo de Emergencias (FEMA)",
-    "la",
-  ],
-  [/^National Weather Service/, "Servicio Nacional de Meteorología (NWS)", "el"],
-  [/^U\.S\. Geological Survey/, "Servicio Geológico de EE. UU. (USGS)", "el"],
-];
-
-/** `from` reads naturally after "Sale de": "la Oficina del Censo…", "los Centros…". */
-export function agencyDisplay(official: string): {
+export function agencyDisplay(
+  official: string,
+  locale: Locale = "es",
+): {
   es: string | null;
   from: string;
   official: string;
 } {
+  const first = official.split(",")[0];
+  if (locale === "en") return { es: null, from: `the ${first}`, official };
   const match = AGENCY_ES.find(([pattern]) => pattern.test(official));
   return {
     es: match ? match[1] : null,
-    from: match ? `${match[2]} ${match[1]}` : official.split(",")[0],
+    from: match ? `${match[2]} ${match[1]}` : first,
     official,
   };
 }

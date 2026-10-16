@@ -11,6 +11,9 @@
  * The four add up to the Puerto Rico total.
  */
 import funds from "../../../data/generated/usaspending-pr.json";
+import { dayLabel as formatDay } from "../../i18n/format.ts";
+import type { Locale } from "../../i18n/locale.ts";
+import { FUNDS_MESSAGES } from "../../i18n/messages/funds.ts";
 
 export type GeoState =
   | "MUNICIPIO_ATTRIBUTABLE"
@@ -25,25 +28,12 @@ export const GEO_STATE_ORDER: GeoState[] = [
 ];
 
 /** Reader-facing names and one-line meanings of the four states. */
-export const GEO_STATE_COPY: Record<GeoState, { label: string; detail: string }> = {
-  MUNICIPIO_ATTRIBUTABLE: {
-    label: "Atribuible a un municipio",
-    detail: "Contratos que se ejecutan en el municipio y asistencia a personas que viven allí.",
-  },
-  MUNICIPIO_UNCERTAIN: {
-    label: "Registrado en un municipio, sin certeza",
-    detail:
-      "Asistencia a organizaciones y gobiernos con un municipio como lugar de ejecución. Puede ser una oficina que sirve a toda la isla.",
-  },
-  PUERTO_RICO_STATEWIDE: {
-    label: "Todo Puerto Rico",
-    detail: "Asistencia registrada para Puerto Rico completo, sin municipio.",
-  },
-  NO_MUNICIPIO_GEOGRAPHY: {
-    label: "Sin municipio registrado",
-    detail: "Contratos en Puerto Rico que no indican municipio.",
-  },
-};
+export function geoStateCopy(
+  locale: Locale = "es",
+): Record<GeoState, { label: string; detail: string }> {
+  return FUNDS_MESSAGES[locale].geo;
+}
+export const GEO_STATE_COPY = geoStateCopy("es");
 
 type Ranked = [string, number];
 export type MunicipioFunds = {
@@ -116,14 +106,19 @@ export const FUNDS_HISTORY = data.history;
 export const FUNDS_ISLAND = data.island;
 export const FUNDS_CDBG = data.cdbg;
 
-const MONTHS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
-/** "2026-10-07" → "7 oct 2026". */
-export function dayLabel(iso: string): string {
-  const [y, m, d] = iso.slice(0, 10).split("-").map(Number);
-  return `${d} ${MONTHS[m - 1]} ${y}`;
+/** "2026-10-07" → "7 oct 2026" / "Oct 7, 2026". */
+export function dayLabel(iso: string, locale: Locale = "es"): string {
+  return formatDay(iso, locale);
 }
-/** "AF 2026 (1 oct 2025 – 30 sep 2026)". */
-export const FUNDS_FY_LABEL = `AF ${data.fiscalYear} (${dayLabel(data.period.start)} – ${dayLabel(data.period.end)})`;
+/** "AF 2026 (1 oct 2025 – 30 sep 2026)" / "FY 2026 (Oct 1, 2025 – Sep 30, 2026)". */
+export function fundsFyLabel(locale: Locale = "es"): string {
+  return FUNDS_MESSAGES[locale].fiscalYearRange(
+    data.fiscalYear,
+    dayLabel(data.period.start, locale),
+    dayLabel(data.period.end, locale),
+  );
+}
+export const FUNDS_FY_LABEL = fundsFyLabel("es");
 
 export function fundsFor(id: string): MunicipioFunds | null {
   return data.municipios[id] ?? null;

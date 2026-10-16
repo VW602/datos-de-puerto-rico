@@ -1,11 +1,7 @@
 import { ageWords, freshness, type Freshness, type Thresholds } from "@/data/pr/currentModel";
+import { useLocale } from "@/i18n/context";
+import { NOW_MESSAGES } from "@/i18n/messages/now";
 
-const FRESH_ES: Record<Freshness, string> = {
-  CURRENT: "Al día",
-  AGING: "Algo atrasado",
-  STALE: "Desactualizado",
-  UNAVAILABLE: "Sin datos",
-};
 /** A shape next to the word, so the state never depends on color. */
 const FRESH_MARK: Record<Freshness, string> = {
   CURRENT: "●",
@@ -32,11 +28,10 @@ export function SourceStatus({
   items: (SourceItem | { label: string; pending: string })[];
   now: Date | null;
 }) {
+  const locale = useLocale();
+  const t = NOW_MESSAGES[locale].status;
   return (
-    <ul
-      aria-label="Estado de las copias de cada fuente"
-      className="mt-1 flex flex-wrap gap-x-5 gap-y-0.5 text-[13px]"
-    >
+    <ul aria-label={t.listLabel} className="mt-1 flex flex-wrap gap-x-5 gap-y-0.5 text-[13px]">
       {items.map((item) => {
         if ("pending" in item)
           return (
@@ -49,9 +44,9 @@ export function SourceStatus({
         return (
           <li key={item.label} className={bad ? "font-semibold text-error" : "text-muted"}>
             {state && <span aria-hidden="true">{FRESH_MARK[state]} </span>}
-            {item.label} · {state ? FRESH_ES[state] : "comprobando…"}
-            {state && item.retrievedAt && ` (${ageWords(item.retrievedAt, now!)})`}
-            {!item.lastAttempt.ok && " · último intento falló"}
+            {item.label} · {state ? t.freshness[state] : t.checking}
+            {state && item.retrievedAt && ` (${ageWords(item.retrievedAt, now!, locale)})`}
+            {!item.lastAttempt.ok && t.lastAttemptFailed}
           </li>
         );
       })}

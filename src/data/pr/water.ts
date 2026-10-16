@@ -17,6 +17,7 @@ import { canSpeakForNow, freshness, type Freshness } from "./currentModel";
 import { municipioName } from "./current";
 import { LIVE_ROUTES, readLiveRoute, isWaterSeries, isWaterSnapshot } from "./liveData";
 import { seriesState, type SeriesState } from "./waterModel";
+import { WATER_MESSAGES } from "../../i18n/messages/water.ts";
 
 export type { HourlySeries, Observation, SeriesFile, Station, WaterSnapshot, WaterView };
 
@@ -39,11 +40,7 @@ export const loadWaterSeries = async (): Promise<SeriesFile> =>
     (m) => m.default as unknown as SeriesFile,
   );
 
-export const VIEW_ES: Record<WaterView, string> = {
-  RIOS: "Ríos y canales",
-  LLUVIA: "Lluvia",
-  EMBALSES: "Embalses y lagos",
-};
+export const VIEW_ES: Record<WaterView, string> = WATER_MESSAGES.es.views;
 
 /** Snapshot freshness, the same four states as alerts and earthquakes. */
 export const waterFreshness = (s: WaterSnapshot, now: Date): Freshness =>

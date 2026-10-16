@@ -13,6 +13,8 @@ import {
   isUsgsSnapshot,
 } from "@/data/pr/liveData";
 import type { WaterSnapshot } from "@/data/pr/water";
+import { useLocale } from "@/i18n/context";
+import { NOW_MESSAGES } from "@/i18n/messages/now";
 import { AlertsSection } from "./now/AlertsSection";
 import { Provenance } from "./now/Provenance";
 import { QuakesSection } from "./now/QuakesSection";
@@ -74,6 +76,7 @@ export function NowView({
   water: WaterSnapshot | null | "error";
 }) {
   const w = water && water !== "error" ? water : null;
+  const t = NOW_MESSAGES[useLocale()];
   return (
     <section
       aria-labelledby="ahora"
@@ -81,37 +84,35 @@ export function NowView({
     >
       <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
         <h2 id="ahora" className="font-display text-[22px] font-medium md:text-2xl">
-          Ahora en Puerto Rico
+          {t.title}
         </h2>
-        <p className="text-[13px] text-muted">
-          Copias guardadas de fuentes oficiales; no es un sistema de avisos.
-        </p>
+        <p className="text-[13px] text-muted">{t.disclaimer}</p>
       </div>
       <SourceStatus
         now={now}
         items={[
           {
-            label: "NWS alertas",
+            label: t.status.nws,
             retrievedAt: nws.retrievedAt,
             lastAttempt: nws.lastAttempt,
             thresholds: nws.freshness,
           },
           {
-            label: "USGS sismos",
+            label: t.status.quakes,
             retrievedAt: usgs.retrievedAt,
             lastAttempt: usgs.lastAttempt,
             thresholds: usgs.freshness,
           },
           w
             ? {
-                label: "USGS agua",
+                label: t.status.water,
                 retrievedAt: w.retrievedAt,
                 lastAttempt: w.lastAttempt,
                 thresholds: w.sourceFreshness,
               }
             : {
-                label: "USGS agua",
-                pending: water === "error" ? "no se pudo cargar" : "cargando…",
+                label: t.status.water,
+                pending: water === "error" ? t.status.loadFailed : t.status.loading,
               },
         ]}
       />

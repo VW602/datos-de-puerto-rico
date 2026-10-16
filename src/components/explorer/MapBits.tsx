@@ -4,6 +4,8 @@ import type { PrMetric } from "@/data/pr/metrics";
 import type { Candidate } from "@/data/pr/geo";
 import { searchPlaces } from "@/data/pr/present";
 import { ISLAND_ONLY_FILL, NO_DATA_HATCH, RAMP_GRADIENT, SIGNED_PATTERNS } from "@/data/scale";
+import { useLocale } from "@/i18n/context";
+import { EXPLORER_MESSAGES } from "@/i18n/messages/explorer";
 
 /** Inline swatches for the signed classes, same patterns as the map. */
 export function ZeroSwatch() {
@@ -71,6 +73,7 @@ export function Legend({
   negativeCount?: number;
   compact?: boolean;
 }) {
+  const t = EXPLORER_MESSAGES[useLocale()].legend;
   if (islandOnly) {
     return (
       <div className="flex flex-wrap items-center gap-2 text-[13px] text-muted">
@@ -78,7 +81,7 @@ export function Legend({
           className="block h-3.5 w-6 shrink-0 border border-divider"
           style={{ background: ISLAND_ONLY_FILL }}
         />
-        <span>No hay cifra por municipio: el mapa pinta toda la isla igual.</span>
+        <span>{t.islandOnly}</span>
       </div>
     );
   }
@@ -96,7 +99,7 @@ export function Legend({
         className={`flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 tabular ${compact ? "w-full" : "flex-1 basis-full @[22rem]:basis-auto"}`}
       >
         <span className="min-w-0">
-          <span className="sr-only">Valor más bajo: </span>
+          <span className="sr-only">{t.lowest}</span>
           {metric.formatTick(min)}
         </span>
         <span
@@ -105,7 +108,7 @@ export function Legend({
           aria-hidden="true"
         />
         <span className="ml-auto min-w-0 text-right @[22rem]:ml-0">
-          <span className="sr-only">Valor más alto: </span>
+          <span className="sr-only">{t.highest}</span>
           {metric.formatTick(max)}
         </span>
       </div>
@@ -118,12 +121,13 @@ export function Legend({
       {metric.signed && negativeCount > 0 && (
         <span className="flex items-center gap-1.5">
           <NegativeSwatch />
-          Neto negativo ({negativeCount})
+          {t.netNegative} ({negativeCount})
         </span>
       )}
       <span className="flex items-center gap-1.5">
         <NoDataSwatch />
-        Sin dato publicado{missingCount > 0 ? ` (${missingCount})` : ""}
+        {t.noData}
+        {missingCount > 0 ? ` (${missingCount})` : ""}
       </span>
       {!compact && (
         <span className="flex items-center gap-1.5">
@@ -138,10 +142,13 @@ export function Legend({
               strokeWidth="2.6"
             />
           </svg>
-          Seleccionado
+          {t.selected}
         </span>
       )}
-      <span>Más oscuro = más alto{metric.scale === "log" ? " · escala logarítmica" : ""}</span>
+      <span>
+        {t.darker}
+        {metric.scale === "log" ? t.log : ""}
+      </span>
     </div>
   );
 }
@@ -157,17 +164,18 @@ export function ZoomControls({
   onReset: () => void;
   className?: string;
 }) {
+  const t = EXPLORER_MESSAGES[useLocale()].map;
   const button =
     "flex size-11 items-center justify-center rounded-[3px] border border-fg bg-surface text-fg hover:bg-track";
   return (
     <div className={`flex flex-col gap-1.5 ${className}`}>
-      <button type="button" aria-label="Acercar el mapa" className={button} onClick={onZoomIn}>
+      <button type="button" aria-label={t.zoomIn} className={button} onClick={onZoomIn}>
         <Plus className="size-4" aria-hidden="true" />
       </button>
-      <button type="button" aria-label="Alejar el mapa" className={button} onClick={onZoomOut}>
+      <button type="button" aria-label={t.zoomOut} className={button} onClick={onZoomOut}>
         <Minus className="size-4" aria-hidden="true" />
       </button>
-      <button type="button" aria-label="Ver toda la isla" className={button} onClick={onReset}>
+      <button type="button" aria-label={t.reset} className={button} onClick={onReset}>
         <Maximize2 className="size-4" aria-hidden="true" />
       </button>
     </div>
@@ -182,6 +190,7 @@ export function MunicipioSearch({
   places: { id: string; name: string }[];
   onPick: (id: string) => void;
 }) {
+  const t = EXPLORER_MESSAGES[useLocale()].search;
   const [query, setQuery] = useState("");
   const listId = useId();
   const results = searchPlaces(places, query);
@@ -193,11 +202,11 @@ export function MunicipioSearch({
     <div className="relative">
       <label className="flex min-h-12 items-center gap-2.5 rounded-[3px] border border-divider bg-surface px-3 focus-within:border-fg">
         <Search className="size-4 shrink-0 text-muted" aria-hidden="true" />
-        <span className="sr-only">Buscar municipio</span>
+        <span className="sr-only">{t.label}</span>
         <input
           type="search"
           value={query}
-          placeholder="Buscar municipio"
+          placeholder={t.label}
           aria-controls={listId}
           aria-expanded={results.length > 0}
           autoComplete="off"
@@ -212,7 +221,7 @@ export function MunicipioSearch({
         />
       </label>
       <p className="sr-only" aria-live="polite">
-        {query ? `${results.length} ${results.length === 1 ? "municipio" : "municipios"}` : ""}
+        {query ? t.count(results.length) : ""}
       </p>
       {results.length > 0 && (
         <ul
@@ -234,7 +243,7 @@ export function MunicipioSearch({
       )}
       {query && results.length === 0 && (
         <p className="absolute top-full right-0 left-0 z-30 mt-1 border border-divider bg-surface px-3 py-2 text-sm text-muted">
-          Ningún municipio con ese nombre.
+          {t.none}
         </p>
       )}
     </div>
@@ -254,6 +263,7 @@ export function TapChooser({
   onChoose: (id: string) => void;
   onCancel: () => void;
 }) {
+  const t = EXPLORER_MESSAGES[useLocale()].chooser;
   const headingRef = useRef<HTMLParagraphElement>(null);
   useEffect(() => {
     headingRef.current?.focus();
@@ -270,7 +280,7 @@ export function TapChooser({
         tabIndex={-1}
         className="mb-2 text-sm text-muted outline-none"
       >
-        Tocaste cerca de {candidates.length} municipios. ¿Cuál quieres ver?
+        {t.prompt(candidates.length)}
       </p>
       <div className="flex flex-wrap gap-1.5">
         {candidates.map((candidate) => (
@@ -288,7 +298,7 @@ export function TapChooser({
           onClick={onCancel}
           className="min-h-11 rounded-full px-4 text-[15px] text-muted underline"
         >
-          Cancelar
+          {t.cancel}
         </button>
       </div>
     </div>

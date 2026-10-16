@@ -26,42 +26,8 @@ export function freshness(retrievedAt: string | null, now: Date, t: Thresholds):
 /** Whether a snapshot can be read as "now": only CURRENT or AGING. */
 export const canSpeakForNow = (f: Freshness) => f === "CURRENT" || f === "AGING";
 
-/** Puerto Rico time (AST, UTC−4, no daylight saving), whatever the viewer's device says. */
-export const PR_TIME_ZONE = "America/Puerto_Rico";
-const PR_FORMAT = new Intl.DateTimeFormat("es-PR", {
-  timeZone: PR_TIME_ZONE,
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-  hour: "numeric",
-  minute: "2-digit",
-  hour12: true,
-});
-const PR_SHORT = new Intl.DateTimeFormat("es-PR", {
-  timeZone: PR_TIME_ZONE,
-  day: "numeric",
-  month: "short",
-  hour: "numeric",
-  minute: "2-digit",
-  hour12: true,
-});
-
-/** "7 oct 2026, 9:35 p. m. hora de Puerto Rico (AST)". */
-export function prTime(iso: string | null, short = false): string {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "—";
-  return `${(short ? PR_SHORT : PR_FORMAT).format(d).replace(/\u202f|\u00a0/g, " ")}${short ? " AST" : " hora de Puerto Rico (AST)"}`;
-}
-
-/** Age in words: "hace 12 min", "hace 3 h", "hace 2 días". */
-export function ageWords(iso: string, now: Date): string {
-  const minutes = Math.max(0, Math.round((now.getTime() - Date.parse(iso)) / 60000));
-  if (minutes < 60) return `hace ${minutes} min`;
-  const hours = Math.round(minutes / 60);
-  if (hours < 48) return `hace ${hours} h`;
-  return `hace ${Math.round(hours / 24)} días`;
-}
+// Times and ages in words live with the rest of the locale-aware formatting.
+export { PR_TIME_ZONE, ageWords, prTime } from "../../i18n/format.ts";
 
 /** Events within `hours` before the snapshot's own retrieval time (not the viewer's clock). */
 export function withinHours<T extends { time: string }>(

@@ -21,6 +21,8 @@
  * from its own observation time, never from the time the snapshot was retrieved.
  */
 
+import { WATER_MESSAGES } from "../../i18n/messages/water.ts";
+
 export type SeriesState = "CURRENT" | "AGING" | "STALE" | "NO_DATA";
 export type SeriesThresholds = { currentMinutes: number; staleMinutes: number };
 
@@ -37,75 +39,42 @@ export function seriesState(
   return "STALE";
 }
 
-export const SERIES_STATE_ES: Record<SeriesState, string> = {
-  CURRENT: "Dato reciente",
-  AGING: "Dato de hace unas horas",
-  STALE: "Sin dato reciente",
-  NO_DATA: "Sin dato",
-};
+/** Reader-facing wording lives in src/i18n/messages/water.ts; these are the Spanish originals. */
+const ES = WATER_MESSAGES.es;
+export const SERIES_STATE_ES: Record<SeriesState, string> = ES.seriesState;
 
-/** Units as USGS publishes them, with a reader-friendly Spanish name. No conversion. */
-export const UNIT_ES: Record<string, { name: string; symbol: string }> = {
-  "ft^3/s": { name: "pies cúbicos por segundo", symbol: "ft³/s" },
-  ft: { name: "pies", symbol: "ft" },
-  m: { name: "metros", symbol: "m" },
-  in: { name: "pulgadas", symbol: "in" },
-};
-export const unitSymbol = (unit: string) => UNIT_ES[unit]?.symbol ?? unit;
-export const unitName = (unit: string) => UNIT_ES[unit]?.name ?? unit;
+/** Units as USGS publishes them, with a reader-friendly name. No conversion. */
+const UNIT_SYMBOL: Record<string, string> = { "ft^3/s": "ft³/s", ft: "ft", m: "m", in: "in" };
+export const UNIT_ES: Record<string, { name: string; symbol: string }> = Object.fromEntries(
+  Object.entries(UNIT_SYMBOL).map(([unit, symbol]) => [unit, { name: ES.units[unit]!, symbol }]),
+);
+export const unitSymbol = (unit: string) => UNIT_SYMBOL[unit] ?? unit;
+export const unitName = (unit: string) => ES.units[unit] ?? unit;
 
 /**
  * What each measure is called, faithful to the USGS parameter names. Gage
  * height is the water level read at the gage against the gage's own datum: it
  * is not the depth of the river and not a flood level.
  */
-export const KIND_ES = {
-  DISCHARGE: "Caudal",
-  GAGE_HEIGHT: "Altura del medidor",
-  PRECIPITATION: "Lluvia",
-  RESERVOIR_ELEVATION: "Elevación del agua",
-} as const;
-
-export const DATUM_ES: Record<string, string> = {
-  PRVD02: "sobre el Datum Vertical de Puerto Rico de 2002 (PRVD02)",
-  LMSL: "sobre el nivel medio local del mar (LMSL)",
-  NGVD29: "sobre el Datum Vertical Geodésico Nacional de 1929 (NGVD 29)",
-};
+export const KIND_ES = ES.kinds;
+export const DATUM_ES: Record<string, string> = ES.datums;
 
 /** USGS data qualifiers, translated; an unknown code is shown as published. */
-export const QUALIFIER_ES: Record<string, string> = {
-  DRY: "seco (USGS)",
-  ESTIMATED: "estimado",
-  RATINGDEV: "curva de caudal en desarrollo (USGS no publica caudal)",
-  UNAVAIL: "no disponible",
-  DISCONTINUED: "estación descontinuada",
-  ICE: "hielo",
-  EQUIP: "falla de equipo",
-  FLOOD: "dañado por crecida",
-  MAINT: "en mantenimiento",
-  BKW: "efecto de remanso",
-  ZFL: "flujo cero",
-};
+export const QUALIFIER_ES: Record<string, string> = ES.qualifiers;
 export const qualifierEs = (q: string) => QUALIFIER_ES[q] ?? q;
 
-export const APPROVAL_ES = {
-  Provisional: "Provisional",
-  Approved: "Aprobado",
-} as const;
-
-export const TREND_ES = { UP: "subiendo", DOWN: "bajando", SAME: "sin cambio" } as const;
+export const APPROVAL_ES = ES.approval;
+export const TREND_ES = ES.trend;
 
 /**
  * Where a station is. A municipio from USGS site metadata says where the gage
  * stands, not what conditions are like across that municipio.
  */
 export function stationPlace(municipioName: string | null): string {
-  return municipioName
-    ? `Estación ubicada en ${municipioName}`
-    : "Estación sin municipio en los datos del USGS";
+  return municipioName ? ES.stationIn(municipioName) : ES.stationNoMunicipio;
 }
 
 /** "50.5 ft³/s". Zero stays "0.00"; no value is "sin dato", never 0. */
 export function valueWithUnit(valueText: string | null, unit: string): string {
-  return valueText === null ? "sin dato" : `${valueText} ${unitSymbol(unit)}`;
+  return valueText === null ? ES.noValue : `${valueText} ${unitSymbol(unit)}`;
 }

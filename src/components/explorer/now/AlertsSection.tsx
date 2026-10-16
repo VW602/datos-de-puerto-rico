@@ -1,11 +1,7 @@
-import {
-  SEVERITY_ES,
-  alertArea,
-  alertsStatus,
-  type Alert,
-  type NwsSnapshot,
-} from "@/data/pr/current";
+import { alertArea, alertsStatus, type Alert, type NwsSnapshot } from "@/data/pr/current";
 import { prTime } from "@/data/pr/currentModel";
+import { useLocale } from "@/i18n/context";
+import { NOW_MESSAGES } from "@/i18n/messages/now";
 import { Disclosure } from "./Disclosure";
 import { NowRow } from "./NowRow";
 
@@ -27,6 +23,8 @@ const SEVERITY_CLASS: Record<Alert["severity"], string> = {
 const FIRST_ALERTS = 3;
 
 function AlertCard({ alert }: { alert: Alert }) {
+  const locale = useLocale();
+  const t = NOW_MESSAGES[locale].alerts;
   return (
     <li
       className={`border-l-4 bg-surface px-3 py-2.5 ${SEVERITY_CLASS[alert.severity].split(" ")[0]}`}
@@ -37,19 +35,21 @@ function AlertCard({ alert }: { alert: Alert }) {
           className={`ml-2 inline-block rounded-[2px] border px-1 text-[12px] ${SEVERITY_CLASS[alert.severity]}`}
         >
           <span aria-hidden="true">{SEVERITY_MARK[alert.severity]} </span>
-          Severidad: {SEVERITY_ES[alert.severity]} <span lang="en">({alert.severity})</span>
+          {t.severityLabel} {t.severity[alert.severity]}
+          {locale === "es" && <span lang="en"> ({alert.severity})</span>}
         </span>
       </p>
       <p className="mt-0.5 text-[14px]">
-        <span className="text-muted">Dónde: </span>
+        <span className="text-muted">{t.where}</span>
         {alert.geography === "MUNICIPIOS" && alert.municipios.length > 12
-          ? `${alert.municipios.length} municipios (lista en los detalles)`
-          : alertArea(alert)}
+          ? t.manyMunicipios(alert.municipios.length)
+          : alertArea(alert, locale)}
       </p>
       <p className="text-[14px] tabular">
-        <span className="text-muted">Desde: </span>
-        {prTime(alert.onset ?? alert.effective, true)} <span className="text-muted">· Hasta: </span>
-        {prTime(alert.ends ?? alert.expires, true)}
+        <span className="text-muted">{t.from}</span>
+        {prTime(alert.onset ?? alert.effective, true, locale)}
+        <span className="text-muted">{t.until}</span>
+        {prTime(alert.ends ?? alert.expires, true, locale)}
         {alert.messageType !== "Alert" && (
           <span className="text-muted" lang="en">
             {" "}
@@ -58,9 +58,9 @@ function AlertCard({ alert }: { alert: Alert }) {
         )}
       </p>
       {(alert.description || alert.instruction || alert.municipios.length > 12) && (
-        <Disclosure label="Detalles del NWS" className="text-[14px]">
+        <Disclosure label={t.details} className="text-[14px]">
           {alert.geography === "MUNICIPIOS" && alert.municipios.length > 12 && (
-            <p className="mt-1">Municipios (códigos SAME del NWS): {alertArea(alert)}.</p>
+            <p className="mt-1">{t.municipiosSame(alertArea(alert, locale))}</p>
           )}
           {alert.headline && (
             <p className="mt-1" lang="en">
@@ -78,12 +78,10 @@ function AlertCard({ alert }: { alert: Alert }) {
             </p>
           )}
           <p className="mt-1 text-[13px] text-muted">
-            {alert.descriptionTruncated || alert.instructionTruncated
-              ? "Extracto del texto oficial. "
-              : "Texto oficial del NWS. "}
+            {alert.descriptionTruncated || alert.instructionTruncated ? t.excerpt : t.officialText}
             {alert.url && (
               <a href={alert.url} target="_blank" rel="noreferrer">
-                Alerta completa en el NWS ↗
+                {t.fullAlert}
               </a>
             )}
           </p>
@@ -94,6 +92,7 @@ function AlertCard({ alert }: { alert: Alert }) {
 }
 
 function AlertList({ alerts }: { alerts: Alert[] }) {
+  const t = NOW_MESSAGES[useLocale()].alerts;
   const first = alerts.slice(0, FIRST_ALERTS);
   const rest = alerts.slice(FIRST_ALERTS);
   return (
@@ -104,9 +103,7 @@ function AlertList({ alerts }: { alerts: Alert[] }) {
         ))}
       </ul>
       {rest.length > 0 && (
-        <Disclosure
-          label={`Ver ${rest.length === 1 ? "la otra alerta" : `las otras ${rest.length} alertas`}`}
-        >
+        <Disclosure label={t.seeOthers(rest.length)}>
           <ul className="flex flex-col gap-2">
             {rest.map((a) => (
               <AlertCard key={a.id} alert={a} />
@@ -123,39 +120,38 @@ function AlertList({ alerts }: { alerts: Alert[] }) {
  * none is one calm line; a stale or missing copy says it cannot confirm.
  */
 export function AlertsSection({ snapshot, now }: { snapshot: NwsSnapshot; now: Date | null }) {
+  const locale = useLocale();
+  const all = NOW_MESSAGES[locale];
+  const t = all.alerts;
   const status = now ? alertsStatus(snapshot, now) : null;
   const alerts = status?.alerts ?? [];
   const active = status?.kind === "ACTIVE";
   return (
-    <NowRow id="now-alerts" title="Alertas del NWS" attention={active}>
+    <NowRow id="now-alerts" title={t.title} attention={active}>
       {status === null ? (
-        <p className="text-[15px] text-muted">Comprobando la antigüedad de la última copia…</p>
+        <p className="text-[15px] text-muted">{all.checking}</p>
       ) : status.kind === "UNCONFIRMED" ? (
         <>
           <p className="text-[15px] font-semibold text-error" role="status">
-            No se pudo confirmar el estado actual de las alertas.
+            {t.unconfirmed}
             {snapshot.retrievedAt
-              ? ` La última copia del NWS es del ${prTime(snapshot.retrievedAt, true)}.`
-              : " No hay ninguna copia del NWS."}
+              ? t.lastCopy(prTime(snapshot.retrievedAt, true, locale))
+              : t.noCopy}
           </p>
           {alerts.length > 0 && (
-            <Disclosure
-              label={`Ver ${alerts.length === 1 ? "la alerta" : `las ${alerts.length} alertas`} que estaban en vigor a esa hora`}
-            >
+            <Disclosure label={t.seeThen(alerts.length)}>
               <AlertList alerts={alerts} />
             </Disclosure>
           )}
         </>
       ) : status.kind === "NONE" ? (
         <p className="text-[15px]" role="status">
-          No hay alertas activas del NWS para Puerto Rico en la última actualización (
-          {prTime(snapshot.retrievedAt, true)}).
+          {t.none(prTime(snapshot.retrievedAt, true, locale))}
         </p>
       ) : (
         <>
           <p className="text-[15px] font-semibold" role="status">
-            {alerts.length === 1 ? "1 alerta activa" : `${alerts.length} alertas activas`} del NWS
-            para Puerto Rico (copia de las {prTime(snapshot.retrievedAt, true)}).
+            {t.active(alerts.length, prTime(snapshot.retrievedAt, true, locale))}
           </p>
           <AlertList alerts={alerts} />
         </>

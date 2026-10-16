@@ -4,7 +4,6 @@ import { NowRow } from "./now/NowRow";
 import { prTime, ageWords } from "@/data/pr/currentModel";
 import { SHAPES, project } from "@/data/pr/geo";
 import {
-  VIEW_ES,
   hourlyFor,
   loadWaterSeries,
   seriesCountsByKind,
@@ -19,41 +18,34 @@ import {
   type WaterSnapshot,
   type WaterView,
 } from "@/data/pr/water";
-import {
-  APPROVAL_ES,
-  DATUM_ES,
-  KIND_ES,
-  SERIES_STATE_ES,
-  TREND_ES,
-  qualifierEs,
-  stationPlace,
-  unitName,
-  unitSymbol,
-  valueWithUnit,
-  type SeriesState,
-} from "@/data/pr/waterModel";
+import { unitSymbol, type SeriesState } from "@/data/pr/waterModel";
+import { useLocale } from "@/i18n/context";
+import { plural } from "@/i18n/format";
+import type { Locale } from "@/i18n/locale";
+import { NOW_MESSAGES } from "@/i18n/messages/now";
+import { WATER_MESSAGES, exclusionDetailEn } from "@/i18n/messages/water";
+import { Attribution } from "./now/Provenance";
 
 const VIEWS: WaterView[] = ["RIOS", "LLUVIA", "EMBALSES"];
-const SHAPE_ES: Record<WaterView, string> = {
-  RIOS: "círculo",
-  LLUVIA: "rombo",
-  EMBALSES: "cuadrado",
-};
 const REPORTING = (s: SeriesState) => s === "CURRENT" || s === "AGING";
-const EXCLUSION_ES: Record<string, string> = {
-  INACTIVE: `series sin observaciones en los últimos 30 días (descontinuadas o fuera de servicio)`,
-  ALTERNATE_DATUM_OR_UNIT:
-    "copias de la misma elevación de embalse en otro datum o unidad (se muestra una)",
-  AMBIGUOUS_DUPLICATE: "dos series activas del mismo parámetro en un sitio (no se elige una)",
-  SITE_TYPE_OUT_OF_SCOPE: "sitios de otro tipo (manantial, desvío, costa)",
-  NOT_USGS: "sitios de otra agencia",
-  NO_METADATA: "series sin metadatos",
-  NO_SITE_METADATA: "sitios sin metadatos",
-  METADATA_MISMATCH: "series cuyo significado no es el esperado",
-  INVALID_COORDINATES: "coordenadas inválidas",
-  INVALID_VALUE: "valores no numéricos",
-  FUTURE_OBSERVATION: "observaciones con hora futura",
-};
+
+/** Water wording for the reader's language, with the small lookups the panel needs. */
+function useWater() {
+  const locale = useLocale();
+  const t = WATER_MESSAGES[locale];
+  return {
+    locale,
+    t,
+    unitName: (unit: string) => t.units[unit] ?? unit,
+    qualifier: (q: string) => t.qualifiers[q] ?? q,
+    valueWithUnit: (valueText: string | null, unit: string) =>
+      valueText === null ? t.noValue : `${valueText} ${unitSymbol(unit)}`,
+    stations: (n: number) => plural(n, t.station.one, t.station.many),
+    measurements: (n: number) => plural(n, t.measurement.one, t.measurement.many),
+    time: (iso: string | null, short = false) => prTime(iso, short, locale),
+    age: (iso: string, now: Date) => ageWords(iso, now, locale as Locale),
+  };
+}
 
 function Marker({
   view,
@@ -107,6 +99,8 @@ function LegendGlyph({ view, state }: { view: WaterView; state: SeriesState }) {
 }
 
 function WaterMap({ view, rows }: { view: WaterView; rows: StationRow[] }) {
+  const w = useWater();
+  const t = w.t;
   const [x0, y0] = project(-67.98, 18.56);
   const [x1, y1] = project(-65.18, 17.84);
   // One marker per unique station (site ID), whatever its number of series.
@@ -118,7 +112,7 @@ function WaterMap({ view, rows }: { view: WaterView; rows: StationRow[] }) {
         viewBox={`${x0} ${y0} ${x1 - x0} ${y1 - y0}`}
         className="block h-auto w-full rounded-[3px] bg-water"
         role="img"
-        aria-label={`Mapa de puntos: ${rows.length} ${rows.length === 1 ? "estación" : "estaciones"} de ${VIEW_ES[view].toLowerCase()} del USGS, un punto por estación; ${allCurrent} con todas sus mediciones al día. Cada punto es una estación, no un municipio. La lista debajo tiene cada medición.`}
+        aria-label={t.mapLabel(rows.length, t.viewsLower[view], allCurrent)}
       >
         {SHAPES.map((shape) => (
           <path
@@ -137,7 +131,7 @@ function WaterMap({ view, rows }: { view: WaterView; rows: StationRow[] }) {
               <title>{`${row.station.name} · ${row.measures
                 .map(
                   (m) =>
-                    `${KIND_ES[m.obs.kind]}: ${valueWithUnit(m.obs.valueText, m.obs.unit)}, ${prTime(m.obs.observedAt, true)}, ${SERIES_STATE_ES[m.state].toLowerCase()}`,
+                    `${t.kinds[m.obs.kind]}: ${w.valueWithUnit(m.obs.valueText, m.obs.unit)}, ${w.time(m.obs.observedAt, true)}, ${t.seriesStateLower[m.state]}`,
                 )
                 .join(" · ")}`}</title>
             </g>
@@ -145,12 +139,14 @@ function WaterMap({ view, rows }: { view: WaterView; rows: StationRow[] }) {
         })}
       </svg>
       <figcaption className="mt-1 text-[12px] text-muted">
-        Cada {SHAPE_ES[view]} es una estación (un punto), no un municipio; donde no hay estación no
-        hay medición, no un cero. <LegendGlyph view={view} state="CURRENT" /> relleno: todas sus
-        mediciones con dato reciente. <LegendGlyph view={view} state="STALE" /> vacío: alguna
-        medición sin dato reciente o sin dato. <LegendGlyph view={view} state="NO_DATA" /> con
-        equis: ninguna medición con dato. El tamaño no indica el valor; los puntos cercanos pueden
-        encimarse, y la lista tiene cada estación.
+        {t.caption.each(t.shapes[view])}
+        <LegendGlyph view={view} state="CURRENT" />
+        {t.caption.filled}
+        <LegendGlyph view={view} state="STALE" />
+        {t.caption.open}
+        <LegendGlyph view={view} state="NO_DATA" />
+        {t.caption.cross}
+        {t.caption.size}
       </figcaption>
     </figure>
   );
@@ -217,37 +213,38 @@ type MeasureProps = {
 };
 
 /** The five pieces of one measurement, laid out as table cells or stacked in a card. */
-function measureParts({ obs, state, now, series }: MeasureProps) {
+function measureParts({ obs, state, now, series }: MeasureProps, w: ReturnType<typeof useWater>) {
+  const t = w.t;
   const unit = unitSymbol(obs.unit);
   return {
     label: (
       <>
-        <span className="font-semibold">{KIND_ES[obs.kind]}</span>
-        {obs.datum && <span className="block text-[12px] text-muted">{DATUM_ES[obs.datum]}</span>}
-        <span className="block text-[12px] text-muted">parámetro {obs.parameterCode}</span>
+        <span className="font-semibold">{t.kinds[obs.kind]}</span>
+        {obs.datum && <span className="block text-[12px] text-muted">{t.datums[obs.datum]}</span>}
+        <span className="block text-[12px] text-muted">
+          {t.parameter} {obs.parameterCode}
+        </span>
       </>
     ),
     value: (
       <>
         <ValueMain obs={obs} />
         <span className="block text-[12px]">
-          {APPROVAL_ES[obs.approval]}
-          {obs.qualifiers.length > 0 && ` · ${obs.qualifiers.map(qualifierEs).join(", ")}`}
+          {t.approval[obs.approval]}
+          {obs.qualifiers.length > 0 && ` · ${obs.qualifiers.map(w.qualifier).join(", ")}`}
         </span>
         {obs.flags.length > 0 && (
-          <span className="block text-[12px] font-semibold text-error">
-            Valor negativo publicado por el USGS: se marca para revisión, no se corrige.
-          </span>
+          <span className="block text-[12px] font-semibold text-error">{t.negativeFlag}</span>
         )}
       </>
     ),
     time: (
       <>
-        {prTime(obs.observedAt, true)}
+        {w.time(obs.observedAt, true)}
         <span
           className={`block text-[12px] ${REPORTING(state) ? "text-muted" : "font-semibold text-error"}`}
         >
-          {SERIES_STATE_ES[state]} ({ageWords(obs.observedAt, now)})
+          {t.seriesState[state]} ({w.age(obs.observedAt, now)})
         </span>
       </>
     ),
@@ -258,22 +255,20 @@ function measureParts({ obs, state, now, series }: MeasureProps) {
             obs.rain24h.totalText !== null ? (
               <>
                 <span className="font-semibold tabular">{obs.rain24h.totalText}</span>{" "}
-                <abbr title={unitName(obs.unit)}>{unit}</abbr>
+                <abbr title={w.unitName(obs.unit)}>{unit}</abbr>
                 <span className="block text-[12px] text-muted">
-                  en 24 h hasta {prTime(obs.rain24h.to, true)}
+                  {t.rainIn24(w.time(obs.rain24h.to, true))}
                 </span>
               </>
             ) : (
-              <span className="text-muted">
-                Total de 24 h no disponible (registros incompletos)
-              </span>
+              <span className="text-muted">{t.rainUnavailable}</span>
             )
           ) : (
             <span className="text-muted">—</span>
           )
         ) : obs.trend ? (
           <>
-            {TREND_ES[obs.trend.direction]}
+            {t.trend[obs.trend.direction]}
             {obs.trend.direction !== "SAME" && (
               <span className="tabular">
                 {" "}
@@ -282,7 +277,7 @@ function measureParts({ obs, state, now, series }: MeasureProps) {
               </span>
             )}
             <span className="block text-[12px] text-muted">
-              en 3 h, desde {obs.trend.fromValueText} {unit}
+              {t.trendSince(obs.trend.fromValueText, unit)}
             </span>
           </>
         ) : (
@@ -300,7 +295,7 @@ function measureParts({ obs, state, now, series }: MeasureProps) {
 
 const CELL = "py-1.5 pr-2 align-top";
 function MeasureCells(props: MeasureProps) {
-  const p = measureParts(props);
+  const p = measureParts(props, useWater());
   return (
     <>
       <td className={CELL}>{p.label}</td>
@@ -314,13 +309,14 @@ function MeasureCells(props: MeasureProps) {
 
 /** The value as published, with its unit; no value is "Sin dato", never 0. */
 function ValueMain({ obs }: { obs: Observation }) {
+  const w = useWater();
   return obs.valueText === null ? (
-    <span className="font-semibold">Sin dato</span>
+    <span className="font-semibold">{w.t.noValueTitle}</span>
   ) : (
     <>
-      {obs.kind === "PRECIPITATION" && <span className="text-muted">último registro: </span>}
+      {obs.kind === "PRECIPITATION" && <span className="text-muted">{w.t.lastRecord}</span>}
       <span className="font-semibold">{obs.valueText}</span>{" "}
-      <abbr title={unitName(obs.unit)}>{unitSymbol(obs.unit)}</abbr>
+      <abbr title={w.unitName(obs.unit)}>{unitSymbol(obs.unit)}</abbr>
     </>
   );
 }
@@ -331,13 +327,15 @@ function ValueMain({ obs }: { obs: Observation }) {
  */
 function MeasureStack(props: MeasureProps) {
   const { obs, state, now } = props;
-  const p = measureParts(props);
+  const w = useWater();
+  const t = w.t;
+  const p = measureParts(props, w);
   return (
     <div className="text-[14px]">
       <div className="flex flex-wrap items-baseline justify-between gap-x-3">
         <span>
-          <span className="font-semibold">{KIND_ES[obs.kind]}</span>
-          {obs.datum && <span className="text-[12px] text-muted"> {DATUM_ES[obs.datum]}</span>}
+          <span className="font-semibold">{t.kinds[obs.kind]}</span>
+          {obs.datum && <span className="text-[12px] text-muted"> {t.datums[obs.datum]}</span>}
         </span>
         <span className="tabular">
           <ValueMain obs={obs} />
@@ -345,17 +343,14 @@ function MeasureStack(props: MeasureProps) {
       </div>
       <p className="text-[12px] text-muted">
         <span className={REPORTING(state) ? "" : "font-semibold text-error"}>
-          {SERIES_STATE_ES[state]}
+          {t.seriesState[state]}
         </span>{" "}
-        · {prTime(obs.observedAt, true)} ({ageWords(obs.observedAt, now)}) ·{" "}
-        {APPROVAL_ES[obs.approval]}
-        {obs.qualifiers.length > 0 && ` · ${obs.qualifiers.map(qualifierEs).join(", ")}`} ·
-        parámetro {obs.parameterCode}
+        · {w.time(obs.observedAt, true)} ({w.age(obs.observedAt, now)}) · {t.approval[obs.approval]}
+        {obs.qualifiers.length > 0 && ` · ${obs.qualifiers.map(w.qualifier).join(", ")}`} ·{" "}
+        {t.parameter} {obs.parameterCode}
       </p>
       {obs.flags.length > 0 && (
-        <p className="text-[12px] font-semibold text-error">
-          Valor negativo publicado por el USGS: se marca para revisión, no se corrige.
-        </p>
+        <p className="text-[12px] font-semibold text-error">{t.negativeFlag}</p>
       )}
       {(obs.trend || obs.rain24h || hourlyFor(props.series, obs.timeSeriesId)) && (
         <div className="mt-0.5 flex items-end justify-between gap-3">
@@ -371,20 +366,21 @@ function MeasureStack(props: MeasureProps) {
 const FIRST_STATIONS = 8;
 
 function StationHeader({ row, as: Tag = "p" }: { row: StationRow; as?: "p" | "th" }) {
+  const t = useWater().t;
   const body = (
     <>
       <span className="font-semibold break-words" lang="en">
         {row.station.name}
       </span>
       <span className="block text-[12px] text-muted">
-        {stationPlace(row.municipio)} · {row.station.id} ·{" "}
+        {row.municipio ? t.stationIn(row.municipio) : t.stationNoMunicipio} · {row.station.id} ·{" "}
         <a
           href={row.station.url}
           target="_blank"
           rel="noreferrer"
-          aria-label={`Página del USGS de ${row.station.name}`}
+          aria-label={t.usgsPageLabel(row.station.name)}
         >
-          Ficha del USGS ↗
+          {t.usgsPage}
         </a>
       </span>
     </>
@@ -415,6 +411,7 @@ function StationCards({
   now: Date;
   series: SeriesFile | null;
 }) {
+  const t = useWater().t;
   return (
     <ul className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2 xl:hidden" data-layout="cards">
       {rows.map((row) => (
@@ -423,7 +420,7 @@ function StationCards({
           className="rounded-[3px] border border-divider bg-surface px-3 py-2"
         >
           <StationHeader row={row} />
-          <ul className="mt-1" aria-label={`Mediciones de ${row.station.name}`}>
+          <ul className="mt-1" aria-label={t.measurementsOf(row.station.name)}>
             {row.measures.map((m) => (
               <li key={m.obs.timeSeriesId} className="border-t border-divider-2 py-1.5">
                 <MeasureStack obs={m.obs} state={m.state} now={now} series={series} />
@@ -448,6 +445,7 @@ function StationTable({
   now: Date;
   series: SeriesFile | null;
 }) {
+  const t = useWater().t;
   return (
     <div className="mt-2 hidden xl:block" data-layout="table">
       <table className="w-full table-fixed text-[14px]">
@@ -459,30 +457,26 @@ function StationTable({
           <col className="w-[13%]" />
           <col className="w-[10%]" />
         </colgroup>
-        <caption className="sr-only">
-          Mediciones de {VIEW_ES[view].toLowerCase()} del USGS. Cada fila es una medición; las de
-          una misma estación van juntas bajo su nombre. Por municipio. Cada medición tiene su hora y
-          su estado.
-        </caption>
+        <caption className="sr-only">{t.table.caption(t.viewsLower[view])}</caption>
         <thead>
           <tr className="border-b border-divider-2 text-left text-[12px] text-muted">
             <th scope="col" className="py-1 pr-2 font-normal">
-              Estación
+              {t.table.station}
             </th>
             <th scope="col" className="py-1 pr-2 font-normal">
-              Medición
+              {t.table.measure}
             </th>
             <th scope="col" className="py-1 pr-2 font-normal">
-              Valor
+              {t.table.value}
             </th>
             <th scope="col" className="py-1 pr-2 font-normal">
-              Hora de la medición (PR)
+              {t.table.time}
             </th>
             <th scope="col" className="py-1 pr-2 font-normal">
-              {view === "LLUVIA" ? "Lluvia 24 h" : "Cambio"}
+              {view === "LLUVIA" ? t.table.rain24 : t.table.change}
             </th>
             <th scope="col" className="py-1 pr-2 font-normal">
-              24 h <span className="sr-only">(gráfica, escala propia)</span>
+              {t.table.spark} <span className="sr-only">{t.table.sparkHidden}</span>
             </th>
           </tr>
         </thead>
@@ -501,16 +495,6 @@ function StationTable({
   );
 }
 
-const NOTE: Record<WaterView, string> = {
-  RIOS: "El caudal es el volumen de agua que pasa por el medidor, en pies cúbicos por segundo (ft³/s). La altura del medidor es el nivel del agua leído en el medidor, sobre su propio punto de referencia: no es la profundidad del río ni un nivel de inundación. Un valor alto no es, por sí solo, un aviso.",
-  LLUVIA:
-    "El USGS publica la lluvia en incrementos de 15 minutos (pulgadas). El total de 24 horas se da solo cuando esos registros cubren todo el periodo, hasta la última observación de cada estación. Cada estación se muestra por separado: no se suman ni se ordenan estaciones entre sí.",
-  EMBALSES:
-    "Elevación de la superficie del agua sobre el datum indicado (o la altura del medidor). No es un porcentaje de llenado: el USGS no publica aquí la capacidad del embalse, y este sitio no la calcula.",
-};
-
-const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
-
 /**
  * The water detail: modes, map and every measurement. Mounted only when the
  * reader opens it, so the 24-hour series file is fetched only then.
@@ -526,6 +510,8 @@ export function WaterDetails({
   initialView?: WaterView;
   initialShowAll?: boolean;
 }) {
+  const w = useWater();
+  const t = w.t;
   const [view, setView] = useState<WaterView>(initialView);
   const [showAll, setShowAll] = useState(initialShowAll);
   const [series, setSeries] = useState<SeriesFile | null>(null);
@@ -546,14 +532,12 @@ export function WaterDetails({
   return (
     <div className="pb-1">
       <p className="text-[14px]">
-        <strong>Estas son mediciones de estaciones del USGS; no son avisos de inundación.</strong>{" "}
-        Tampoco dicen si hay sequía ni cuánta agua hay para tomar. Datos provisionales sujetos a
-        revisión por el USGS.{" "}
+        <strong>{t.details.notWarnings}</strong> {t.details.notDrought}{" "}
         <a href={s.source.provisional} target="_blank" rel="noreferrer">
-          Qué significa «provisional» ↗
+          {t.details.provisionalLink}
         </a>
       </p>
-      <div role="group" aria-label="Tipo de estación" className="mt-2 flex flex-wrap gap-1.5">
+      <div role="group" aria-label={t.details.stationType} className="mt-2 flex flex-wrap gap-1.5">
         {VIEWS.map((key) => (
           <button
             key={key}
@@ -565,22 +549,20 @@ export function WaterDetails({
             }}
             className={`min-h-11 rounded-full border px-4 text-[14px] ${view === key ? "border-fg bg-fg font-semibold text-surface" : "border-divider bg-surface"}`}
           >
-            {VIEW_ES[key]} · {plural(s.data.siteInventory.byView[key], "estación", "estaciones")}
+            {t.views[key]} · {w.stations(s.data.siteInventory.byView[key])}
           </button>
         ))}
       </div>
       {summary.stationCount === 0 ? (
-        <p className="mt-2 text-[15px]">
-          Ninguna estación de {VIEW_ES[view].toLowerCase()} con medición publicada en esta copia del
-          USGS.
-        </p>
+        <p className="mt-2 text-[15px]">{t.details.noStations(t.viewsLower[view])}</p>
       ) : (
         <>
           <p className="mt-2 max-w-[72ch] text-[15px]">
-            <strong>{plural(summary.stationCount, "estación", "estaciones")} monitoreadas</strong>{" "}
-            con <strong>{plural(summary.series.seriesCount, "medición", "mediciones")}</strong>:{" "}
-            {summary.series.reporting} con dato reciente · {summary.series.stale} sin dato reciente
-            · {summary.series.noData} sin dato.
+            <strong>
+              {w.stations(summary.stationCount)} {t.details.monitored}
+            </strong>{" "}
+            {t.details.with} <strong>{w.measurements(summary.series.seriesCount)}</strong>:{" "}
+            {t.details.tally(summary.series.reporting, summary.series.stale, summary.series.noData)}
           </p>
           <ul className="max-w-[72ch] text-[15px]">
             {(
@@ -590,26 +572,20 @@ export function WaterDetails({
               ][]
             ).map(([kind, c]) => (
               <li key={kind}>
-                <span className="font-semibold">{KIND_ES[kind]}:</span> {c.reporting} de{" "}
-                {plural(c.seriesCount, "medición", "mediciones")} con dato reciente · sin dato
-                reciente: {c.stale} · sin dato: {c.noData}
+                <span className="font-semibold">{t.kinds[kind]}:</span>{" "}
+                {t.details.kindTally(c.reporting, w.measurements(c.seriesCount), c.stale, c.noData)}
               </li>
             ))}
           </ul>
           <p className="mt-1 max-w-[72ch] text-[13px] text-muted">
-            {NOTE[view]} Una estación puede tener más de una medición (por ejemplo, caudal y altura
-            del medidor); el estado se da por medición, para que una al día no esconda otra sin dato
-            en la misma estación.
+            {t.notes[view]} {t.details.perSeries}
           </p>
           <WaterMap view={view} rows={rows} />
           {s.provenance.series === "UNAVAILABLE" && (
-            <p className="mt-2 text-[13px] text-muted">
-              Las series de 24 horas no estuvieron disponibles en esta actualización; se muestran
-              solo los valores más recientes.
-            </p>
+            <p className="mt-2 text-[13px] text-muted">{t.details.seriesUnavailable}</p>
           )}
           <h4 className="mt-3 text-[14px] font-semibold">
-            Mediciones por estación ({VIEW_ES[view].toLowerCase()}, por municipio)
+            {t.details.byStation(t.viewsLower[view])}
           </h4>
           <StationCards rows={shown} now={now} series={usableSeries} />
           <StationTable view={view} rows={shown} now={now} series={usableSeries} />
@@ -620,16 +596,10 @@ export function WaterDetails({
               onClick={() => setShowAll((x) => !x)}
               className="mt-2 flex min-h-11 items-center font-semibold text-accent"
             >
-              {showAll
-                ? "Mostrar menos"
-                : `Mostrar las ${rows.length} estaciones (${FIRST_STATIONS} a la vista)`}
+              {showAll ? t.details.showLess : t.details.showAll(rows.length, FIRST_STATIONS)}
             </button>
           )}
-          <p className="mt-1 max-w-[72ch] text-[12px] text-muted">
-            Cambio: diferencia entre el valor más reciente y el de 3 horas antes en la misma serie,
-            con la precisión publicada. Gráfica de 24 h: valores a cada hora en punto (lluvia: suma
-            de cada hora), con la escala propia de cada estación.
-          </p>
+          <p className="mt-1 max-w-[72ch] text-[12px] text-muted">{t.details.changeNote}</p>
         </>
       )}
     </div>
@@ -649,41 +619,43 @@ export function WaterSection({
 }) {
   const s = water && water !== "error" ? water : null;
   const status = s && now ? waterStatus(s, now) : null;
+  const w = useWater();
+  const t = w.t;
   return (
-    <NowRow id="now-water" title="Agua (USGS)">
-      {water === null && <p className="text-[15px] text-muted">Cargando datos de agua…</p>}
+    <NowRow id="now-water" title={t.title}>
+      {water === null && <p className="text-[15px] text-muted">{t.section.loading}</p>}
       {water === "error" && (
         <p className="text-[15px] font-semibold text-error" role="status">
-          No se pudieron cargar los datos de agua guardados.
+          {t.section.loadFailed}
         </p>
       )}
-      {s && !now && (
-        <p className="text-[15px] text-muted">Comprobando la antigüedad de la última copia…</p>
-      )}
+      {s && !now && <p className="text-[15px] text-muted">{NOW_MESSAGES[w.locale].checking}</p>}
       {s && status?.kind === "UNCONFIRMED" && (
         <p className="text-[15px] font-semibold text-error" role="status">
-          No se pudieron confirmar las condiciones actuales del agua.
-          {s.retrievedAt
-            ? ` Según la última copia del USGS (${prTime(s.retrievedAt, true)}), con la hora de cada medición:`
-            : " No hay ninguna copia del USGS."}
+          {t.section.unconfirmed}
+          {s.retrievedAt ? t.section.perLastCopy(w.time(s.retrievedAt, true)) : t.section.noCopy}
         </p>
       )}
       {s && s.retrievedAt && now && (
         <>
-          <ul className="text-[15px]" aria-label="Estaciones y mediciones de agua">
+          <ul className="text-[15px]" aria-label={t.section.listLabel}>
             {VIEWS.map((v) => {
               const sum = viewSummary(s, v, now);
               return (
                 <li key={v}>
-                  <span className="font-semibold">{VIEW_ES[v]}:</span>{" "}
+                  <span className="font-semibold">{t.views[v]}:</span>{" "}
                   {sum.stationCount === 0
-                    ? "ninguna estación con medición publicada"
-                    : `${plural(sum.stationCount, "estación", "estaciones")} · ${sum.series.reporting} de ${plural(sum.series.seriesCount, "medición", "mediciones")} con dato reciente`}
+                    ? t.section.noStation
+                    : t.section.summary(
+                        w.stations(sum.stationCount),
+                        sum.series.reporting,
+                        w.measurements(sum.series.seriesCount),
+                      )}
                 </li>
               );
             })}
           </ul>
-          <Disclosure label="Ver estaciones de agua: mapa y mediciones">
+          <Disclosure label={t.section.open}>
             <WaterDetails water={s} now={now} />
           </Disclosure>
         </>
@@ -694,50 +666,61 @@ export function WaterSection({
 
 /** Water part of "¿De dónde salen estos datos?". */
 export function WaterProvenance({ water: s }: { water: WaterSnapshot }) {
+  const w = useWater();
+  const t = w.t.provenance;
   return (
     <div>
       <p>
         <span lang="en">U.S. Geological Survey</span> (USGS),{" "}
-        <span lang="en">Water Data for the Nation</span>: {s.source.service}. Cada medición dice su
-        estación (ID del USGS), el código de parámetro, la unidad, la hora de la medición y si el
-        dato es provisional o aprobado.
+        <span lang="en">Water Data for the Nation</span>: {s.source.service}. {t.intro}
       </p>
       <p className="mt-1">
-        Obtenido: {s.retrievedAt ? prTime(s.retrievedAt) : "nunca"}.
-        {!s.lastAttempt.ok && ` Último intento fallido: ${prTime(s.lastAttempt.at)}.`} La hora de
-        obtención no es la hora de las mediciones.
+        {t.retrieved}
+        {s.retrievedAt ? w.time(s.retrievedAt) : t.never}.
+        {!s.lastAttempt.ok && t.lastAttemptFailed(w.time(s.lastAttempt.at))}
+        {t.notObservationTime}
       </p>
       <p className="mt-1">
-        Reglas: una serie por sitio y parámetro; las series sin datos en 30 días no se publican; en
-        embalses se muestra una elevación (PRVD02 en pies primero). Excluidas:{" "}
+        {t.rules}
         {Object.entries(s.data.exclusions.counts)
           .filter(([, n]) => n > 0)
-          .map(([reason, n]) => `${n} ${EXCLUSION_ES[reason] ?? reason}`)
+          .map(([reason, n]) => `${n} ${w.t.exclusions[reason] ?? reason}`)
           .join("; ")}
         .
       </p>
       {s.data.exclusions.listed.length > 0 && (
         <ul className="mt-1 list-disc pl-5">
-          {s.data.exclusions.listed.map((e) => (
-            <li key={`${e.stationId}-${e.parameterCode}-${e.reason}`}>
-              {e.stationId}, parámetro {e.parameterCode}: {e.detail}.
-            </li>
-          ))}
+          {s.data.exclusions.listed.map((e) => {
+            // English reads the note back from its template; an unknown note stays as written.
+            const english = w.locale === "en" ? exclusionDetailEn(e.detail) : null;
+            return (
+              <li key={`${e.stationId}-${e.parameterCode}-${e.reason}`}>
+                {english ? (
+                  t.listed(e.stationId, e.parameterCode, english)
+                ) : (
+                  <>
+                    {e.stationId}, {w.t.parameter} {e.parameterCode}:{" "}
+                    <span lang="es-PR">{e.detail}</span>.
+                  </>
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
       <p className="mt-1">
-        {s.source.attribution}{" "}
+        <Attribution text={s.source.attribution} />{" "}
         <a href={s.source.docs} target="_blank" rel="noreferrer">
-          Documentación de la API ↗
+          {t.apiDocs}
         </a>{" "}
         <a href={s.source.web} target="_blank" rel="noreferrer">
-          Datos de agua del USGS para Puerto Rico ↗
+          {t.prWater}
         </a>{" "}
         <a href={s.source.provisional} target="_blank" rel="noreferrer">
-          Datos provisionales ↗
+          {t.provisional}
         </a>{" "}
         <a href={s.source.terms} target="_blank" rel="noreferrer">
-          Créditos y derechos ↗
+          {t.credits}
         </a>
       </p>
     </div>

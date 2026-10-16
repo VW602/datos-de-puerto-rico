@@ -35,6 +35,8 @@ import {
   SIGNED_PATTERNS,
   ZERO_PATTERN_ID,
 } from "@/data/scale";
+import { useLocale } from "@/i18n/context";
+import { EXPLORER_MESSAGES } from "@/i18n/messages/explorer";
 
 export type MapVariant = "band" | "detail" | "overview";
 
@@ -154,9 +156,9 @@ const ISLAND_LABELS: {
   },
 ];
 
-const SEA_LABELS: { text: string; at: [number, number] }[] = [
-  { text: "OCÉANO ATLÁNTICO", at: [-66.55, 18.6] },
-  { text: "MAR CARIBE", at: [-66.25, 17.795] },
+const SEA_LABELS: { key: "atlantic" | "caribbean"; at: [number, number] }[] = [
+  { key: "atlantic", at: [-66.55, 18.6] },
+  { key: "caribbean", at: [-66.25, 17.795] },
 ];
 
 function useSize<T extends HTMLElement>() {
@@ -238,6 +240,7 @@ export function AtlasMap({
   className,
   children,
 }: Props) {
+  const t = EXPLORER_MESSAGES[useLocale()].map;
   const { ref: boxRef, size } = useSize<HTMLDivElement>();
   const interactive = variant !== "overview";
   const [hoverId, setHoverId] = useState<string | null>(null);
@@ -405,7 +408,7 @@ export function AtlasMap({
           viewBox={`${box.x0} ${box.y0} ${box.x1 - box.x0} ${box.y1 - box.y0}`}
           preserveAspectRatio="xMidYMid meet"
           role={interactive ? "application" : "img"}
-          aria-roledescription={interactive ? "mapa" : undefined}
+          aria-roledescription={interactive ? t.roleDescription : undefined}
           aria-label={label}
           tabIndex={interactive ? 0 : undefined}
           onKeyDown={onKeyDown}
@@ -438,7 +441,7 @@ export function AtlasMap({
               const [x, y] = project(...sea.at);
               return (
                 <text
-                  key={sea.text}
+                  key={sea.key}
                   x={x}
                   y={y}
                   textAnchor="middle"
@@ -446,7 +449,7 @@ export function AtlasMap({
                   fontSize={px(variant === "overview" ? 7 : 12)}
                   letterSpacing={px(variant === "overview" ? 1.5 : 4)}
                 >
-                  {sea.text}
+                  {t[sea.key]}
                 </text>
               );
             })}
@@ -555,9 +558,7 @@ export function AtlasMap({
 
       {interactive && describe && (
         <p className="sr-only" aria-live="polite">
-          {activeFocus
-            ? `${describe(activeFocus)}. Enter para seleccionar; flechas para moverte.`
-            : ""}
+          {activeFocus ? `${describe(activeFocus)}${t.keyboard}` : ""}
         </p>
       )}
       {children}

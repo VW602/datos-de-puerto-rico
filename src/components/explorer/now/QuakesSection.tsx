@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  EVENT_TYPE_ES,
   quakeWindows,
   quakesStatus,
   summarize,
@@ -9,12 +8,16 @@ import {
 } from "@/data/pr/current";
 import { prTime } from "@/data/pr/currentModel";
 import { SHAPES, project } from "@/data/pr/geo";
+import { useLocale } from "@/i18n/context";
+import type { Locale } from "@/i18n/locale";
+import { NOW_MESSAGES } from "@/i18n/messages/now";
 import { Disclosure } from "./Disclosure";
 import { NowRow } from "./NowRow";
 
-const fmtMag = (e: Earthquake) => (e.mag === null ? "M sin dato" : `M ${e.mag.toFixed(1)}`);
-const fmtDepth = (e: Earthquake) =>
-  e.depthKm === null ? "sin dato" : `${e.depthKm.toFixed(1)} km`;
+const fmtMag = (e: Earthquake, locale: Locale) =>
+  e.mag === null ? NOW_MESSAGES[locale].quakes.noMagnitude : `M ${e.mag.toFixed(1)}`;
+const fmtDepth = (e: Earthquake, locale: Locale) =>
+  e.depthKm === null ? NOW_MESSAGES[locale].quakes.noDepth : `${e.depthKm.toFixed(1)} km`;
 
 function QuakeMap({
   region,
@@ -25,6 +28,8 @@ function QuakeMap({
   week: Earthquake[];
   day: Earthquake[];
 }) {
+  const locale = useLocale();
+  const t = NOW_MESSAGES[locale].quakes;
   const [x0, y0] = project(region.minLon, region.maxLat);
   const [x1, y1] = project(region.maxLon, region.minLat);
   const dayIds = new Set(day.map((e) => e.id));
@@ -35,7 +40,7 @@ function QuakeMap({
         viewBox={`${x0} ${y0} ${x1 - x0} ${y1 - y0}`}
         className="block h-auto w-full rounded-[3px] bg-water"
         role="img"
-        aria-label={`Mapa de la región de Puerto Rico con ${week.length} eventos de los últimos 7 días; ${day.length} en las últimas 24 horas. La lista debajo tiene todos los datos.`}
+        aria-label={t.mapLabel(week.length, day.length)}
       >
         {SHAPES.map((shape) => (
           <path
@@ -60,38 +65,37 @@ function QuakeMap({
               stroke={recent ? "#fff" : "var(--color-fg)"}
               strokeWidth={recent ? 4 : 3}
             >
-              <title>{`${fmtMag(e)} · ${e.place ?? ""} · ${prTime(e.time, true)} · profundidad ${fmtDepth(e)}`}</title>
+              <title>{`${fmtMag(e, locale)} · ${e.place ?? ""} · ${prTime(e.time, true, locale)} · ${t.depth} ${fmtDepth(e, locale)}`}</title>
             </circle>
           );
         })}
       </svg>
-      <figcaption className="mt-1 text-[12px] text-muted">
-        Círculo relleno: últimas 24 horas. Círculo vacío: 2 a 7 días. Más grande = mayor magnitud.
-        Región: 17°–20° N, 69°–63.5° O.
-      </figcaption>
+      <figcaption className="mt-1 text-[12px] text-muted">{t.mapCaption}</figcaption>
     </figure>
   );
 }
 
 /** One event per item: magnitude first, then time, place, depth and the USGS page. No sideways scrolling. */
 function QuakeList({ events }: { events: Earthquake[] }) {
+  const locale = useLocale();
+  const t = NOW_MESSAGES[locale].quakes;
   return (
-    <ol
-      className="mt-2 border-t border-divider-2 text-[14px]"
-      aria-label="Eventos, del más reciente al más antiguo"
-    >
+    <ol className="mt-2 border-t border-divider-2 text-[14px]" aria-label={t.listLabel}>
       {events.map((e) => (
         <li key={e.id} className="border-b border-divider-2 py-1.5">
-          <span className="font-semibold tabular">{fmtMag(e)}</span>
+          <span className="font-semibold tabular">{fmtMag(e, locale)}</span>
           {e.magType && <span className="text-muted"> {e.magType}</span>}
-          <span className="tabular"> · {prTime(e.time, true)}</span>
-          {e.tsunami === 1 && <span className="text-[13px]"> · indicador tsunami USGS: 1</span>}
+          <span className="tabular"> · {prTime(e.time, true, locale)}</span>
+          {e.tsunami === 1 && <span className="text-[13px]">{t.tsunamiFlag}</span>}
           <span className="block">
-            <span lang="en">{e.place ?? "Sin lugar"}</span>
+            {e.place ? <span lang="en">{e.place}</span> : t.noPlace}
             {e.type && e.type !== "earthquake" && (
-              <span className="text-muted"> ({EVENT_TYPE_ES[e.type] ?? e.type})</span>
+              <span className="text-muted"> ({t.eventTypes[e.type] ?? e.type})</span>
             )}
-            <span className="text-muted tabular"> · profundidad {fmtDepth(e)}</span>
+            <span className="text-muted tabular">
+              {" "}
+              · {t.depth} {fmtDepth(e, locale)}
+            </span>
             {e.url && (
               <>
                 {" · "}
@@ -99,9 +103,9 @@ function QuakeList({ events }: { events: Earthquake[] }) {
                   href={e.url}
                   target="_blank"
                   rel="noreferrer"
-                  aria-label={`Detalles en USGS de ${fmtMag(e)}, ${prTime(e.time, true)}`}
+                  aria-label={t.detailsLabel(fmtMag(e, locale), prTime(e.time, true, locale))}
                 >
-                  Detalles ↗
+                  {t.details}
                 </a>
               </>
             )}
@@ -117,17 +121,17 @@ export function QuakeDetails({ snapshot }: { snapshot: UsgsSnapshot }) {
   const [range, setRange] = useState<"day" | "week">("day");
   const list = range === "day" ? day : week;
   const flagged = week.filter((e) => e.tsunami === 1);
+  const t = NOW_MESSAGES[useLocale()].quakes;
   return (
     <div className="pb-1">
       {flagged.length > 0 && (
         <p className="mt-1 text-[14px]">
-          El USGS marca {flagged.length === 1 ? "un evento" : `${flagged.length} eventos`} con su
-          indicador de tsunami (1). Ese indicador solo dice que fue un sismo grande en el océano:{" "}
-          <strong>no es un aviso de tsunami</strong>. Los avisos de tsunami los emite NOAA
-          (tsunami.gov) y aparecerían entre las alertas oficiales.
+          {t.flaggedLong(flagged.length)}
+          <strong>{t.notAWarning}</strong>
+          {t.warningsFrom}
         </p>
       )}
-      <div role="group" aria-label="Periodo" className="mt-2 flex flex-wrap gap-1.5">
+      <div role="group" aria-label={t.period} className="mt-2 flex flex-wrap gap-1.5">
         {(["day", "week"] as const).map((key) => (
           <button
             key={key}
@@ -136,7 +140,7 @@ export function QuakeDetails({ snapshot }: { snapshot: UsgsSnapshot }) {
             onClick={() => setRange(key)}
             className={`min-h-11 rounded-full border px-4 text-[14px] ${range === key ? "border-fg bg-fg font-semibold text-surface" : "border-divider bg-surface"}`}
           >
-            {key === "day" ? `Últimas 24 horas (${day.length})` : `7 días (${week.length})`}
+            {key === "day" ? t.last24(day.length) : t.last7(week.length)}
           </button>
         ))}
       </div>
@@ -144,11 +148,7 @@ export function QuakeDetails({ snapshot }: { snapshot: UsgsSnapshot }) {
       {list.length > 0 ? (
         <QuakeList events={list} />
       ) : (
-        <p className="mt-2 text-[14px]">
-          {range === "day"
-            ? "No hay eventos en las últimas 24 horas de la copia."
-            : "No hay eventos en los últimos 7 días de la copia."}
-        </p>
+        <p className="mt-2 text-[14px]">{range === "day" ? t.noneDay : t.noneWeek}</p>
       )}
     </div>
   );
@@ -160,50 +160,44 @@ export function QuakeDetails({ snapshot }: { snapshot: UsgsSnapshot }) {
  * one click away.
  */
 export function QuakesSection({ snapshot, now }: { snapshot: UsgsSnapshot; now: Date | null }) {
+  const locale = useLocale();
+  const all = NOW_MESSAGES[locale];
+  const t = all.quakes;
   const status = now ? quakesStatus(snapshot, now) : null;
   const { day, week } = quakeWindows(snapshot);
   const sum = summarize(day);
   const flagged = week.filter((e) => e.tsunami === 1).length;
-  const at = snapshot.retrievedAt ? prTime(snapshot.retrievedAt, true) : null;
+  const at = snapshot.retrievedAt ? prTime(snapshot.retrievedAt, true, locale) : null;
   return (
-    <NowRow id="now-quakes" title="Sismos (USGS)">
+    <NowRow id="now-quakes" title={t.title}>
       {status?.kind === "UNCONFIRMED" && (
         <p className="text-[15px] font-semibold text-error" role="status">
-          No se pudo confirmar la actividad sísmica actual.
-          {at ? ` Según la última copia del USGS (${at}):` : " No hay ninguna copia del USGS."}
+          {t.unconfirmed}
+          {at ? t.perLastCopy(at) : t.noCopy}
         </p>
       )}
-      {status === null && (
-        <p className="text-[15px] text-muted">Comprobando la antigüedad de la última copia…</p>
-      )}
+      {status === null && <p className="text-[15px] text-muted">{all.checking}</p>}
       {status && at && (
         <p className="text-[15px]">
-          {status.kind === "NONE"
-            ? `El USGS no registra eventos en la región en las 24 horas hasta las ${at}.`
-            : `${sum.count} ${sum.count === 1 ? "evento" : "eventos"} en las 24 horas hasta las ${at}.`}
+          {status.kind === "NONE" ? t.noneInWindow(at) : t.count(sum.count, at)}
           {sum.strongest && (
             <>
               {" "}
-              Mayor: <span className="font-semibold">{fmtMag(sum.strongest)}</span>,{" "}
-              <span lang="en">{sum.strongest.place ?? "sin lugar"}</span>.
+              {t.strongest} <span className="font-semibold">{fmtMag(sum.strongest, locale)}</span>,{" "}
+              {sum.strongest.place ? <span lang="en">{sum.strongest.place}</span> : t.noPlaceLower}.
             </>
           )}
           {sum.latest && sum.count > 1 && (
             <>
               {" "}
-              Más reciente: {fmtMag(sum.latest)}, {prTime(sum.latest.time, true)}.
+              {t.latest} {fmtMag(sum.latest, locale)}, {prTime(sum.latest.time, true, locale)}.
             </>
           )}
         </p>
       )}
-      {flagged > 0 && (
-        <p className="text-[14px]">
-          {flagged === 1 ? "Un evento" : `${flagged} eventos`} con el indicador de tsunami del USGS:
-          no es un aviso de tsunami (explicación en el detalle).
-        </p>
-      )}
+      {flagged > 0 && <p className="text-[14px]">{t.flaggedShort(flagged)}</p>}
       {snapshot.retrievedAt && (
-        <Disclosure label={`Ver mapa y lista de sismos (7 días: ${week.length})`}>
+        <Disclosure label={t.open(week.length)}>
           <QuakeDetails snapshot={snapshot} />
         </Disclosure>
       )}

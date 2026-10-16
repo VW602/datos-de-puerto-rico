@@ -256,11 +256,16 @@ describe("USGS: sismos", () => {
     expect(flagged.tsunami).toBe(1);
     expect(Object.keys(flagged)).not.toContain("tsunamiWarning");
     const panel = read("src/components/explorer/now/QuakesSection.tsx");
-    expect(panel).toMatch(/no es un aviso de tsunami/);
-    expect(panel).toMatch(/indicador tsunami USGS: 1/);
-    // The only "aviso" wording next to the flag is the negation; warnings come from NOAA/NWS alerts.
-    expect(panel).not.toMatch(/(^|[^o] )[Aa]viso de tsunami del USGS/);
-    expect(panel).not.toMatch(/tsunami === 1 && <[^>]*>\s*Aviso/);
+    const copy = read("src/i18n/messages/now.ts");
+    // The flag is called a flag in both languages, next to an explicit "not a warning".
+    expect(copy).toMatch(/notAWarning: "no es un aviso de tsunami"/);
+    expect(copy).toMatch(/notAWarning: "it is not a tsunami warning"/);
+    expect(copy).toMatch(/tsunamiFlag: " · indicador tsunami USGS: 1"/);
+    expect(copy).toMatch(/tsunamiFlag: " · USGS tsunami flag: 1"/);
+    expect(panel).toMatch(/tsunami === 1 && <span[^>]*>\{t\.tsunamiFlag\}/);
+    // The only "aviso"/"warning" wording next to the flag is the negation; warnings come from NOAA/NWS alerts.
+    expect(copy).not.toMatch(/(^|[^o] )[Aa]viso de tsunami del USGS|USGS tsunami warning/);
+    expect(panel).not.toMatch(/tsunami === 1 && <[^>]*>\s*(Aviso|Warning)/);
   });
 });
 

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   fitView,
   focusView,
@@ -10,8 +10,8 @@ import {
 } from "@/data/pr/geo";
 import { ALL, femaPlaceValues } from "@/data/pr/fema";
 import { applyLayers, islandStat } from "@/data/pr/layers";
-import { metricGroup, prMetricById, type MetricGroup, type PrMetricId } from "@/data/pr/metrics";
-import { MISSING_COPY, missingReason } from "@/data/pr/missing";
+import { groupLabel, metricGroup, prMetricById, type PrMetricId } from "@/data/pr/metrics";
+import { missingCopy, missingReason } from "@/data/pr/missing";
 import { municipios } from "@/data/pr/places";
 import { deltaWords, describePlace, rankOf } from "@/data/pr/present";
 import {
@@ -24,41 +24,52 @@ import {
 import { rankByMetric } from "@/data/pr/ranking";
 import { publicSourceById } from "@/data/pr/sources";
 import { ISLAND_ONLY_FILL, colorForValue } from "@/data/scale";
+import { useLocale } from "@/i18n/context";
+import type { AppSearch } from "@/lib/locale-url";
+import { EXPLORER_MESSAGES } from "@/i18n/messages/explorer";
 import { SITE_NAME } from "@/lib/site";
 import { AtlasMap } from "./AtlasMap";
 import { DataTable } from "./DataTable";
 import { DisasterFilter } from "./FemaDetail";
 import { NowPanel } from "./NowPanel";
+import { LanguageSwitch } from "./LanguageSwitch";
 import { Legend, MunicipioSearch, TapChooser, ZoomControls } from "./MapBits";
 import { Ranking78 } from "./Ranking78";
 import { SourcePanel } from "./SourcePanel";
 import { FullProfile, Summary } from "./Summary";
 
-/** TIGER/Line asks for this notice on the first page of any site that repackages its boundaries. */
-const MAP_ATTRIBUTION = publicSourceById("geometria-municipios")?.attribution ?? null;
-
-const groupLabel = (group: MetricGroup) => (group === "Isla" ? "Toda la isla" : group);
-
 type Size = { width: number; height: number };
 type MobileTab = "perfil" | "los78" | "fuente";
 
-export function PuertoRicoApp() {
-  const [metricId, setMetricId] = useState<PrMetricId>(DEFAULT_METRIC_ID);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+export function PuertoRicoApp({
+  initial = {},
+  onSwitchLocale,
+}: {
+  /** Already validated (src/lib/locale-url.ts): known measure, municipio, tab and disaster only. */
+  initial?: AppSearch;
+  /** In-app navigation for the language switch; without it the switch is a plain link. */
+  onSwitchLocale?: (href: string) => void;
+} = {}) {
+  const locale = useLocale();
+  const t = EXPLORER_MESSAGES[locale];
+  const [metricId, setMetricId] = useState<PrMetricId>(initial.metric ?? DEFAULT_METRIC_ID);
+  const [selectedId, setSelectedId] = useState<string | null>(initial.place ?? null);
   const [candidates, setCandidates] = useState<Candidate[] | null>(null);
   // Desktop band and mobile detail map keep their own views; the overview mirrors the detail map.
   const [bandView, setBandView] = useState<View | null>(null);
   const [bandSize, setBandSize] = useState<Size>({ width: 0, height: 0 });
   const [detailView, setDetailView] = useState<View | null>(null);
   const [detailSize, setDetailSize] = useState<Size>({ width: 0, height: 0 });
-  const [tab, setTab] = useState<MobileTab>("los78");
+  const [tab, setTab] = useState<MobileTab>(initial.view ?? "los78");
   const [showTable, setShowTable] = useState(false);
   // FEMA recovery measures can be read for one disaster or all of them.
-  const [disaster, setDisaster] = useState<string>(ALL);
+  const [disaster, setDisaster] = useState<string>(initial.disaster ?? ALL);
 
-  const metric = prMetricById(metricId);
+  const metric = prMetricById(metricId, locale);
   const group = metricGroup(metricId);
-  const island = islandStat(metricId);
+  const island = islandStat(metricId, locale);
+  /** TIGER/Line asks for this notice on the first page of any site that repackages its boundaries. */
+  const mapAttribution = publicSourceById("geometria-municipios", locale)?.attribution ?? null;
   const basePlaces = useMemo(() => toPublicPlaces(applyLayers(municipios)), []);
   const places = useMemo(
     () =>
@@ -99,6 +110,13 @@ export function PuertoRicoApp() {
   }, [places, metric, ranking, island]);
 
   const selected = selectedId ? (placeById.get(selectedId) ?? null) : null;
+  // What the language switch carries over: only what differs from a fresh page.
+  const switchState = {
+    metric: metricId === DEFAULT_METRIC_ID ? undefined : metricId,
+    place: selectedId ?? undefined,
+    view: tab === "los78" ? undefined : tab,
+    disaster: disaster === ALL ? undefined : disaster,
+  };
 
   const select = useCallback(
     (id: string) => {
@@ -109,9 +127,18 @@ export function PuertoRicoApp() {
     [detailSize.height, detailSize.width],
   );
 
+  // A municipio carried over from the other language is centered on the phone's
+  // detail map once its size is known, as if it had just been tapped.
+  const focusedInitial = useRef(false);
+  useEffect(() => {
+    if (focusedInitial.current || !initial.place || detailSize.width === 0) return;
+    focusedInitial.current = true;
+    setDetailView(focusView(initial.place, detailSize.width, detailSize.height));
+  }, [initial.place, detailSize.width, detailSize.height]);
+
   const describe = useCallback(
-    (id: string) => describePlace(metric, placeById.get(id), ranking),
-    [metric, placeById, ranking],
+    (id: string) => describePlace(metric, placeById.get(id), ranking, locale),
+    [metric, placeById, ranking, locale],
   );
 
   const tooltip = useCallback(
@@ -124,30 +151,30 @@ export function PuertoRicoApp() {
         <>
           <p className="font-display text-lg leading-tight font-semibold">{place.name}</p>
           {island ? (
-            <p className="text-sm text-muted">Solo hay cifra para toda la isla</p>
+            <p className="text-sm text-muted">{t.map.tooltipIslandOnly}</p>
           ) : value == null ? (
             <p className="text-base font-semibold text-muted">
-              {MISSING_COPY[missingReason(metric.id, id)].short}
+              {missingCopy(locale)[missingReason(metric.id, id)].short}
             </p>
           ) : (
             <>
               <p className="text-[22px] leading-tight font-bold tabular">
-                {value === 0 ? "0 · cero publicado" : metric.format(value)}
+                {value === 0 ? t.map.zeroPublished : metric.format(value)}
               </p>
               <p className="text-[13px] text-muted tabular">
-                {rank ? `${rank.rank} de ${rank.of} · ` : ""}
-                {deltaWords(metric, value - ranking.median)}
+                {rank ? t.map.rankOf(rank.rank, rank.of) : ""}
+                {deltaWords(metric, value - ranking.median, locale)}
               </p>
             </>
           )}
         </>
       );
     },
-    [placeById, island, metric, ranking],
+    [placeById, island, metric, ranking, locale, t],
   );
 
-  const islandNote = island ? `Solo para toda la isla · ${metric.format(island.value)}` : null;
-  const mapLabel = `Mapa de Puerto Rico: ${metric.label}. ${selected ? `Seleccionado: ${describe(selected.id)}.` : "Ningún municipio seleccionado."}`;
+  const islandNote = island ? t.map.islandNote(metric.format(island.value)) : null;
+  const mapLabel = t.map.label(metric.label, selected ? describe(selected.id) : null);
 
   // The phone's detail map starts on the main island (closer than the overview strip);
   // "Toda la isla" switches it to the whole archipelago.
@@ -192,9 +219,9 @@ export function PuertoRicoApp() {
       <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 border-b border-fg px-4 py-1.5 md:px-14 md:py-3">
         <div className="flex items-baseline gap-3">
           <h1 className="font-display text-[21px] font-semibold md:text-[26px]">{SITE_NAME}</h1>
-          <span className="hidden text-sm text-muted lg:inline">78 municipios, con su fuente</span>
+          <span className="hidden text-sm text-muted lg:inline">{t.header.tagline}</span>
         </div>
-        <nav aria-label="Temas" className="hidden flex-wrap gap-0.5 md:flex">
+        <nav aria-label={t.header.topics} className="hidden flex-wrap gap-0.5 md:flex">
           {PUBLIC_GROUPS.map((item) => (
             <button
               key={item}
@@ -203,16 +230,19 @@ export function PuertoRicoApp() {
               onClick={() => setMetricId(publicMetricsInGroup(item)[0].id)}
               className={`min-h-11 px-3.5 text-base ${item === group ? "font-semibold text-fg shadow-[inset_0_-3px_0_var(--color-accent)]" : "text-muted hover:text-fg"}`}
             >
-              {groupLabel(item)}
+              {groupLabel(item, locale)}
             </button>
           ))}
         </nav>
-        <a
-          href="#fuente"
-          className="flex min-h-11 items-center text-[15px] font-semibold text-accent"
-        >
-          Fuentes y método
-        </a>
+        <div className="flex items-center gap-x-4">
+          <a
+            href="#fuente"
+            className="flex min-h-11 items-center text-[15px] font-semibold text-accent"
+          >
+            {t.header.sources}
+          </a>
+          <LanguageSwitch state={switchState} onNavigate={onSwitchLocale} />
+        </div>
       </header>
 
       <main>
@@ -223,13 +253,13 @@ export function PuertoRicoApp() {
         <div className="flex flex-col gap-3 px-4 pt-4 pb-3 md:flex-row md:items-end md:justify-between md:gap-8 md:px-14 md:pt-7 md:pb-5">
           <div className="min-w-0">
             <p className="text-xs font-bold tracking-[0.09em] text-accent uppercase md:text-[13px]">
-              {groupLabel(group)} · {metric.source}
+              {groupLabel(group, locale)} · {metric.source}
             </p>
             <h2 className="mt-1.5 hidden font-display text-[54px] leading-none font-medium md:block">
               {metric.label}
             </h2>
             <label className="mt-1.5 block md:hidden">
-              <span className="sr-only">Medida</span>
+              <span className="sr-only">{t.measure.label}</span>
               <select
                 value={metricId}
                 onChange={(event) => setMetricId(event.target.value as PrMetricId)}
@@ -240,8 +270,8 @@ export function PuertoRicoApp() {
                 }}
               >
                 {PUBLIC_GROUPS.map((item) => (
-                  <optgroup key={item} label={groupLabel(item)}>
-                    {publicMetricsInGroup(item).map((option) => (
+                  <optgroup key={item} label={groupLabel(item, locale)}>
+                    {publicMetricsInGroup(item, locale).map((option) => (
                       <option key={option.id} value={option.id}>
                         {option.label}
                       </option>
@@ -256,10 +286,10 @@ export function PuertoRicoApp() {
           <div className="hidden flex-col items-end gap-2.5 md:flex">
             <div
               role="radiogroup"
-              aria-label={`Medidas de ${groupLabel(group)}`}
+              aria-label={t.measure.radios(groupLabel(group, locale))}
               className="flex max-w-[640px] flex-wrap justify-end gap-1.5"
             >
-              {publicMetricsInGroup(group).map((item) => {
+              {publicMetricsInGroup(group, locale).map((item) => {
                 const active = item.id === metricId;
                 return (
                   <button
@@ -276,9 +306,7 @@ export function PuertoRicoApp() {
               })}
             </div>
             <p className="text-sm text-muted tabular">
-              {island
-                ? "Una sola cifra para toda la isla"
-                : `${ranking.ranked.length} de 78 municipios con dato`}
+              {island ? t.measure.islandOnly : t.measure.withData(ranking.ranked.length)}
             </p>
           </div>
         </div>
@@ -340,12 +368,12 @@ export function PuertoRicoApp() {
                 className="absolute top-1.5 left-2.5 z-10 text-[11px] font-bold tracking-[0.08em] text-sea uppercase"
                 aria-hidden="true"
               >
-                Toda la isla
+                {t.map.wholeIsland}
               </p>
               <div className="aspect-[1048/330] w-full">
                 <AtlasMap
                   variant="overview"
-                  label={`Vista de toda la isla, de Mona a Culebra. ${overviewRect ? "El recuadro marca la parte que muestra el mapa grande." : ""}`}
+                  label={t.map.overview(Boolean(overviewRect))}
                   fills={fills}
                   selectedId={selectedId}
                   viewport={overviewRect}
@@ -389,14 +417,14 @@ export function PuertoRicoApp() {
                 }
                 className="flex min-h-11 items-center rounded-[3px] border border-fg bg-surface px-3.5 text-[15px] font-semibold hover:bg-track"
               >
-                Toda la isla
+                {t.map.wholeIsland}
               </button>
               <span className="flex-1 text-xs text-muted">
-                {detailShowsAll ? "Toca un municipio o acércate" : "Arrastra el mapa para moverte"}
+                {detailShowsAll ? t.map.tapHint : t.map.dragHint}
               </span>
               <button
                 type="button"
-                aria-label="Alejar el mapa"
+                aria-label={t.map.zoomOut}
                 onClick={() => zoomDetail(1 / 1.6)}
                 className="flex size-11 items-center justify-center rounded-[3px] border border-fg bg-surface text-xl hover:bg-track"
               >
@@ -404,7 +432,7 @@ export function PuertoRicoApp() {
               </button>
               <button
                 type="button"
-                aria-label="Acercar el mapa"
+                aria-label={t.map.zoomIn}
                 onClick={() => zoomDetail(1.6)}
                 className="flex size-11 items-center justify-center rounded-[3px] border border-fg bg-surface text-xl hover:bg-track"
               >
@@ -444,7 +472,7 @@ export function PuertoRicoApp() {
             {selected && (
               <details className="mt-4 hidden md:block">
                 <summary className="flex min-h-11 cursor-pointer items-center text-[15px] font-semibold">
-                  Ver las {PUBLIC_METRICS.length} medidas de {selected.name}
+                  {t.summary.allMeasures(PUBLIC_METRICS.length, selected.name)}
                 </summary>
                 <div className="mt-2">
                   <FullProfile place={selected} />
@@ -472,14 +500,14 @@ export function PuertoRicoApp() {
         <div className="px-4 pb-8 md:hidden">
           <div
             role="tablist"
-            aria-label="Más información"
+            aria-label={t.tabs.label}
             className="grid grid-cols-3 border-b border-divider"
           >
             {(
               [
-                ["perfil", "Perfil"],
-                ["los78", "Los 78"],
-                ["fuente", "Fuente"],
+                ["perfil", t.tabs.perfil],
+                ["los78", t.tabs.los78],
+                ["fuente", t.tabs.fuente],
               ] as [MobileTab, string][]
             ).map(([id, text]) => (
               <button
@@ -501,9 +529,7 @@ export function PuertoRicoApp() {
               (selected ? (
                 <FullProfile place={selected} />
               ) : (
-                <p className="text-base text-muted">
-                  Escoge un municipio para ver todas sus medidas.
-                </p>
+                <p className="text-base text-muted">{t.tabs.profileEmpty}</p>
               ))}
             {tab === "los78" &&
               (island ? (
@@ -524,7 +550,7 @@ export function PuertoRicoApp() {
                     onClick={() => setShowTable((value) => !value)}
                     className="mt-4 flex min-h-12 w-full items-center justify-center rounded-[3px] border border-fg text-base font-semibold"
                   >
-                    {showTable ? "Ocultar la tabla" : "Ver la tabla completa"}
+                    {showTable ? t.tabs.hideTable : t.tabs.showTable}
                   </button>
                   {showTable && (
                     <div className="mt-3">
@@ -548,12 +574,12 @@ export function PuertoRicoApp() {
         {/* Desktop: secondary table, then the source */}
         {!island && (
           <section
-            aria-label="Tabla de los 78"
+            aria-label={t.table.heading}
             className="hidden border-t border-divider px-14 py-8 md:block"
           >
             <div className="flex items-baseline justify-between">
-              <h2 className="font-display text-[28px] font-medium">Tabla de los 78</h2>
-              <span className="text-sm text-muted">Usa los encabezados para ordenar</span>
+              <h2 className="font-display text-[28px] font-medium">{t.table.heading}</h2>
+              <span className="text-sm text-muted">{t.table.sortHint}</span>
             </div>
             <div className="mt-3.5">
               <DataTable
@@ -572,29 +598,20 @@ export function PuertoRicoApp() {
       </main>
 
       <footer className="border-t border-fg px-4 pt-4 pb-6 text-[13px] leading-normal text-muted md:px-14">
-        <p>
-          Fuentes: Oficina del Censo de EE. UU. (ACS y TIGER/Line), NHTSA (FARS), CDC (BRFSS), BLS
-          (LAUS), USAspending.gov (Departamento del Tesoro), OpenFEMA, el Servicio Nacional de
-          Meteorología (NWS) y el Servicio Geológico de EE. UU. (USGS). Cada medida dice su fuente y
-          su periodo.
-        </p>
-        {MAP_ATTRIBUTION && <p className="mt-1">{MAP_ATTRIBUTION}</p>}
-        <p className="mt-1">
-          Proyecto independiente, sin afiliación con ninguna agencia de gobierno.
-        </p>
+        <p>{t.footer.sources}</p>
+        {mapAttribution && <p className="mt-1">{mapAttribution}</p>}
+        <p className="mt-1">{t.footer.independent}</p>
       </footer>
     </div>
   );
 }
 
 function IslandOnlyNote() {
+  const t = EXPLORER_MESSAGES[useLocale()].island;
   return (
-    <section aria-label="Sin orden por municipio">
-      <h2 className="font-display text-[26px] font-medium md:text-3xl">Los 78, de mayor a menor</h2>
-      <p className="mt-3 text-base text-muted">
-        Esta cifra solo existe para toda la isla. La encuesta BRFSS de los CDC no la publica por
-        municipio, así que no hay orden ni tabla.
-      </p>
+    <section aria-label={t.noteLabel}>
+      <h2 className="font-display text-[26px] font-medium md:text-3xl">{t.noteHeading}</h2>
+      <p className="mt-3 text-base text-muted">{t.note}</p>
     </section>
   );
 }

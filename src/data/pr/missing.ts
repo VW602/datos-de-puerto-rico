@@ -1,5 +1,7 @@
 import { metricGrain, type PrMetricId } from "./metrics";
 import { valueExclusion } from "./public";
+import type { Locale } from "@/i18n/locale";
+import { EXPLORER_MESSAGES } from "@/i18n/messages/explorer";
 
 /**
  * Why a value is missing. A missing value is never shown as 0, and these
@@ -19,32 +21,15 @@ export type MissingReason =
   /** The source gives two different values; held back until confirmed. */
   | "source_conflict";
 
-export const MISSING_COPY: Record<MissingReason, { short: string; long: string }> = {
-  not_published: {
-    short: "Sin dato publicado",
-    long: "La fuente oficial no publicó este dato para este municipio.",
-  },
-  not_applicable: {
-    short: "No aplica",
-    long: "Esta medida no aplica a este municipio.",
-  },
-  geography_unavailable: {
-    short: "Solo para toda la isla",
-    long: "La fuente solo publica este dato para un área más grande, no por municipio.",
-  },
-  source_unavailable: {
-    short: "Fuente sin responder",
-    long: "La fuente no respondió y no hay una copia guardada. Vuelve a intentar más tarde.",
-  },
-  pending_update: {
-    short: "Pendiente",
-    long: "Este dato espera la próxima publicación de la fuente.",
-  },
-  source_conflict: {
-    short: "Dato sin confirmar",
-    long: "La fuente oficial da dos versiones distintas de este dato. No se muestra hasta confirmarlo.",
-  },
-};
+/** What each reason says, short (in place of the value) and long (explained). */
+export function missingCopy(
+  locale: Locale = "es",
+): Record<MissingReason, { short: string; long: string }> {
+  return EXPLORER_MESSAGES[locale].missing;
+}
+
+/** The Spanish copy (the original wording). */
+export const MISSING_COPY = missingCopy("es");
 
 /** Best-known reason a metric has no value for a municipio. */
 export function missingReason(id: PrMetricId, municipioId?: string): MissingReason {

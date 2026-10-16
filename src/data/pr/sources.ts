@@ -4,6 +4,9 @@
  * carries no internal analysis, rights evidence or excluded-source details.
  */
 import registry from "../../../data/generated/sources.public.json";
+import type { Locale } from "@/i18n/locale";
+import { REGISTRY_EN } from "@/i18n/messages/registry";
+import { SOURCE_MESSAGES } from "@/i18n/messages/sources";
 import type { PrMetricId } from "./metrics";
 
 export type PublicStatus = "PUBLIC_READY" | "PUBLIC_PENDING" | "PUBLIC_EXCLUDED";
@@ -38,14 +41,43 @@ for (const record of PUBLIC_SOURCES) {
   for (const metric of record.metrics) byMetric.set(metric, record);
 }
 
+/**
+ * A record in the reader's language: the registry itself in Spanish; in
+ * English, the reviewed translation of its descriptive fields. Ids, URLs,
+ * dates, agency names and statuses are the same record either way. A record
+ * with no English entry fails loudly instead of showing Spanish under /en/.
+ */
+export function localizedRecord(record: PublicSourceRecord, locale: Locale): PublicSourceRecord {
+  if (locale === "es") return record;
+  const en = REGISTRY_EN[record.datasetId];
+  if (!en) throw new Error(`Missing English registry text for ${record.datasetId}`);
+  return {
+    ...record,
+    title: en.title,
+    sourceTitle: en.sourceTitle,
+    reportingPeriod: en.reportingPeriod,
+    attribution: en.attribution,
+    methodology: record.methodology === null ? null : en.methodology,
+    missingValuePolicy: en.missingValuePolicy,
+  };
+}
+
 /** Public record by datasetId (for sources with no metric, such as the map boundaries). */
-export function publicSourceById(datasetId: string): PublicSourceRecord | null {
-  return PUBLIC_SOURCES.find((record) => record.datasetId === datasetId) ?? null;
+export function publicSourceById(
+  datasetId: string,
+  locale: Locale = "es",
+): PublicSourceRecord | null {
+  const record = PUBLIC_SOURCES.find((item) => item.datasetId === datasetId);
+  return record ? localizedRecord(record, locale) : null;
 }
 
 /** Null when the metric's source is excluded or unknown. */
-export function publicSourceForMetric(id: PrMetricId): PublicSourceRecord | null {
-  return byMetric.get(id) ?? null;
+export function publicSourceForMetric(
+  id: PrMetricId,
+  locale: Locale = "es",
+): PublicSourceRecord | null {
+  const record = byMetric.get(id);
+  return record ? localizedRecord(record, locale) : null;
 }
 
 /**
@@ -66,18 +98,21 @@ export type MetricProvenance = {
   verified: boolean;
 };
 
-/** Registry text for people: an UNKNOWN marker reads as "Por confirmar". */
-function forPeople(text: string): string {
-  return text.replace(/^UNKNOWN\b\.?\s*/, "Por confirmar ").trim();
+/** Registry text for people: an UNKNOWN marker reads as "Por confirmar" / "To be confirmed". */
+function forPeople(text: string, locale: Locale): string {
+  return text.replace(/^UNKNOWN\b\.?\s*/, SOURCE_MESSAGES[locale].unknown).trim();
 }
 
-export function provenanceForMetric(id: PrMetricId): MetricProvenance | null {
-  const record = publicSourceForMetric(id);
+export function provenanceForMetric(
+  id: PrMetricId,
+  locale: Locale = "es",
+): MetricProvenance | null {
+  const record = publicSourceForMetric(id, locale);
   if (!record) return null;
   return {
-    agency: forPeople(record.sourceAgency),
+    agency: forPeople(record.sourceAgency, locale),
     title: record.title,
-    period: forPeople(record.reportingPeriod),
+    period: forPeople(record.reportingPeriod, locale),
     geography: record.geography,
     url: record.sourceURL,
     retrievedAt: record.retrievedAt,

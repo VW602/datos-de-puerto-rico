@@ -9,6 +9,7 @@ import { NotFoundPage } from "@/lib/not-found";
 import { SECURITY_HEADERS } from "@/lib/security-headers";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import { Route as RootRoute } from "@/routes/__root";
+import { Route as SpanishRoute } from "@/routes/index";
 import { FRESHNESS } from "../../../scripts/live/source.ts";
 import { freshness } from "./currentModel";
 
@@ -22,13 +23,21 @@ const text = (html: string) =>
 
 type Meta = { title?: string; name?: string; property?: string; content?: string };
 type Link = { rel: string; href: string };
-const head = RootRoute.options.head!({} as never) as { meta: Meta[]; links: Link[] };
-const meta = (key: string) => head.meta.find((m) => m.name === key || m.property === key)?.content;
+type Head = { meta: Meta[]; links: Link[] };
+// The page's head is the root's shared tags plus the Spanish page's own (later tags win, as in HeadContent).
+const rootHead = RootRoute.options.head!({} as never) as Head;
+const spanishHead = SpanishRoute.options.head!({} as never) as Head;
+const head: Head = {
+  meta: [...rootHead.meta, ...spanishHead.meta],
+  links: [...rootHead.links, ...spanishHead.links],
+};
+const meta = (key: string) =>
+  [...head.meta].reverse().find((m) => m.name === key || m.property === key)?.content;
 
 describe("public name, URL and metadata", () => {
   it("the page title and Open Graph name are the public name", () => {
     expect(SITE_NAME).toBe("Datos de Puerto Rico");
-    expect(head.meta.find((m) => m.title)?.title).toBe(SITE_NAME);
+    expect([...head.meta].reverse().find((m) => m.title)?.title).toBe(SITE_NAME);
     expect(meta("og:title")).toBe(SITE_NAME);
     expect(meta("og:site_name")).toBe(SITE_NAME);
   });
