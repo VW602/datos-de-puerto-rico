@@ -73,6 +73,18 @@ export const readWater = (kv: KvReader | undefined, b: BuiltIn) =>
 
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8" };
 
+/**
+ * A response read back from the edge cache, with this site's own browser
+ * policy. Cloudflare applies the zone's Browser Cache TTL (4 hours by default)
+ * to what the Cache API returns, which would let a browser keep live data for
+ * hours; the cached body and its Age stay as they are.
+ */
+export function fromCache(hit: Response): Response {
+  const headers = new Headers(hit.headers);
+  headers.set("cache-control", `public, max-age=${LIVE_MAX_AGE}`);
+  return new Response(hit.body, { status: hit.status, statusText: hit.statusText, headers });
+}
+
 function json(body: unknown, method: string, servedFrom?: string): Response {
   const headers: Record<string, string> = {
     ...JSON_HEADERS,

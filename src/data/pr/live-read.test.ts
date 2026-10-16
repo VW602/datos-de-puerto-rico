@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { LIVE_KV } from "@/lib/live-kv";
 import {
+  fromCache,
   handleLive,
   readEarthquakes,
   readNws,
@@ -243,6 +244,28 @@ describe("/live/* routes", () => {
     }
     const water = await (await handleLive(req(LIVE_ROUTES.water), undefined, BUILT)).json();
     expect(water.contentSha256).toBe(BUILT.water.snapshot.contentSha256);
+  });
+
+  it("a response read back from the edge cache keeps the 60-second browser policy", async () => {
+    // What the Cache API hands back on Cloudflare: the zone's 4-hour Browser Cache TTL
+    // in place of the Worker's own header, plus Age and Last-Modified.
+    const stored = await handleLive(req(LIVE_ROUTES.nws), undefined, BUILT);
+    const body = await stored.clone().text();
+    const headers = new Headers(stored.headers);
+    headers.set("cache-control", "public, max-age=14400");
+    headers.set("age", "53");
+    headers.set("cf-cache-status", "HIT");
+    const served = fromCache(new Response(body, { status: 200, headers }));
+    expect(served.status).toBe(200);
+    expect(served.headers.get("cache-control")).toBe("public, max-age=60");
+    expect(served.headers.get("age")).toBe("53");
+    expect(served.headers.get("x-live-source")).toBe("built-in");
+    expect(served.headers.get("content-type")).toMatch(/^application\/json/);
+    expect(await served.text()).toBe(body);
+    // And the route really uses it for every cache hit.
+    const route = read("src/server/live-route.ts");
+    expect(route).toMatch(/if \(hit\) return fromCache\(hit\);/);
+    expect(route).not.toMatch(/return hit;/);
   });
 
   it("HEAD answers with headers and no body", async () => {

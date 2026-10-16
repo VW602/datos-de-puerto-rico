@@ -3,7 +3,7 @@ import nws from "../../data/current/nws.json";
 import earthquakes from "../../data/current/usgs-earthquakes.json";
 import waterSeries from "../../data/current/usgs-water-series.json";
 import water from "../../data/current/usgs-water.json";
-import { handleLive, type BuiltIn, type KvReader } from "./liveRead";
+import { fromCache, handleLive, type BuiltIn, type KvReader } from "./liveRead";
 
 /** The copies built into the site: the last known good data, used whenever KV is not newer. */
 const BUILT_IN = {
@@ -34,7 +34,7 @@ export default defineHandler(async (event) => {
   const cacheable = cache && request.method === "GET";
   if (cacheable) {
     const hit = await cache.match(request);
-    if (hit) return hit;
+    if (hit) return fromCache(hit);
   }
   const response = await handleLive(request, cloudflare?.env?.LIVE_DATA, BUILT_IN);
   if (cacheable && response.status === 200) {
