@@ -27,6 +27,7 @@ import { ISLAND_ONLY_FILL, colorForValue } from "@/data/scale";
 import { useLocale } from "@/i18n/context";
 import type { AppSearch } from "@/lib/locale-url";
 import { EXPLORER_MESSAGES } from "@/i18n/messages/explorer";
+
 import { SITE_NAME } from "@/lib/site";
 import { AtlasMap } from "./AtlasMap";
 import { DataTable } from "./DataTable";
@@ -37,6 +38,9 @@ import { Legend, MunicipioSearch, TapChooser, ZoomControls } from "./MapBits";
 import { Ranking78 } from "./Ranking78";
 import { SourcePanel } from "./SourcePanel";
 import { FullProfile, Summary } from "./Summary";
+
+// Same policy for both languages; Spanish readers land on its Spanish section.
+const PRIVACY_POLICY_URL = "https://truenorth242.com/privacy/datos-de-puerto-rico";
 
 type Size = { width: number; height: number };
 type MobileTab = "perfil" | "los78" | "fuente";
@@ -601,6 +605,16 @@ export function PuertoRicoApp({
         <p>{t.footer.sources}</p>
         {mapAttribution && <p className="mt-1">{mapAttribution}</p>}
         <p className="mt-1">{t.footer.independent}</p>
+        <p className="mt-1">
+          <a
+            href={locale === "es" ? `${PRIVACY_POLICY_URL}#politica-espanol` : PRIVACY_POLICY_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="underline underline-offset-2 hover:text-fg"
+          >
+            {t.footer.privacy}
+          </a>
+        </p>
       </footer>
     </div>
   );

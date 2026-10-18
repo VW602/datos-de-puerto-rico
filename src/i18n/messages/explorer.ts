@@ -165,6 +165,7 @@ export const EXPLORER_MESSAGES = defineMessages({
       sources:
         "Fuentes: Oficina del Censo de EE. UU. (ACS y TIGER/Line), NHTSA (FARS), CDC (BRFSS), BLS (LAUS), USAspending.gov (Departamento del Tesoro), OpenFEMA, el Servicio Nacional de Meteorología (NWS) y el Servicio Geológico de EE. UU. (USGS). Cada medida dice su fuente y su periodo.",
       independent: "Proyecto independiente, sin afiliación con ninguna agencia de gobierno.",
+      privacy: "Privacidad",
     },
   },
   en: {
@@ -324,6 +325,7 @@ export const EXPLORER_MESSAGES = defineMessages({
       sources:
         "Sources: U.S. Census Bureau (ACS and TIGER/Line), NHTSA (FARS), CDC (BRFSS), BLS (LAUS), USAspending.gov (U.S. Department of the Treasury), OpenFEMA, the National Weather Service (NWS) and the U.S. Geological Survey (USGS). Every measure names its source and period.",
       independent: "An independent project, not affiliated with any government agency.",
+      privacy: "Privacy",
     },
   },
 });
