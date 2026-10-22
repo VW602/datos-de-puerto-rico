@@ -246,6 +246,7 @@ error y se puede reportar.
 
 - No hay cuentas ni formularios.
 - No hay analíticas ni rastreadores, y no se usan cookies de rastreo.
+- El sitio no recoge ni envía datos de quien lo usa.
 - El navegador consulta los datos actuales en el servidor del propio sitio,
   alojado en Cloudflare; no hace llamadas directas al NWS ni al USGS. Las
   consultas a esas agencias las realiza el proceso de actualización de datos.
