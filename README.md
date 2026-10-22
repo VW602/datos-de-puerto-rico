@@ -1,6 +1,6 @@
 # Datos de Puerto Rico
 
-Dirección pública prevista: <https://datos.tn242.com> (todavía no está publicado).
+**En vivo:** <https://datos.tn242.com>.
 
 Un mapa de datos públicos de los 78 municipios de Puerto Rico. Cada cifra dice de
 dónde sale, qué periodo cubre y qué le falta.
@@ -63,10 +63,13 @@ embalses. Para actualizarlas: `npm run data:water:update`.
 
 ## Datos actuales
 
-Las alertas, los sismos y el agua no se piden al abrir la página. Un programa de
-actualización los pide a la fuente oficial, los revisa y guarda una **copia**
-(`data/current/`) con la hora en que se obtuvo. El sitio muestra esa copia y dice
-qué tan vieja es:
+Al abrir la página, el navegador pide las alertas, los sismos y el agua a las
+rutas `/live/*` del propio sitio; no consulta directamente al NWS ni al USGS.
+Un proceso de actualización consulta las fuentes oficiales, valida los datos y
+publica las copias en Cloudflare Workers KV. El servidor del sitio sirve la copia
+de KV si es válida y más reciente que la incluida en el despliegue
+(`data/current/`); en caso contrario, usa la copia incluida. Cada copia conserva
+la hora en que se obtuvo, y el sitio indica qué tan vieja es:
 
 | Estado | Qué quiere decir |
 | --- | --- |
@@ -108,8 +111,9 @@ condiciones de uso, en [DATA_LICENSES.md](DATA_LICENSES.md).
   desempleo mensual salen de copias oficiales guardadas en el repositorio, con su
   SHA-256. Los scripts los
   vuelven a generar sin internet y siempre dan los mismos bytes.
-- **La página no consulta ningún servicio** al abrirse. Todo sale de archivos del
-  repositorio.
+- **Las medidas del mapa salen de archivos del repositorio.** La sección
+  «Ahora en Puerto Rico» carga las copias de datos actuales desde el servidor del
+  propio sitio, con Cloudflare Workers KV y una copia incluida como respaldo.
 
 ## Correrlo en tu computadora
 
@@ -137,8 +141,8 @@ Abre <http://localhost:8080>.
 | `npm run data:usaspending:update` | Pide de nuevo los fondos federales a la API oficial de USAspending (necesita red; se puede reanudar) |
 | `npm run data:bls:update` | Pide de nuevo el desempleo mensual a la API oficial de BLS (necesita red) |
 
-Cómo se actualizan los datos actuales y se despliega la vista previa (GitHub Actions y
-Cloudflare): [docs/OPERATIONS.md](docs/OPERATIONS.md).
+Cómo se actualizan los datos actuales y se despliega el sitio en producción
+(GitHub Actions y Cloudflare): [docs/OPERATIONS.md](docs/OPERATIONS.md).
 
 ### Actualizar los datos del Censo o del mapa
 
@@ -242,8 +246,9 @@ error y se puede reportar.
 
 - No hay cuentas ni formularios.
 - No hay analíticas ni rastreadores, y no se usan cookies de rastreo.
-- El sitio no recoge ni envía datos de quien lo usa. La página no llama a ningún
-  servicio externo: todo sale de archivos del sitio.
+- El navegador consulta los datos actuales en el servidor del propio sitio,
+  alojado en Cloudflare; no hace llamadas directas al NWS ni al USGS. Las
+  consultas a esas agencias las realiza el proceso de actualización de datos.
 - Hoy el sitio no guarda nada en tu navegador: ni cookies ni `localStorage`. Si
   algún día guarda algo, será solo el estado de la pantalla (por ejemplo, la medida
   escogida), en `localStorage`, y se quedará en tu dispositivo.
