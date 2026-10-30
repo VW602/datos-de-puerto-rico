@@ -17,9 +17,15 @@
  *   3. it is newer than what KV holds;
  *   4. it is written whole: one value per source, water snapshot and series
  *      together.
- * Otherwise nothing is written for that source; good data in KV stays. A
- * small status:<source> value records the attempt, and the run exits 1 on
- * any failure.
+ * Otherwise nothing is written for that source; good data in KV stays, and
+ * the run exits 1 on any failure.
+ *
+ * A small status:<source> value records the source's state, not every
+ * attempt (Workers KV writes are limited): it is written on every failure,
+ * on every change of state (failure → success, written ↔ not-newer) and when
+ * the stored record is missing or of the older shape, but not again while the
+ * same success repeats. A successful copy is always in live:<source>, whose
+ * retrievedAt the site uses for freshness; the GitHub run log keeps every attempt.
  */
 
 import { readFileSync } from "node:fs";
@@ -53,15 +59,42 @@ export type Result = {
   reason: string | null;
 };
 
-/** Small, public-safe operational record: no visitor data, no stack traces. */
+/**
+ * Small, public-safe operational record: no visitor data, no stack traces.
+ * It describes the current state and holds no timestamp that would go stale
+ * while that state repeats without being rewritten.
+ */
 export type Status = {
   source: LiveSource;
   ok: boolean;
   outcome: Outcome;
-  attemptAt: string;
+  /** First attempt with this outcome. Not rewritten while the outcome repeats. */
+  since: string;
+  /** Failures only: the latest failed attempt (every failure is written). Null while ok. */
+  lastAttemptAt: string | null;
   reason: string | null;
-  lastSuccess: { retrievedAt: string; publishedAt: string } | null;
+  /**
+   * Failures only: the copy still served from live:<source> (the last success),
+   * read from KV when the failure is recorded. Null while ok: then live:<source>
+   * itself is the current success.
+   */
+  lastSuccess: { retrievedAt: string } | null;
 };
+
+/**
+ * Whether this outcome needs a new status record: always for a failure, and for
+ * a success only when the stored record is missing, of the older shape, or says
+ * something else (a failure, or the other success outcome).
+ */
+export function statusChanged(previous: string | null, outcome: Outcome): boolean {
+  if (outcome === "failed" || previous === null) return true;
+  try {
+    const p = JSON.parse(previous) as Partial<Status>;
+    return typeof p.since !== "string" || p.ok !== true || p.outcome !== outcome;
+  } catch {
+    return true;
+  }
+}
 
 type Prepared = { key: string; value: string; retrievedAt: string };
 type Snap = {
@@ -160,27 +193,49 @@ export async function publishSource(opts: {
   } catch (error) {
     result = { source, outcome: "failed", retrievedAt: null, reason: reasonOf(error) };
   }
-  // Status: keeps the last success across failures. A status problem fails the run but never touches data.
+  // Status: written only when the state needs recording (see statusChanged).
+  // A status problem fails the run but never touches data.
   try {
-    let lastSuccess: Status["lastSuccess"] = null;
+    let previous: string | null = null;
     try {
-      const previous = await kvGet(kv, statusKey(source), fetchImpl);
-      lastSuccess = previous ? ((JSON.parse(previous) as Status).lastSuccess ?? null) : null;
+      previous = await kvGet(kv, statusKey(source), fetchImpl);
     } catch {
-      lastSuccess = null;
+      previous = null; // unknown: record the state again
     }
-    const attemptAt = now().toISOString();
-    if (result.outcome === "written")
-      lastSuccess = { retrievedAt: result.retrievedAt!, publishedAt: attemptAt };
-    const status: Status = {
-      source,
-      ok: result.outcome !== "failed",
-      outcome: result.outcome,
-      attemptAt,
-      reason: result.reason,
-      lastSuccess,
-    };
-    await kvPut(kv, statusKey(source), JSON.stringify(status), fetchImpl);
+    if (statusChanged(previous, result.outcome)) {
+      const attemptAt = now().toISOString();
+      const failing = result.outcome === "failed";
+      let prior: Partial<Status> | null = null;
+      try {
+        prior = previous ? (JSON.parse(previous) as Partial<Status>) : null;
+      } catch {
+        prior = null;
+      }
+      const sameOutcome =
+        typeof prior?.since === "string" &&
+        prior.outcome === result.outcome &&
+        prior.ok === !failing;
+      let lastSuccess: Status["lastSuccess"] = null;
+      if (failing) {
+        // The last success is the copy KV still serves for this source.
+        try {
+          const at = storedRetrievedAt(source, await kvGet(kv, LIVE_KEYS[source], fetchImpl));
+          lastSuccess = at ? { retrievedAt: at } : null;
+        } catch {
+          lastSuccess = null;
+        }
+      }
+      const status: Status = {
+        source,
+        ok: !failing,
+        outcome: result.outcome,
+        since: sameOutcome ? prior!.since! : attemptAt,
+        lastAttemptAt: failing ? attemptAt : null,
+        reason: result.reason,
+        lastSuccess,
+      };
+      await kvPut(kv, statusKey(source), JSON.stringify(status), fetchImpl);
+    }
   } catch (error) {
     if (result.outcome !== "failed")
       result = { ...result, outcome: "failed", reason: `estado: ${reasonOf(error)}` };

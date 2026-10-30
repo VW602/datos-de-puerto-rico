@@ -16,7 +16,8 @@ Cloudflare Cron (Worker datos-scheduler)
 
 - **El reloj** es el Worker `datos-scheduler` (`infra/datos-scheduler/`). Solo pide a
   GitHub que corra «Live data → KV»: cada 15 minutos (alertas del NWS y sismos del
-  USGS) y en el minuto 7 de cada hora (lo mismo más el agua del USGS). No tiene rutas,
+  USGS) y en el minuto 7 de cada hora (solo el agua del USGS: las alertas y los sismos
+  se refrescaron 7 minutos antes). No tiene rutas,
   `workers.dev` está apagado y no lee ni escribe datos. El cron de GitHub no se usa:
   en una prueba de unas 45 horas, un cron de cada hora corrió solo 7 veces.
 - **El trabajo** es el flujo «Live data → KV» (`live-kv.yml`). Sin `npm ci`, sin
@@ -24,8 +25,12 @@ Cloudflare Cron (Worker datos-scheduler)
   corrida, pasa los validadores de siempre y las comprobaciones de lectura del sitio,
   y es más nueva que la que guarda KV. El agua (copia y series) va en un solo valor.
 - **El almacén** es Workers KV (`live:nws`, `live:earthquakes`, `live:water`, y
-  `status:<fuente>` con el último intento). El sitio sirve el valor de KV si es
+  `status:<fuente>` con el estado de la fuente). El sitio sirve el valor de KV si es
   válido y más nuevo que la copia incluida en el sitio; si no, la copia incluida.
+  `status:<fuente>` se escribe en cada falla y en cada cambio de estado, no en cada
+  éxito repetido (KV gratis permite 1.000 escrituras al día): `since` dice desde cuándo
+  dura el estado; en una falla, `lastAttemptAt` y `lastSuccess` (la copia que KV sigue
+  sirviendo). Cada intento queda en el registro de la corrida en GitHub.
 
 **Falla cerrado.** Si una fuente no se actualiza o no valida, o KV falla, no se
 escribe nada para esa fuente: el dato bueno sigue en KV y el sitio dice qué tan viejo
@@ -34,7 +39,7 @@ es. GitHub avisa por correo cuando el flujo falla. Además, un vigilante diario
 «desactualizado».
 
 Para refrescar a mano: Actions → «Live data → KV» → Run workflow (`target`:
-`production`).
+`production`; `sources`: `all` para las tres fuentes, o una de ellas).
 
 ## Flujos de GitHub Actions
 
