@@ -22,8 +22,8 @@ export const DISPATCH = {
 
 /**
  * Cron → workflow inputs. Every 15 minutes: NWS alerts and USGS earthquakes.
- * Minute 7 of every hour: the same plus USGS water. The two never fire at the
- * same minute.
+ * Minute 7 of every hour: USGS water only (the workflow's `sources: auto`, see
+ * scripts/live/sources.ts). The two never fire at the same minute.
  */
 export const SCHEDULES: Record<string, { refresh_water: boolean }> = {
   "*/15 * * * *": { refresh_water: false },

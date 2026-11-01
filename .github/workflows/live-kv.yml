@@ -1,9 +1,12 @@
-# Live data → KV: refreshes NWS alerts, USGS earthquakes and (on request)
-# USGS water, validates them with the existing pipeline, and publishes them to
-# Workers KV, where the site's /live/* routes read them.
+# Live data → KV: refreshes NWS alerts and USGS earthquakes, or USGS water,
+# validates them with the existing pipeline, and publishes them to Workers KV,
+# where the site's /live/* routes read them.
 #
 # Data only. No npm install, no build and no deploy: the Worker version does
-# not change. Manual-only while the repository is private (no schedule).
+# not change. No GitHub schedule: the datos-scheduler Worker dispatches it
+# every 15 minutes (alerts and earthquakes) and at minute 7 of each hour
+# (water only), with `sources` left at "auto" (scripts/live/sources.ts).
+# A manual run can refresh any set, including all three.
 #
 # Fails closed: a source that fails to update or validate, or a KV read or
 # write error, writes nothing for that source (the good data in KV stays) and
@@ -18,8 +21,13 @@ on:
         type: choice
         options: [preview, production]
         default: preview
+      sources:
+        description: "Sources to refresh (auto: as the scheduler; all: the three)"
+        type: choice
+        options: [auto, all, "nws,earthquakes", water]
+        default: auto
       refresh_water:
-        description: "Also refresh USGS water (about 15 s more)"
+        description: "With sources=auto: refresh only USGS water (the scheduler's hourly run)"
         type: boolean
         default: false
 
@@ -46,13 +54,22 @@ jobs:
         with:
           node-version: "22"
 
+      # An unknown choice fails the run here, before anything is refreshed.
+      - name: Choose sources
+        id: pick
+        env:
+          SOURCES_INPUT: ${{ inputs.sources }}
+          REFRESH_WATER: ${{ inputs.refresh_water }}
+        run: node scripts/live/sources.ts --sources="$SOURCES_INPUT" --refresh-water="$REFRESH_WATER" >> "$GITHUB_OUTPUT"
+
       # The updaters keep last known good locally and exit 1 on failure; the
       # publisher then refuses any snapshot not retrieved in this run.
       - name: Update NWS alerts and USGS earthquakes
+        if: contains(steps.pick.outputs.sources, 'nws')
         continue-on-error: true
         run: node scripts/live/update.ts
       - name: Update USGS water
-        if: inputs.refresh_water
+        if: contains(steps.pick.outputs.sources, 'water')
         continue-on-error: true
         run: node scripts/water/update.ts
 
@@ -61,5 +78,5 @@ jobs:
           CLOUDFLARE_KV_API_TOKEN: ${{ secrets.CLOUDFLARE_KV_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           TARGET: ${{ inputs.target }}
-          SOURCES: ${{ inputs.refresh_water && 'nws,earthquakes,water' || 'nws,earthquakes' }}
+          SOURCES: ${{ steps.pick.outputs.sources }}
         run: node scripts/live/publish.ts --target="$TARGET" --sources="$SOURCES"
